@@ -74,7 +74,7 @@ export function bankMCQ(
   items: BankItem[],
   pool?: string[],
 ): Topic {
-  const distractorPool = pool ?? Array.from(new Set(items.map((i) => i.answer)));
+  const distractorPool = Array.from(new Set(pool ?? items.map((i) => i.answer)));
   return {
     id,
     label,

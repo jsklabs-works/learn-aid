@@ -1,17 +1,17 @@
 # Learn Aid
 
-A free, browser-only worksheet generator for the **Victorian Curriculum**, Grades 1–12. Built for students, parents and teachers who want quick, random practice worksheets without signing up for anything.
+A free, browser-only worksheet and online-test generator, Grades 1–12. Built for students, parents and teachers who want quick, random practice without signing up for anything.
 
-- Pick a **subject** (Maths or English) and a **grade** (1–12)
-- Choose which **topics** to include
-- Set how many **questions** you want
-- Generate a worksheet, preview it, then **download a PDF** with a matching answer key on the last page
+- Pick a **syllabus** (Victorian Curriculum or Cambridge International), **subject** (Maths or English), **grade** (1–12) and **difficulty** (Standard or Advanced)
+- Choose which **topics** to include and how many **questions** you want (up to 50)
+- **Worksheet mode**: generate, preview (with diagrams for geometry questions), then **download a PDF** with a matching answer key on the last page
+- **Online test mode**: answer questions right in the browser (multiple choice or free text), submit, and get an instant score with a per-question breakdown
 
 Everything runs client-side — no backend, no accounts, no data collection.
 
 ## Coverage
 
-**Maths**, banded by grade:
+**Maths**, banded by grade (Standard):
 
 | Grades | Topics |
 |---|---|
@@ -22,7 +22,7 @@ Everything runs client-side — no backend, no accounts, no data collection.
 | 9–10 | Two-step/simultaneous equations, factoring quadratics, Pythagoras, trigonometry, index laws, gradients |
 | 11–12 | Differentiation (power rule), log laws, compound interest, sequences, exact trig values, the discriminant |
 
-**English**, banded by grade:
+**English**, banded by grade (Standard):
 
 | Grades | Topics |
 |---|---|
@@ -33,7 +33,16 @@ Everything runs client-side — no backend, no accounts, no data collection.
 | 9–10 | Grammar editing, literary devices, word roots, run-on sentences |
 | 11–12 | Advanced vocabulary, rhetorical techniques, grammar editing, text purpose |
 
-Questions are procedurally generated (maths) or randomly sampled from curated item banks (English), so each worksheet is different.
+Questions are procedurally generated (maths) or randomly sampled from curated item banks (English), so each worksheet is different. Perimeter, area, angle, and Pythagoras/trigonometry questions include a labelled diagram, both on screen and in the downloaded PDF.
+
+### Difficulty and syllabus
+
+- **Advanced** pulls in a taste of the *next* grade band's topics (e.g. Grade 5–6 Advanced adds some Grade 7–8 algebra/ratio topics); the top band (11–12) gets genuinely new extension topics instead (e.g. the quadratic formula, integration, the chain rule; idioms and tone analysis for English).
+- **Cambridge International** shares the same core skill topics as the Victorian Curriculum (arithmetic, algebra, grammar, etc. are common ground) and adds a handful of Cambridge-flavoured topics at Grade 9+ (standard form, bearings, sets/Venn diagrams; formal/informal register, inference). It is not a full parallel curriculum — see [`src/curriculum/maths.ts`](src/curriculum/maths.ts) and [`src/curriculum/english.ts`](src/curriculum/english.ts) for exactly what's added.
+
+### Online test scoring
+
+Free-text answers are graded with a lenient, case-insensitive string match (whitespace/punctuation-tolerant) — fine for numeric and short-phrase answers, but sentence-correction style answers need an exact match, so the results screen always shows your answer next to the correct one for transparency. There's no backend, so scores aren't saved anywhere — the test lives for the current browser session only.
 
 ## Development
 

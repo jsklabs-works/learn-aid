@@ -1,4 +1,4 @@
-import type { Question, Topic } from "../types";
+import type { Difficulty, Question, Syllabus, Topic } from "../types";
 import { gcd, ordinal, pick, randInt, simplifyFraction } from "./utils";
 
 // ---------- Grades 1-2 ----------
@@ -144,6 +144,7 @@ function perimeterRectangle(maxSide: number): Topic {
       return {
         prompt: `Find the perimeter of a rectangle with length ${l} cm and width ${w} cm.`,
         answer: `${2 * (l + w)} cm`,
+        figure: { kind: "rectangle", width: l, height: w, unit: "cm" },
       };
     },
   };
@@ -241,6 +242,7 @@ function areaRectangle(maxSide: number): Topic {
       return {
         prompt: `Find the area of a rectangle with length ${l} cm and width ${w} cm.`,
         answer: `${l * w} cm²`,
+        figure: { kind: "rectangle", width: l, height: w, unit: "cm" },
       };
     },
   };
@@ -256,6 +258,7 @@ function areaTriangle(maxBase: number): Topic {
       return {
         prompt: `Find the area of a triangle with base ${base} cm and height ${height} cm.`,
         answer: `${(base * height) / 2} cm²`,
+        figure: { kind: "triangleBase", base, height, unit: "cm" },
       };
     },
   };
@@ -380,6 +383,7 @@ function angleTriangle(): Topic {
       return {
         prompt: `Two angles of a triangle are ${a}° and ${b}°. What is the third angle?`,
         answer: `${c}°`,
+        figure: { kind: "triangleAngles", a, b },
       };
     },
   };
@@ -394,6 +398,7 @@ function angleStraightLine(): Topic {
       return {
         prompt: `An angle on a straight line is split into two parts. One part is ${a}°. What is the other part?`,
         answer: `${180 - a}°`,
+        figure: { kind: "angleOnLine", known: a },
       };
     },
   };
@@ -501,11 +506,13 @@ function pythagoras(): Topic {
         return {
           prompt: `A right triangle has legs of length ${A} cm and ${B} cm. Find the hypotenuse.`,
           answer: `${C} cm`,
+          figure: { kind: "rightTriangle", legA: A, legB: B, hyp: C, unit: "cm", unknown: "hyp" },
         };
       }
       return {
         prompt: `A right triangle has a hypotenuse of ${C} cm and one leg of ${A} cm. Find the other leg.`,
         answer: `${B} cm`,
+        figure: { kind: "rightTriangle", legA: A, legB: B, hyp: C, unit: "cm", unknown: "legB" },
       };
     },
   };
@@ -695,7 +702,137 @@ function quadraticDiscriminant(): Topic {
   };
 }
 
-export function getMathsTopics(grade: number): Topic[] {
+// ---------- Advanced extension topics (Grade 11-12 "Advanced" only) ----------
+
+function quadraticFormula(): Topic {
+  return {
+    id: "quadratic-formula",
+    label: "The quadratic formula",
+    generate: () => {
+      const a = randInt(1, 3);
+      let b = randInt(-9, 9);
+      if (b === 0) b = 4;
+      const c = -randInt(1, 9);
+      const disc = b * b - 4 * a * c;
+      const sqrtDisc = Math.sqrt(disc);
+      const x1 = (-b + sqrtDisc) / (2 * a);
+      const x2 = (-b - sqrtDisc) / (2 * a);
+      const expr = `${a === 1 ? "" : a}x²${formatSigned(b, "x")} − ${Math.abs(c)} = 0`;
+      return {
+        prompt: `Use the quadratic formula to solve (round to 2 decimal places): ${expr}`,
+        answer: `x = ${x1.toFixed(2)} or x = ${x2.toFixed(2)}`,
+      };
+    },
+  };
+}
+
+function integrationPowerRule(): Topic {
+  return {
+    id: "integration-power-rule",
+    label: "Integration (power rule)",
+    generate: () => {
+      const a = randInt(2, 9);
+      const n = randInt(1, 5);
+      const newPower = n + 1;
+      const coef = simplifyFraction(a, newPower);
+      const coefDisplay = coef.includes("/") ? `(${coef})` : coef;
+      const powerText = newPower === 1 ? "x" : `x^${newPower}`;
+      return {
+        prompt: `Find ∫ ${a}x^${n} dx`,
+        answer: `${coefDisplay}${powerText} + C`,
+      };
+    },
+  };
+}
+
+function chainRuleSimple(): Topic {
+  return {
+    id: "chain-rule-simple",
+    label: "The chain rule",
+    generate: () => {
+      const a = randInt(2, 5);
+      const b = randInt(1, 9);
+      const n = randInt(2, 4);
+      const newCoef = a * n;
+      const powerText = n - 1 === 1 ? `(${a}x + ${b})` : `(${a}x + ${b})^${n - 1}`;
+      return {
+        prompt: `Differentiate using the chain rule: y = (${a}x + ${b})^${n}`,
+        answer: `dy/dx = ${newCoef}${powerText}`,
+      };
+    },
+  };
+}
+
+// ---------- Cambridge International extras (Grade 9+) ----------
+
+function standardForm(): Topic {
+  return {
+    id: "standard-form",
+    label: "Standard form",
+    generate: () => {
+      const mantissa = randInt(10, 99) / 10;
+      const exponent = randInt(2, 8);
+      const value = Math.round(mantissa * Math.pow(10, exponent));
+      const toStandard = Math.random() < 0.5;
+      if (toStandard) {
+        return { prompt: `Write ${value.toLocaleString()} in standard form.`, answer: `${mantissa} × 10^${exponent}` };
+      }
+      return { prompt: `Write ${mantissa} × 10^${exponent} as an ordinary number.`, answer: value.toLocaleString() };
+    },
+  };
+}
+
+function bearings(): Topic {
+  return {
+    id: "bearings",
+    label: "Bearings",
+    generate: () => {
+      const bearing = randInt(1, 359);
+      const back = (bearing + 180) % 360;
+      return {
+        prompt: `The bearing of point B from point A is ${String(bearing).padStart(3, "0")}°. Find the bearing of A from B.`,
+        answer: `${String(back).padStart(3, "0")}°`,
+      };
+    },
+  };
+}
+
+function setsVenn(): Topic {
+  return {
+    id: "sets-venn",
+    label: "Sets and Venn diagrams",
+    generate: () => {
+      const onlyA = randInt(4, 12);
+      const onlyB = randInt(4, 12);
+      const both = randInt(2, 8);
+      const neither = randInt(1, 6);
+      const total = onlyA + onlyB + both + neither;
+      const askWhich = pick(["total", "either", "neither"] as const);
+      if (askWhich === "total") {
+        return {
+          prompt: `In a class, ${onlyA} students study only French, ${onlyB} study only Spanish, ${both} study both, and ${neither} study neither. How many students are there in total?`,
+          answer: String(total),
+        };
+      }
+      if (askWhich === "either") {
+        return {
+          prompt: `In a class of ${total} students, ${onlyA} study only French, ${onlyB} study only Spanish, and ${both} study both. How many students study at least one of the two languages?`,
+          answer: String(onlyA + onlyB + both),
+        };
+      }
+      return {
+        prompt: `In a class of ${total} students, ${onlyA + both} study French and ${onlyB + both} study Spanish, and ${both} study both. How many students study neither language?`,
+        answer: String(neither),
+      };
+    },
+  };
+}
+
+function cambridgeExtras(grade: number): Topic[] {
+  return grade >= 9 ? [standardForm(), bearings(), setsVenn()] : [];
+}
+
+function baseMathsTopics(grade: number): Topic[] {
   if (grade <= 2) {
     return [
       additionWithin(grade === 1 ? 20 : 50),
@@ -762,6 +899,27 @@ export function getMathsTopics(grade: number): Topic[] {
     unitCircleValues(),
     quadraticDiscriminant(),
   ];
+}
+
+/** "Advanced" pulls in a taste of the next grade band's topics; the top band gets genuinely new extension topics. */
+function advancedExtras(grade: number): Topic[] {
+  if (grade <= 2) return [multiplicationTables(2, 5), perimeterRectangle(10)];
+  if (grade <= 4) return [percentageOf(), orderOfOperations()];
+  if (grade <= 6) return [simplifyLikeTerms(), ratioSimplify()];
+  if (grade <= 8) return [solveTwoStep(), pythagoras()];
+  if (grade <= 10) return [derivativePowerRule(), logLaws()];
+  return [quadraticFormula(), integrationPowerRule(), chainRuleSimple()];
+}
+
+export function getMathsTopics(
+  grade: number,
+  syllabus: Syllabus = "vic",
+  difficulty: Difficulty = "standard",
+): Topic[] {
+  const base = baseMathsTopics(grade);
+  const advanced = difficulty === "advanced" ? advancedExtras(grade) : [];
+  const cambridge = syllabus === "cambridge" ? cambridgeExtras(grade) : [];
+  return [...base, ...advanced, ...cambridge];
 }
 
 export type { Question };

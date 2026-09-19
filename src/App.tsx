@@ -1,24 +1,36 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
+import { FigureSvg } from "./components/FigureSvg";
 import { GRADES, getTopics } from "./curriculum";
+import { isCorrectAnswer } from "./grading";
 import { generateWorksheetPdf } from "./pdf";
-import type { Question, Subject } from "./types";
+import type { Difficulty, Question, Subject, Syllabus } from "./types";
 
 const OPTION_LETTERS = ["A", "B", "C", "D"];
 const MIN_QUESTIONS = 1;
-const MAX_QUESTIONS = 40;
+const MAX_QUESTIONS = 50;
+
+type Mode = "worksheet" | "test";
 
 function App() {
   const [subject, setSubject] = useState<Subject>("maths");
   const [grade, setGrade] = useState(3);
+  const [syllabus, setSyllabus] = useState<Syllabus>("vic");
+  const [difficulty, setDifficulty] = useState<Difficulty>("standard");
+  const [mode, setMode] = useState<Mode>("worksheet");
   const [count, setCount] = useState(10);
   const [selectedTopicIds, setSelectedTopicIds] = useState<Set<string>>(new Set());
   const [questions, setQuestions] = useState<Question[] | null>(null);
   const [showAnswers, setShowAnswers] = useState(false);
+  const [testAnswers, setTestAnswers] = useState<string[]>([]);
+  const [testSubmitted, setTestSubmitted] = useState(false);
 
-  const topics = useMemo(() => getTopics(subject, grade), [subject, grade]);
+  const topics = useMemo(
+    () => getTopics(subject, grade, syllabus, difficulty),
+    [subject, grade, syllabus, difficulty],
+  );
 
-  // Whenever the subject/grade changes, select all of that grade's topics by default.
+  // Whenever the subject/grade/syllabus/difficulty changes, select all of that set's topics by default.
   useEffect(() => {
     setSelectedTopicIds(new Set(topics.map((t) => t.id)));
     setQuestions(null);
@@ -43,6 +55,8 @@ function App() {
     });
     setQuestions(generated);
     setShowAnswers(false);
+    setTestAnswers(new Array(generated.length).fill(""));
+    setTestSubmitted(false);
   }
 
   function handleDownload() {
@@ -55,19 +69,51 @@ function App() {
     });
   }
 
+  const score = useMemo(() => {
+    if (!questions || !testSubmitted) return null;
+    const correct = questions.filter((q, i) => isCorrectAnswer(testAnswers[i] ?? "", q.answer)).length;
+    return { correct, total: questions.length };
+  }, [questions, testAnswers, testSubmitted]);
+
   return (
     <div className="page">
       <header className="page-header">
         <h1>Worksheet Generator</h1>
         <p className="subtitle">
-          Random practice worksheets for Grades 1–12, aligned to the Victorian Curriculum — for students, parents and
-          teachers.
+          Random practice worksheets and online tests for Grades 1–12 — for students, parents and teachers.
         </p>
       </header>
 
       <main className="layout">
-        <section className="panel" aria-label="Worksheet settings">
+        <section className="panel" aria-label="Settings">
+          <div className="mode-toggle" role="tablist" aria-label="Mode">
+            <button
+              role="tab"
+              aria-selected={mode === "worksheet"}
+              className={mode === "worksheet" ? "mode-tab active" : "mode-tab"}
+              onClick={() => setMode("worksheet")}
+            >
+              Worksheet (PDF)
+            </button>
+            <button
+              role="tab"
+              aria-selected={mode === "test"}
+              className={mode === "test" ? "mode-tab active" : "mode-tab"}
+              onClick={() => setMode("test")}
+            >
+              Online test
+            </button>
+          </div>
+
           <div className="field-row">
+            <label className="field">
+              <span>Syllabus</span>
+              <select value={syllabus} onChange={(e) => setSyllabus(e.target.value as Syllabus)}>
+                <option value="vic">Victorian Curriculum</option>
+                <option value="cambridge">Cambridge International</option>
+              </select>
+            </label>
+
             <label className="field">
               <span>Subject</span>
               <select value={subject} onChange={(e) => setSubject(e.target.value as Subject)}>
@@ -84,6 +130,14 @@ function App() {
                     Grade {g}
                   </option>
                 ))}
+              </select>
+            </label>
+
+            <label className="field">
+              <span>Difficulty</span>
+              <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)}>
+                <option value="standard">Standard</option>
+                <option value="advanced">Advanced</option>
               </select>
             </label>
 
@@ -119,18 +173,18 @@ function App() {
           </fieldset>
 
           <button className="primary-button" onClick={handleGenerate}>
-            Generate worksheet
+            {mode === "worksheet" ? "Generate worksheet" : "Start test"}
           </button>
         </section>
 
-        <section className="preview" aria-label="Worksheet preview">
+        <section className="preview" aria-label="Preview">
           {!questions && (
             <div className="empty-state">
-              <p>Choose a subject, grade and topics, then generate a worksheet to see a preview here.</p>
+              <p>Choose your settings, then generate to see a preview here.</p>
             </div>
           )}
 
-          {questions && (
+          {questions && mode === "worksheet" && (
             <>
               <div className="preview-toolbar">
                 <h2>
@@ -151,6 +205,11 @@ function App() {
                 {questions.map((q, i) => (
                   <li key={i} className="question">
                     <div className="question-prompt">{q.prompt}</div>
+                    {q.figure && (
+                      <div className="question-figure">
+                        <FigureSvg figure={q.figure} />
+                      </div>
+                    )}
                     {q.options && (
                       <div className="question-options">
                         {q.options.map((opt, oi) => (
@@ -166,11 +225,102 @@ function App() {
               </ol>
             </>
           )}
+
+          {questions && mode === "test" && (
+            <>
+              <div className="preview-toolbar">
+                <h2>
+                  Grade {grade} {subject === "maths" ? "Maths" : "English"} Test
+                </h2>
+                <div className="preview-actions">
+                  {!testSubmitted ? (
+                    <button className="primary-button" onClick={() => setTestSubmitted(true)}>
+                      Submit test
+                    </button>
+                  ) : (
+                    <button className="primary-button" onClick={handleGenerate}>
+                      Try a new test
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {score && (
+                <div className="score-banner">
+                  You scored <strong>{score.correct}</strong> / {score.total} (
+                  {Math.round((score.correct / score.total) * 100)}%)
+                </div>
+              )}
+
+              <ol className="question-list">
+                {questions.map((q, i) => {
+                  const userAnswer = testAnswers[i] ?? "";
+                  const correct = testSubmitted ? isCorrectAnswer(userAnswer, q.answer) : null;
+                  return (
+                    <li key={i} className={`question${testSubmitted ? (correct ? " correct" : " incorrect") : ""}`}>
+                      <div className="question-prompt">{q.prompt}</div>
+                      {q.figure && (
+                        <div className="question-figure">
+                          <FigureSvg figure={q.figure} />
+                        </div>
+                      )}
+                      {q.options ? (
+                        <div className="test-options">
+                          {q.options.map((opt, oi) => (
+                            <label key={oi} className="test-option">
+                              <input
+                                type="radio"
+                                name={`q-${i}`}
+                                value={opt}
+                                disabled={testSubmitted}
+                                checked={userAnswer === opt}
+                                onChange={() =>
+                                  setTestAnswers((prev) => {
+                                    const next = [...prev];
+                                    next[i] = opt;
+                                    return next;
+                                  })
+                                }
+                              />
+                              <span>
+                                {OPTION_LETTERS[oi]}) {opt}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          className="test-answer-input"
+                          value={userAnswer}
+                          disabled={testSubmitted}
+                          placeholder="Your answer"
+                          onChange={(e) =>
+                            setTestAnswers((prev) => {
+                              const next = [...prev];
+                              next[i] = e.target.value;
+                              return next;
+                            })
+                          }
+                        />
+                      )}
+                      {testSubmitted && (
+                        <div className="question-answer">
+                          {correct ? "Correct" : `Correct answer: ${q.answer}`}
+                          {!correct && userAnswer && <> — you answered: {userAnswer}</>}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ol>
+            </>
+          )}
         </section>
       </main>
 
       <footer className="page-footer">
-        <p>Runs entirely in your browser — no data leaves your device.</p>
+        <p>Runs entirely in your browser — no data leaves your device, and no account is needed.</p>
       </footer>
     </div>
   );

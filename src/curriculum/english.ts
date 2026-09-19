@@ -1,5 +1,5 @@
-import type { Topic } from "../types";
-import { bankFill, bankMCQ } from "./utils";
+import type { Difficulty, Syllabus, Topic } from "../types";
+import { bankFill, bankMCQ, pick } from "./utils";
 
 // ---------- Grades 1-2 ----------
 
@@ -190,6 +190,11 @@ const PUNCTUATION_MID: [string, string][] = [
   ["well i suppose we could try", "Well, I suppose we could try."],
   ["my sisters name is emma", "My sister's name is Emma."],
   ["on saturday we visited nan and pop", "On Saturday, we visited Nan and Pop."],
+  ["the movie which we watched last night was terrifying", "The movie, which we watched last night, was terrifying."],
+  ["please bring a pen a notebook and a ruler", "Please bring a pen, a notebook, and a ruler."],
+  ["wow that was an amazing goal", "Wow, that was an amazing goal!"],
+  ["marks favourite subjects are science and art", "Mark's favourite subjects are science and art."],
+  ["no i havent finished my homework yet", "No, I haven't finished my homework yet."],
 ];
 
 function punctuationMid(): Topic {
@@ -210,6 +215,12 @@ const PARTS_OF_SPEECH: { sentence: string; word: string; pos: "noun" | "verb" | 
   { sentence: "The old man walked slowly to the shiny car.", word: "old", pos: "adjective" },
   { sentence: "The old man walked slowly to the shiny car.", word: "walked", pos: "verb" },
   { sentence: "The old man walked slowly to the shiny car.", word: "shiny", pos: "adjective" },
+  { sentence: "The curious cat explored the empty house.", word: "curious", pos: "adjective" },
+  { sentence: "The curious cat explored the empty house.", word: "explored", pos: "verb" },
+  { sentence: "The curious cat explored the empty house.", word: "house", pos: "noun" },
+  { sentence: "A gentle breeze cooled the tired hikers.", word: "gentle", pos: "adjective" },
+  { sentence: "A gentle breeze cooled the tired hikers.", word: "cooled", pos: "verb" },
+  { sentence: "A gentle breeze cooled the tired hikers.", word: "hikers", pos: "noun" },
 ];
 
 function partsOfSpeech(): Topic {
@@ -286,6 +297,12 @@ const HOMOPHONES: { sentence: string; answer: string; distractors: string[] }[] 
   { sentence: "She wore a new ___ to the party.", answer: "dress", distractors: [] },
   { sentence: "Please ___ the door.", answer: "close", distractors: ["clothes"] },
   { sentence: "I bought new ___ for winter.", answer: "clothes", distractors: ["close"] },
+  { sentence: "We ate a delicious ___ for dessert.", answer: "pie", distractors: ["pi"] },
+  { sentence: "The value of ___ is roughly 3.14.", answer: "pi", distractors: ["pie"] },
+  { sentence: "She will ___ the ball to her teammate.", answer: "pass", distractors: ["past"] },
+  { sentence: "That happened in the ___.", answer: "past", distractors: ["pass"] },
+  { sentence: "I need to buy a new pair of ___.", answer: "shoes", distractors: ["choose"] },
+  { sentence: "Which one will you ___?", answer: "choose", distractors: ["shoes"] },
 ];
 
 function homophones(): Topic {
@@ -316,6 +333,10 @@ const PREFIXES: { word: string; prefix: string; meaning: string }[] = [
   { word: "overeat", prefix: "over-", meaning: "too much" },
   { word: "submarine", prefix: "sub-", meaning: "under" },
   { word: "bicycle", prefix: "bi-", meaning: "two" },
+  { word: "triangle", prefix: "tri-", meaning: "three" },
+  { word: "export", prefix: "ex-", meaning: "out" },
+  { word: "international", prefix: "inter-", meaning: "between" },
+  { word: "autograph", prefix: "auto-", meaning: "self" },
 ];
 
 function prefixMeanings(): Topic {
@@ -337,6 +358,9 @@ const ACTIVE_PASSIVE: [string, string][] = [
   ["The artist painted the mural.", "The mural was painted by the artist."],
   ["The storm damaged the roof.", "The roof was damaged by the storm."],
   ["The committee approved the plan.", "The plan was approved by the committee."],
+  ["The gardener planted the roses.", "The roses were planted by the gardener."],
+  ["A famous author wrote the novel.", "The novel was written by a famous author."],
+  ["The earthquake destroyed the bridge.", "The bridge was destroyed by the earthquake."],
 ];
 
 function activePassive(): Topic {
@@ -354,6 +378,12 @@ const CLAUSES: { sentence: string; clause: string; kind: "independent" | "depend
   { sentence: "She finished her homework before she watched TV.", clause: "she finished her homework", kind: "independent" },
   { sentence: "Because he was tired, he went to bed early.", clause: "Because he was tired", kind: "dependent" },
   { sentence: "Because he was tired, he went to bed early.", clause: "he went to bed early", kind: "independent" },
+  { sentence: "When the bell rang, the students rushed outside.", clause: "When the bell rang", kind: "dependent" },
+  { sentence: "When the bell rang, the students rushed outside.", clause: "the students rushed outside", kind: "independent" },
+  { sentence: "The movie, which we watched twice, was excellent.", clause: "which we watched twice", kind: "dependent" },
+  { sentence: "The movie, which we watched twice, was excellent.", clause: "The movie was excellent", kind: "independent" },
+  { sentence: "Unless you study, you will fail the test.", clause: "Unless you study", kind: "dependent" },
+  { sentence: "Unless you study, you will fail the test.", clause: "you will fail the test", kind: "independent" },
 ];
 
 function clauseTypes(): Topic {
@@ -371,6 +401,12 @@ const PERSUASIVE_TECHNIQUES: { example: string; technique: string }[] = [
   { example: "Leading scientists agree that this is the safest option.", technique: "expert opinion" },
   { example: "This heartbreaking story will change how you see the world.", technique: "emotive language" },
   { example: "Everyone who matters already owns one.", technique: "bandwagon" },
+  { example: "Only 3 seats left at this price — book now!", technique: "urgency" },
+  { example: "As a parent, don't you want to keep your kids safe?", technique: "rhetorical question" },
+  { example: "This product will change your life forever.", technique: "emotive language" },
+  { example: "Studies show 87% of users saw results within a week.", technique: "statistics" },
+  { example: "Our founder, a former surgeon, designed this for real safety.", technique: "expert opinion" },
+  { example: "Join the millions who have already made the switch.", technique: "bandwagon" },
 ];
 
 function persuasiveTechniques(): Topic {
@@ -392,6 +428,13 @@ const VOCAB_CONTEXT: { sentence: string; word: string; meaning: string; distract
   { sentence: "Her persistent efforts finally paid off.", word: "persistent", meaning: "determined", distractors: ["lazy", "brief", "quiet"] },
   { sentence: "The ancient ruins were a mystery to archaeologists.", word: "ancient", meaning: "very old", distractors: ["newly built", "hidden", "dangerous"] },
   { sentence: "The politician's speech was full of ambiguous statements.", word: "ambiguous", meaning: "unclear", distractors: ["honest", "loud", "brief"] },
+  { sentence: "The volunteers worked with great diligence to finish on time.", word: "diligence", meaning: "careful effort", distractors: ["laziness", "anger", "speed"] },
+  { sentence: "His candid response surprised the interviewer.", word: "candid", meaning: "honest and direct", distractors: ["evasive", "rude", "nervous"] },
+  { sentence: "The city's infrastructure was in a dilapidated state.", word: "dilapidated", meaning: "run-down", distractors: ["brand new", "colourful", "expensive"] },
+  { sentence: "She gave a succinct summary of the report.", word: "succinct", meaning: "brief and clear", distractors: ["lengthy", "confusing", "boring"] },
+  { sentence: "The crowd was subdued after the announcement.", word: "subdued", meaning: "quiet and reserved", distractors: ["excited", "furious", "confused"] },
+  { sentence: "His arguments were both cogent and persuasive.", word: "cogent", meaning: "clear and convincing", distractors: ["weak", "irrelevant", "aggressive"] },
+  { sentence: "The detective was known for her tenacity.", word: "tenacity", meaning: "persistence", distractors: ["kindness", "carelessness", "shyness"] },
 ];
 
 function vocabularyInContext(): Topic {
@@ -421,6 +464,11 @@ const GRAMMAR_EDITING: [string, string][] = [
   ["I could of finished it yesterday.", "I could have finished it yesterday."],
   ["Everyone should bring their own lunch.", "Everyone should bring his or her own lunch."],
   ["He is the tallest out of the two.", "He is the taller of the two."],
+  ["Between you and I, this is a bad idea.", "Between you and me, this is a bad idea."],
+  ["Its raining outside, bring your umbrella.", "It's raining outside, bring your umbrella."],
+  ["The reason he failed is because he didn't study.", "The reason he failed is that he didn't study."],
+  ["Less people came than we expected.", "Fewer people came than we expected."],
+  ["Whom do you think will win?", "Who do you think will win?"],
 ];
 
 function grammarEditing(): Topic {
@@ -439,6 +487,10 @@ const LITERARY_DEVICES: { example: string; device: string }[] = [
   { example: "A fire station burned down.", device: "irony" },
   { example: "The silence was deafening.", device: "oxymoron" },
   { example: "Death lay his icy hand on kings.", device: "personification" },
+  { example: "The crash of thunder shook the house.", device: "onomatopoeia" },
+  { example: "This is a jumbo shrimp of a problem.", device: "oxymoron" },
+  { example: "He's been working like a machine all day.", device: "simile" },
+  { example: "The world is a stage.", device: "metaphor" },
 ];
 
 function literaryDevices(): Topic {
@@ -458,6 +510,10 @@ const WORD_ROOTS: { root: string; meaning: string; example: string }[] = [
   { root: "chron", meaning: "time", example: "chronology" },
   { root: "geo", meaning: "earth", example: "geography" },
   { root: "phon", meaning: "sound", example: "telephone" },
+  { root: "port", meaning: "carry", example: "transport" },
+  { root: "scrib/script", meaning: "write", example: "manuscript" },
+  { root: "dict", meaning: "speak", example: "predict" },
+  { root: "spect", meaning: "look", example: "inspect" },
 ];
 
 function wordRoots(): Topic {
@@ -474,6 +530,10 @@ const RUN_ON_SENTENCES: [string, string][] = [
   ["She loves to read she visits the library every week.", "She loves to read, and she visits the library every week."],
   ["He was tired he kept working.", "He was tired, but he kept working."],
   ["The movie was long we still enjoyed it.", "The movie was long, but we still enjoyed it."],
+  ["We arrived early the doors were still locked.", "We arrived early, but the doors were still locked."],
+  ["The sun set the sky turned orange.", "The sun set, and the sky turned orange."],
+  ["I called her twice she never answered.", "I called her twice, but she never answered."],
+  ["The recipe looked simple it took hours to make.", "The recipe looked simple, but it took hours to make."],
 ];
 
 function fixRunOnSentences(): Topic {
@@ -497,6 +557,12 @@ const ADVANCED_VOCAB: { word: string; meaning: string; distractors: string[] }[]
   { word: "candid", meaning: "honest and direct", distractors: ["secretive", "shy", "arrogant"] },
   { word: "austere", meaning: "plain and severe", distractors: ["luxurious", "colourful", "friendly"] },
   { word: "benevolent", meaning: "kind and generous", distractors: ["cruel", "selfish", "nervous"] },
+  { word: "conspicuous", meaning: "easily noticed", distractors: ["hidden", "boring", "small"] },
+  { word: "vindicate", meaning: "clear of blame", distractors: ["accuse", "ignore", "punish"] },
+  { word: "impetuous", meaning: "acting without thinking", distractors: ["careful", "patient", "shy"] },
+  { word: "fastidious", meaning: "very attentive to detail", distractors: ["careless", "lazy", "generous"] },
+  { word: "obsequious", meaning: "excessively eager to please", distractors: ["rebellious", "indifferent", "confident"] },
+  { word: "prudent", meaning: "sensible and cautious", distractors: ["reckless", "arrogant", "naive"] },
 ];
 
 function advancedVocabulary(): Topic {
@@ -517,6 +583,9 @@ const RHETORICAL_TECHNIQUES: { example: string; technique: string }[] = [
   { example: "As the leading expert has confirmed, this policy works.", technique: "appeal to authority" },
   { example: "These reckless criminals threaten everything we hold dear.", technique: "loaded language" },
   { example: "Either we act now, or we lose everything.", technique: "false dichotomy" },
+  { example: "Freedom. Opportunity. Prosperity. That is what we offer.", technique: "asyndeton" },
+  { example: "Ask not what your country can do for you.", technique: "antithesis" },
+  { example: "This so-called 'expert' has never even run a business.", technique: "ad hominem" },
 ];
 
 function rhetoricalTechniques(): Topic {
@@ -538,6 +607,10 @@ const ADVANCED_GRAMMAR_EDITING: [string, string][] = [
   ["The data shows that the results are inconclusive, it needs more analysis.", "The data shows that the results are inconclusive; it needs more analysis."],
   ["By the time we arrived, the meeting already started.", "By the time we arrived, the meeting had already started."],
   ["One should always proofread your work.", "One should always proofread one's own work."],
+  ["Having finished the exam, the room felt quiet.", "Having finished the exam, she noticed the room felt quiet."],
+  ["Its important that everyone submits their form on time.", "It's important that everyone submits their form on time."],
+  ["The company are planning to relocate its headquarters.", "The company is planning to relocate its headquarters."],
+  ["He is one of the students who is always on time.", "He is one of the students who are always on time."],
 ];
 
 function advancedGrammarEditing(): Topic {
@@ -554,6 +627,10 @@ const TEXT_PURPOSE: { excerpt: string; purpose: string }[] = [
   { excerpt: "The bustling markets of Marrakech overwhelmed the senses.", purpose: "to describe" },
   { excerpt: "Unemployment fell by 0.4% in the last quarter, new data shows.", purpose: "to inform" },
   { excerpt: "Once upon a time, in a village by the sea, lived a curious girl.", purpose: "to entertain" },
+  { excerpt: "Turn off the power supply before removing the back panel.", purpose: "to instruct" },
+  { excerpt: "This policy will devastate small businesses across the region.", purpose: "to persuade" },
+  { excerpt: "The old library smelled of dust and forgotten stories.", purpose: "to describe" },
+  { excerpt: "The council will vote on the new budget next Tuesday.", purpose: "to inform" },
 ];
 
 function textPurpose(): Topic {
@@ -564,7 +641,116 @@ function textPurpose(): Topic {
   return bankMCQ("text-purpose", "Text purpose", items, TEXT_PURPOSE.map((t) => t.purpose));
 }
 
-export function getEnglishTopics(grade: number): Topic[] {
+// ---------- Advanced extension topics (Grade 11-12 "Advanced" only) ----------
+
+const IDIOMS: { idiom: string; meaning: string; distractors: string[] }[] = [
+  { idiom: "bite the bullet", meaning: "face a difficult situation bravely", distractors: ["avoid a problem", "celebrate a win", "give up quickly"] },
+  { idiom: "cost an arm and a leg", meaning: "be very expensive", distractors: ["be free", "be dangerous", "be quick"] },
+  { idiom: "once in a blue moon", meaning: "very rarely", distractors: ["very often", "at midnight", "unexpectedly"] },
+  { idiom: "the ball is in your court", meaning: "it's your decision now", distractors: ["you are losing", "the game is over", "it's a team effort"] },
+  { idiom: "let the cat out of the bag", meaning: "reveal a secret", distractors: ["cause chaos", "adopt a pet", "make a mistake"] },
+  { idiom: "burn the midnight oil", meaning: "work late into the night", distractors: ["waste time", "start a fire", "wake up early"] },
+  { idiom: "a blessing in disguise", meaning: "something good that seemed bad at first", distractors: ["an obvious gift", "bad luck", "a religious event"] },
+  { idiom: "beat around the bush", meaning: "avoid getting to the point", distractors: ["work outdoors", "argue loudly", "speak honestly"] },
+];
+
+function idioms(): Topic {
+  const items = IDIOMS.map((i) => ({
+    prompt: `What does the idiom "${i.idiom}" mean?`,
+    answer: i.meaning,
+    distractors: i.distractors,
+  }));
+  return {
+    id: "idioms",
+    label: "Idioms and expressions",
+    generate: () => {
+      const item = pick(items);
+      const options = [item.answer, ...item.distractors].sort(() => Math.random() - 0.5);
+      return { prompt: item.prompt, answer: item.answer, options };
+    },
+  };
+}
+
+const TONE_EXAMPLES: { excerpt: string; tone: string }[] = [
+  { excerpt: "How wonderful — another Monday morning meeting.", tone: "sarcastic" },
+  { excerpt: "We must act immediately; every second we delay costs lives.", tone: "urgent" },
+  { excerpt: "I remember the smell of Grandma's kitchen every autumn.", tone: "nostalgic" },
+  { excerpt: "The undersigned hereby agrees to the terms outlined above.", tone: "formal" },
+  { excerpt: "Honestly, who even cares anymore?", tone: "indifferent" },
+  { excerpt: "I am absolutely thrilled to announce this incredible news!", tone: "enthusiastic" },
+];
+
+function toneAnalysis(): Topic {
+  const items = TONE_EXAMPLES.map((t) => ({ prompt: `What is the tone of: "${t.excerpt}"?`, answer: t.tone }));
+  return bankMCQ("tone-analysis", "Analysing tone", items, TONE_EXAMPLES.map((t) => t.tone));
+}
+
+function advancedEnglishExtras(grade: number): Topic[] {
+  if (grade <= 2) return [synonymsEasy(), antonymsMid()];
+  if (grade <= 4) return [verbTenses(), figurativeLanguage()];
+  if (grade <= 6) return [activePassive(), clauseTypes()];
+  if (grade <= 8) return [grammarEditing(), literaryDevices()];
+  if (grade <= 10) return [advancedVocabulary(), rhetoricalTechniques()];
+  return [idioms(), toneAnalysis()];
+}
+
+// ---------- Cambridge International extras (Grade 9+) ----------
+
+const REGISTER_EXAMPLES: { casual: string; formal: string }[] = [
+  { casual: "Hey, can you send me that file?", formal: "Could you please send me that file?" },
+  { casual: "Yeah, I reckon that's a good idea.", formal: "Yes, I believe that is a good idea." },
+  { casual: "Sorry, can't make it, gotta bail.", formal: "Unfortunately, I am unable to attend." },
+  { casual: "Thanks heaps for your help!", formal: "Thank you very much for your assistance." },
+  { casual: "Let's grab a coffee sometime.", formal: "Perhaps we could arrange to meet for coffee." },
+];
+
+function formalInformalRegister(): Topic {
+  const items = REGISTER_EXAMPLES.map((r) => ({
+    prompt: `Rewrite this informally-worded sentence in a formal register: "${r.casual}"`,
+    answer: r.formal,
+  }));
+  return bankFill("register", "Formal and informal register", items);
+}
+
+const INFERENCE_EXAMPLES: { passage: string; inference: string; distractors: string[] }[] = [
+  {
+    passage: "Maria checked her watch for the third time and glanced at the empty doorway again.",
+    inference: "She is waiting anxiously for someone who is late",
+    distractors: ["She has nowhere to be", "She is about to leave the building", "She dislikes wearing watches"],
+  },
+  {
+    passage: "The coach benched their star player for the final quarter without any explanation.",
+    inference: "There may be a disciplinary or strategic reason not stated directly",
+    distractors: ["The player asked to sit out", "The team was losing badly", "The player was injured"],
+  },
+  {
+    passage: "Despite the rain, the stadium was completely full an hour before kickoff.",
+    inference: "The match was highly anticipated by fans",
+    distractors: ["The stadium has a small capacity", "Tickets were free that day", "The rain had just started"],
+  },
+];
+
+function inferenceMeaning(): Topic {
+  return {
+    id: "inference",
+    label: "Inference and implication",
+    generate: () => {
+      const item = pick(INFERENCE_EXAMPLES);
+      const options = [item.inference, ...item.distractors].sort(() => Math.random() - 0.5);
+      return {
+        prompt: `What can be inferred from: "${item.passage}"?`,
+        answer: item.inference,
+        options,
+      };
+    },
+  };
+}
+
+function cambridgeEnglishExtras(grade: number): Topic[] {
+  return grade >= 9 ? [formalInformalRegister(), inferenceMeaning()] : [];
+}
+
+function baseEnglishTopics(grade: number): Topic[] {
   if (grade <= 2) {
     return [opposites(), plurals(), rhymingWords(), punctuationBasic(), nounsAndVerbs()];
   }
@@ -581,4 +767,15 @@ export function getEnglishTopics(grade: number): Topic[] {
     return [grammarEditing(), literaryDevices(), wordRoots(), fixRunOnSentences()];
   }
   return [advancedVocabulary(), rhetoricalTechniques(), advancedGrammarEditing(), textPurpose()];
+}
+
+export function getEnglishTopics(
+  grade: number,
+  syllabus: Syllabus = "vic",
+  difficulty: Difficulty = "standard",
+): Topic[] {
+  const base = baseEnglishTopics(grade);
+  const advanced = difficulty === "advanced" ? advancedEnglishExtras(grade) : [];
+  const cambridge = syllabus === "cambridge" ? cambridgeEnglishExtras(grade) : [];
+  return [...base, ...advanced, ...cambridge];
 }

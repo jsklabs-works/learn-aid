@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import { drawFigure, FIGURE_HEIGHT_MM } from "./figurePdf";
 import type { Question, Subject } from "./types";
 
 const PAGE_WIDTH = 210;
@@ -18,17 +19,25 @@ function newDoc(): jsPDF {
   return new jsPDF({ unit: "mm", format: "a4" });
 }
 
+/**
+ * jsPDF's standard fonts only support WinAnsi encoding, which is missing the
+ * Unicode minus sign (−) and root sign (√) used in on-screen question text.
+ */
+function sanitizeForPdf(text: string): string {
+  return text.replace(/√(\d+)/g, "sqrt($1)").replace(/−/g, "-");
+}
+
 function addHeader(doc: jsPDF, title: string, topicLabels: string[]): number {
   let y = MARGIN;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
-  doc.text(title, MARGIN, y);
+  doc.text(sanitizeForPdf(title), MARGIN, y);
   y += 8;
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.setTextColor(90);
-  const topicsText = `Topics: ${topicLabels.join(", ")}`;
+  const topicsText = sanitizeForPdf(`Topics: ${topicLabels.join(", ")}`);
   const topicLines = doc.splitTextToSize(topicsText, CONTENT_WIDTH);
   doc.text(topicLines, MARGIN, y);
   y += topicLines.length * 4.5 + 6;
@@ -63,13 +72,14 @@ export function generateWorksheetPdf(info: WorksheetInfo): void {
 
   info.questions.forEach((q, index) => {
     const number = `${index + 1}.`;
-    const promptLines = doc.splitTextToSize(q.prompt, CONTENT_WIDTH - 10);
+    const promptLines = doc.splitTextToSize(sanitizeForPdf(q.prompt), CONTENT_WIDTH - 10);
     const optionsLine = q.options
-      ? q.options.map((opt, i) => `${OPTION_LETTERS[i]}) ${opt}`).join("     ")
+      ? sanitizeForPdf(q.options.map((opt, i) => `${OPTION_LETTERS[i]}) ${opt}`).join("     "))
       : null;
     const optionLines = optionsLine ? doc.splitTextToSize(optionsLine, CONTENT_WIDTH - 10) : [];
 
-    const blockHeight = promptLines.length * 6 + optionLines.length * 6 + (q.options ? 6 : 12);
+    const figureHeight = q.figure ? FIGURE_HEIGHT_MM : 0;
+    const blockHeight = promptLines.length * 6 + optionLines.length * 6 + figureHeight + (q.options ? 6 : 12);
     y = ensureSpace(doc, y, blockHeight);
 
     doc.setFont("helvetica", "bold");
@@ -77,6 +87,11 @@ export function generateWorksheetPdf(info: WorksheetInfo): void {
     doc.setFont("helvetica", "normal");
     doc.text(promptLines, MARGIN + 8, y);
     y += promptLines.length * 6;
+
+    if (q.figure) {
+      drawFigure(doc, q.figure, MARGIN + 8, y);
+      y += FIGURE_HEIGHT_MM;
+    }
 
     if (optionLines.length > 0) {
       doc.text(optionLines, MARGIN + 8, y);
@@ -98,7 +113,7 @@ export function generateWorksheetPdf(info: WorksheetInfo): void {
 
   doc.setFontSize(12);
   info.questions.forEach((q, index) => {
-    const text = `${index + 1}. ${q.answer}`;
+    const text = sanitizeForPdf(`${index + 1}. ${q.answer}`);
     const lines = doc.splitTextToSize(text, CONTENT_WIDTH);
     ay = ensureSpace(doc, ay, lines.length * 6 + 2);
     doc.setFont("helvetica", "normal");
