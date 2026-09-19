@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import { FigureSvg } from "./components/FigureSvg";
-import { GRADES, getTopics } from "./curriculum";
+import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
 import { isCorrectAnswer } from "./grading";
 import { generateWorksheetPdf } from "./pdf";
 import type { Difficulty, Question, Subject, Syllabus } from "./types";
@@ -27,10 +27,18 @@ function App() {
   const [testAnswers, setTestAnswers] = useState<string[]>([]);
   const [testSubmitted, setTestSubmitted] = useState(false);
 
+  const subjectLabel = getSubject(subject).label;
+
   const topics = useMemo(
     () => getTopics(subject, grade, syllabus, difficulty),
     [subject, grade, syllabus, difficulty],
   );
+
+  function handleSubjectChange(next: Subject) {
+    setSubject(next);
+    const { minGrade } = getSubject(next);
+    if (grade < minGrade) setGrade(minGrade);
+  }
 
   // Whenever the subject/grade/syllabus/difficulty changes, select all of that set's topics by default.
   useEffect(() => {
@@ -65,6 +73,7 @@ function App() {
     if (!questions) return;
     generateWorksheetPdf({
       subject,
+      subjectLabel,
       grade,
       topicLabels: (activeTopics.length > 0 ? activeTopics : topics).map((t) => t.label),
       questions,
@@ -133,9 +142,21 @@ function App() {
 
             <label className="field">
               <span>Subject</span>
-              <select value={subject} onChange={(e) => setSubject(e.target.value as Subject)}>
-                <option value="maths">Maths</option>
-                <option value="english">English</option>
+              <select value={subject} onChange={(e) => handleSubjectChange(e.target.value as Subject)}>
+                <optgroup label="Core">
+                  {SUBJECTS.filter((s) => s.group === "core").map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.label}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="Grade 9+ electives">
+                  {SUBJECTS.filter((s) => s.group === "elective").map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.label}
+                    </option>
+                  ))}
+                </optgroup>
               </select>
             </label>
 
@@ -205,7 +226,7 @@ function App() {
             <>
               <div className="preview-toolbar">
                 <h2>
-                  Grade {grade} {subject === "maths" ? "Maths" : "English"} Worksheet
+                  Grade {grade} {subjectLabel} Worksheet
                 </h2>
                 <div className="preview-actions">
                   <button onClick={() => setShowAnswers((s) => !s)}>
@@ -247,7 +268,7 @@ function App() {
             <>
               <div className="preview-toolbar">
                 <h2>
-                  Grade {grade} {subject === "maths" ? "Maths" : "English"} Test
+                  Grade {grade} {subjectLabel} Test
                 </h2>
                 <div className="preview-actions">
                   {!testSubmitted ? (

@@ -2,7 +2,7 @@
 
 A free, browser-only worksheet and online-test generator, Grades 1–12. Built for students, parents and teachers who want quick, random practice without signing up for anything.
 
-- Pick a **syllabus** (Victorian Curriculum or Cambridge International), **subject** (Maths or English), **grade** (1–12) and **difficulty** (Standard or Advanced)
+- Pick a **syllabus** (Victorian Curriculum or Cambridge International), **subject** (Maths, English, or the Grade 9+ elective Accounting), **grade** (1–12) and **difficulty** (Standard or Advanced)
 - Choose which **topics** to include and how many **questions** you want (up to 50)
 - **Worksheet mode**: generate, preview (with diagrams for geometry questions), then **download a PDF** with a matching answer key on the last page
 - **Online test mode**: answer questions right in the browser (multiple choice or free text), submit, and get an instant score with a per-question breakdown
@@ -35,18 +35,26 @@ Everything runs client-side — no backend, no accounts, no data collection.
 
 Questions are procedurally generated (maths) or randomly sampled from curated item banks (English), so each worksheet is different. Perimeter, area, angle, and Pythagoras/trigonometry questions include a labelled diagram, both on screen and in the downloaded PDF.
 
+**Grade 9+ electives** (only offered from Grade 9; picking one from a lower grade jumps the grade up to 9):
+
+| Subject | Grades 9–10 | Grades 11–12 |
+|---|---|---|
+| Accounting | Accounting equation, classifying accounts, debits/credits, net profit, straight-line depreciation, trial balance check | Reducing-balance depreciation, profit margins, current ratio, doubtful debts, FIFO inventory, break-even, cash flow classification |
+
+Business Studies, Economics, Biology, Chemistry and Physics are planned next, using the same subject registry ([`src/curriculum/subjects.ts`](src/curriculum/subjects.ts)).
+
 ### Difficulty and syllabus
 
 - **Advanced** pulls in a taste of the *next* grade band's topics (e.g. Grade 5–6 Advanced adds some Grade 7–8 algebra/ratio topics); the top band (11–12) gets genuinely new extension topics instead (e.g. the quadratic formula, integration, the chain rule; idioms and tone analysis for English).
-- **Cambridge International** shares the same core skill topics as the Victorian Curriculum (arithmetic, algebra, grammar, etc. are common ground) and adds a handful of Cambridge-flavoured topics at Grade 9+ (standard form, bearings, sets/Venn diagrams; formal/informal register, inference). It is not a full parallel curriculum — see [`src/curriculum/maths.ts`](src/curriculum/maths.ts) and [`src/curriculum/english.ts`](src/curriculum/english.ts) for exactly what's added.
+- **Cambridge International** shares the same core skill topics as the Victorian Curriculum (arithmetic, algebra, grammar, etc. are common ground) and adds a handful of Cambridge-flavoured topics at Grade 9+ (standard form, bearings, sets/Venn diagrams; formal/informal register, inference; VAT and financial-statement terminology for Accounting). It is not a full parallel curriculum — see [`src/curriculum/maths.ts`](src/curriculum/maths.ts) and [`src/curriculum/english.ts`](src/curriculum/english.ts) for exactly what's added.
 
 ### Online test scoring
 
 Free-text answers are graded with a lenient, case-insensitive string match (whitespace/punctuation-tolerant) — fine for numeric and short-phrase answers, but sentence-correction style answers need an exact match, so the results screen always shows your answer next to the correct one for transparency. There's no backend, so scores aren't saved anywhere — the test lives for the current browser session only.
 
-### About the English item banks
+### About the static item banks
 
-The repo is public, so the static English question/answer banks in [`src/curriculum/english.ts`](src/curriculum/english.ts) are stored as base64 blobs (see [`src/curriculum/codec.ts`](src/curriculum/codec.ts)) rather than plain arrays, so an answer isn't sitting as literal, greppable text next to its question in the source or the shipped JS. This is **not real security** — anyone who reads `codec.ts` can decode it in one line, and it does nothing to stop someone inspecting a live online test's React state in dev tools. Properly hiding answers from a determined user would need a backend to check answers server-side, which this project deliberately doesn't have. Maths answers are computed live from random numbers, so there's nothing to encode there.
+The repo is public, so the static question/answer banks (English in [`src/curriculum/english.ts`](src/curriculum/english.ts), plus the classification-style banks in [`src/curriculum/accounting.ts`](src/curriculum/accounting.ts)) are stored as base64 blobs (see [`src/curriculum/codec.ts`](src/curriculum/codec.ts)) rather than plain arrays, so an answer isn't sitting as literal, greppable text next to its question in the source or the shipped JS. This is **not real security** — anyone who reads `codec.ts` can decode it in one line, and it does nothing to stop someone inspecting a live online test's React state in dev tools. Properly hiding answers from a determined user would need a backend to check answers server-side, which this project deliberately doesn't have. Maths answers are computed live from random numbers, so there's nothing to encode there.
 
 ## Development
 

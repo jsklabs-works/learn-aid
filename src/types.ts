@@ -25,6 +25,6 @@ export interface Topic {
   generate: () => Question;
 }
 
-export type Subject = "maths" | "english";
+export type Subject = "maths" | "english" | "accounting";
 export type Syllabus = "vic" | "cambridge";
 export type Difficulty = "standard" | "advanced";

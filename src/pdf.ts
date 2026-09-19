@@ -10,6 +10,7 @@ const OPTION_LETTERS = ["A", "B", "C", "D"];
 
 interface WorksheetInfo {
   subject: Subject;
+  subjectLabel: string;
   grade: number;
   topicLabels: string[];
   questions: Question[];
@@ -64,8 +65,7 @@ function ensureSpace(doc: jsPDF, y: number, needed: number): number {
 
 export function generateWorksheetPdf(info: WorksheetInfo): void {
   const doc = newDoc();
-  const subjectLabel = info.subject === "maths" ? "Maths" : "English";
-  const title = `Grade ${info.grade} ${subjectLabel} Worksheet`;
+  const title = `Grade ${info.grade} ${info.subjectLabel} Worksheet`;
 
   let y = addHeader(doc, title, info.topicLabels);
   doc.setFontSize(12);
