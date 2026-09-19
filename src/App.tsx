@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import { FigureSvg } from "./components/FigureSvg";
 import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
-import { isCorrectAnswer } from "./grading";
+import { diagnoseAnswer, isCorrectAnswer } from "./grading";
 import { generateWorksheetPdf } from "./pdf";
 import type { Difficulty, Question, Subject, Syllabus } from "./types";
 import { useTheme, type Theme } from "./useTheme";
@@ -106,7 +106,7 @@ function App() {
           </div>
         </div>
         <p className="subtitle">
-          Random practice worksheets and online tests for Grades 1–12 — for students, parents and teachers.
+          Fresh practice worksheets and self-marking online tests for Grades 1–12, made for students, parents and teachers.
         </p>
       </header>
 
@@ -258,6 +258,12 @@ function App() {
                       </div>
                     )}
                     {showAnswers && <div className="question-answer">Answer: {q.answer}</div>}
+                    {showAnswers && q.explanation && (
+                      <div className="question-explanation">
+                        <strong>How to get it</strong>
+                        {q.explanation}
+                      </div>
+                    )}
                   </li>
                 ))}
               </ol>
@@ -346,6 +352,13 @@ function App() {
                         <div className="question-answer">
                           {correct ? "Correct" : `Correct answer: ${q.answer}`}
                           {!correct && userAnswer && <> — you answered: {userAnswer}</>}
+                          {!correct && diagnoseAnswer(userAnswer, q.answer) && <> {diagnoseAnswer(userAnswer, q.answer)}</>}
+                        </div>
+                      )}
+                      {testSubmitted && !correct && q.explanation && (
+                        <div className="question-explanation">
+                          <strong>How to get it</strong>
+                          {q.explanation}
                         </div>
                       )}
                     </li>

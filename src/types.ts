@@ -17,6 +17,8 @@ export interface Question {
   answer: string;
   options?: string[];
   figure?: Figure;
+  /** Worked steps or a short reason, shown for wrong answers and in answer keys. Lines are separated by \n. */
+  explanation?: string;
 }
 
 export interface Topic {

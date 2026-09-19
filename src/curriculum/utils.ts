@@ -53,6 +53,7 @@ export function simplifyFraction(num: number, den: number): string {
 interface BankItem {
   prompt: string;
   answer: string;
+  explanation?: string;
 }
 
 /** A topic whose questions are picked verbatim from a fixed bank. */
@@ -83,7 +84,7 @@ export function bankMCQ(
       const others = distractorPool.filter((p) => p !== item.answer);
       const distractors = shuffle(others).slice(0, 3);
       const options = shuffle([item.answer, ...distractors]);
-      return { prompt: item.prompt, answer: item.answer, options };
+      return { prompt: item.prompt, answer: item.answer, options, explanation: item.explanation };
     },
   };
 }

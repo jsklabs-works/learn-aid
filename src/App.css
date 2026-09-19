@@ -255,6 +255,24 @@
   font-weight: 600;
 }
 
+.question-explanation {
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-left: 3px solid var(--accent-border);
+  background: var(--code-bg);
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  color: var(--text-h);
+  white-space: pre-line;
+}
+
+.question-explanation strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 12px;
+  color: var(--accent);
+}
+
 .question-figure {
   margin: 10px 0;
   color: var(--text-h);
