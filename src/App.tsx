@@ -386,6 +386,7 @@ function App() {
 
       <footer className="page-footer">
         <p>Runs entirely in your browser — no data leaves your device, and no account is needed.</p>
+        <p>© 2026 jsklabs-works. All rights reserved. For personal and classroom use.</p>
       </footer>
     </div>
   );

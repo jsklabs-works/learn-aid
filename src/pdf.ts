@@ -7,6 +7,7 @@ const PAGE_HEIGHT = 297;
 const MARGIN = 20;
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
 const OPTION_LETTERS = ["A", "B", "C", "D"];
+const FOOTER_TEXT = "Learn Aid (c) 2026 jsklabs-works. All rights reserved. For personal and classroom use.";
 
 interface WorksheetInfo {
   subject: Subject;
@@ -22,10 +23,15 @@ function newDoc(): jsPDF {
 
 /**
  * jsPDF's standard fonts only support WinAnsi encoding, which is missing the
- * Unicode minus sign (−) and root sign (√) used in on-screen question text.
+ * Unicode minus sign (−), root sign (√), pi, prime and integral signs used in on-screen question text.
  */
 function sanitizeForPdf(text: string): string {
-  return text.replace(/√(\d+)/g, "sqrt($1)").replace(/−/g, "-");
+  return text
+    .replace(/√(\d+)/g, "sqrt($1)")
+    .replace(/−/g, "-")
+    .replace(/π/g, "pi")
+    .replace(/′/g, "'")
+    .replace(/∫ ?/g, "integral of ");
 }
 
 function addHeader(doc: jsPDF, title: string, topicLabels: string[]): number {
@@ -134,6 +140,15 @@ export function generateWorksheetPdf(info: WorksheetInfo): void {
     }
     ay += 2;
   });
+
+  const pages = doc.getNumberOfPages();
+  for (let page = 1; page <= pages; page++) {
+    doc.setPage(page);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(140);
+    doc.text(FOOTER_TEXT, PAGE_WIDTH / 2, PAGE_HEIGHT - 10, { align: "center" });
+  }
 
   const fileName = `grade-${info.grade}-${info.subject}-worksheet.pdf`;
   doc.save(fileName);
