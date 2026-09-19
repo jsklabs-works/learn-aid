@@ -12,6 +12,108 @@ const FUNCTIONAL: [string, string][] = unpack("W1siYSBoeWRyb3h5bCAoLU9IKSBncm91c
 const GAS_TESTS: [string, string][] = unpack("W1siUmVsaWdodHMgYSBnbG93aW5nIHNwbGludCIsIm94eWdlbiJdLFsiQnVybnMgd2l0aCBhIHNxdWVha3kgcG9wIHdoZW4gYSBsaXQgc3BsaW50IGlzIGFwcGxpZWQiLCJoeWRyb2dlbiJdLFsiVHVybnMgbGltZXdhdGVyIG1pbGt5IiwiY2FyYm9uIGRpb3hpZGUiXSxbIkJsZWFjaGVzIGRhbXAgbGl0bXVzIHBhcGVyIiwiY2hsb3JpbmUiXSxbIlR1cm5zIGRhbXAgcmVkIGxpdG11cyBwYXBlciBibHVlIiwiYW1tb25pYSJdXQ==");
 const SEPARATION: [string, string][] = unpack("W1sic2VwYXJhdGluZyBhbiBpbnNvbHVibGUgc29saWQgZnJvbSBhIGxpcXVpZCIsImZpbHRyYXRpb24iXSxbIm9idGFpbmluZyBwdXJlIHdhdGVyIGZyb20gc2FsdCBzb2x1dGlvbiIsImRpc3RpbGxhdGlvbiJdLFsic2VwYXJhdGluZyBkaWZmZXJlbnQgY29sb3VyZWQgaW5rcyIsImNocm9tYXRvZ3JhcGh5Il0sWyJvYnRhaW5pbmcgc29saWQgY3J5c3RhbHMgZnJvbSBhIHNhdHVyYXRlZCBzb2x1dGlvbiIsImNyeXN0YWxsaXNhdGlvbiJdLFsic2VwYXJhdGluZyB0d28gbWlzY2libGUgbGlxdWlkcyB3aXRoIGRpZmZlcmVudCBib2lsaW5nIHBvaW50cyIsImZyYWN0aW9uYWwgZGlzdGlsbGF0aW9uIl0sWyJzZXBhcmF0aW5nIGlyb24gZmlsaW5ncyBmcm9tIHNhbmQiLCJtYWduZXRpYyBzZXBhcmF0aW9uIl1d");
 
+const GROUP_NOTE: Record<string, string> = {
+  "alkali metals": "Group 1 metals are soft, very reactive and react vigorously with water",
+  "alkaline earth metals": "Group 2 metals are reactive metals, less reactive than Group 1",
+  halogens: "Group 17 elements are reactive non-metals that form salts with metals",
+  "noble gases": "Group 18 gases have full outer shells, so they are very unreactive",
+  "transition metals": "these are the block of metals in the middle of the table, between Groups 2 and 13",
+};
+
+const BALANCED: Record<string, string> = {
+  "H2 + O2 -> H2O": "2H2 + O2 -> 2H2O",
+  "N2 + H2 -> NH3": "N2 + 3H2 -> 2NH3",
+  "Mg + O2 -> MgO": "2Mg + O2 -> 2MgO",
+  "CH4 + O2 -> CO2 + H2O": "CH4 + 2O2 -> CO2 + 2H2O",
+  "C3H8 + O2 -> CO2 + H2O": "C3H8 + 5O2 -> 3CO2 + 4H2O",
+  "Fe + O2 -> Fe2O3": "4Fe + 3O2 -> 2Fe2O3",
+  "Al + O2 -> Al2O3": "4Al + 3O2 -> 2Al2O3",
+  "Na + Cl2 -> NaCl": "2Na + Cl2 -> 2NaCl",
+  "H2 + Cl2 -> HCl": "H2 + Cl2 -> 2HCl",
+  "C2H6 + O2 -> CO2 + H2O": "2C2H6 + 7O2 -> 4CO2 + 6H2O",
+  "K + H2O -> KOH + H2": "2K + 2H2O -> 2KOH + H2",
+};
+
+const CHANGE_NOTE: Record<string, string> = {
+  "Ice melting": "it is still water (H2O) and only its state changed",
+  "Iron rusting": "iron reacts with oxygen and water to make a new substance, iron oxide",
+  "Burning wood": "it makes new substances such as ash, carbon dioxide and water",
+  "Dissolving sugar in water": "the sugar is still sugar and can be recovered by evaporating the water",
+  "Boiling water": "the liquid water becomes steam but is still water",
+  "Baking a cake": "heat causes new substances to form and this cannot be reversed",
+  "Milk going sour": "bacteria make lactic acid, a new substance",
+  "Crushing a can": "only the shape changes and no new substance forms",
+};
+
+const LE_CHATELIER_NOTE: Record<string, string> = {
+  "Increasing the concentration of a reactant.": "The system shifts right to use up the extra reactant",
+  "Removing a product as it forms.": "The system shifts right to make more product to replace it",
+  "Increasing the temperature of an exothermic reaction.": "The system shifts left, the endothermic direction, to absorb the extra heat",
+  "Decreasing the temperature of an exothermic reaction.": "The system shifts right, the exothermic direction, to release heat and replace what was lost",
+  "Increasing the pressure of a gaseous reaction with fewer moles of gas on the right-hand side.": "The system shifts right, towards fewer gas moles, which lowers the pressure",
+  "Increasing the pressure of a gaseous reaction with more moles of gas on the right-hand side.": "The system shifts left, towards fewer gas moles, which lowers the pressure",
+  "Adding a catalyst.": "A catalyst speeds up the forward and reverse reactions equally, so the position of equilibrium does not change",
+  "Increasing the pressure when there are equal moles of gas on both sides.": "Both sides have the same number of gas moles, so pressure favours neither direction",
+  "Increasing the concentration of a product.": "The system shifts left to use up the extra product",
+};
+
+const OXIDATION_WORKING: Record<string, string> = {
+  "Mn in KMnO4": "K is +1 and 4 O atoms are 4 x (-2) = -8, so Mn = 0 - (+1) - (-8) = +7",
+  "S in SO2": "2 O atoms are 2 x (-2) = -4, so S = +4",
+  "S in H2SO4": "2 H atoms are +2 and 4 O atoms are -8, so S = +8 - 2 = +6",
+  "Cr in K2Cr2O7": "2 K atoms are +2 and 7 O atoms are -14, so the 2 Cr atoms total +12 and each Cr = +6",
+  "N in NH3": "3 H atoms are +3, so N = -3",
+  "N in HNO3": "H is +1 and 3 O atoms are -6, so N = +5",
+  "C in CO2": "2 O atoms are -4, so C = +4",
+  "C in CH4": "4 H atoms are +4, so C = -4",
+  "Cl in NaClO": "Na is +1 and O is -2, so Cl = +1",
+  "Fe in Fe2O3": "3 O atoms are -6, so the 2 Fe atoms total +6 and each Fe = +3",
+  "O in H2O2": "this is a peroxide: the 2 H atoms are +2, so the 2 O atoms total -2 and each O = -1",
+  "Cu in CuSO4": "the sulfate ion SO4 has a charge of 2-, so Cu = +2",
+};
+
+const GAS_NOTE: Record<string, string> = {
+  oxygen: "Oxygen supports burning, so it relights a glowing splint",
+  hydrogen: "Hydrogen burns explosively with oxygen, giving a squeaky pop",
+  "carbon dioxide": "Carbon dioxide reacts with limewater to form insoluble calcium carbonate, which looks milky",
+  chlorine: "Chlorine is a bleach, so it bleaches damp litmus paper",
+  ammonia: "Ammonia is the only common alkaline gas, so it turns damp red litmus paper blue",
+};
+
+const SEPARATION_NOTE: Record<string, string> = {
+  filtration: "the solid particles are too big to pass through the filter paper but the liquid does",
+  distillation: "the water evaporates and is condensed back to a liquid, leaving the salt behind",
+  chromatography: "different colours travel different distances up the paper",
+  crystallisation: "some water is evaporated and the solution is then cooled so that crystals form",
+  "fractional distillation": "liquids with different boiling points boil off at different temperatures and are collected separately",
+  "magnetic separation": "iron is attracted to a magnet and sand is not",
+};
+
+const FAMILY_NOTE: Record<string, string> = {
+  alcohol: "alcohols contain the -OH group",
+  alkene: "alkenes are unsaturated, with at least one C=C double bond",
+  "carboxylic acid": "carboxylic acids contain the -COOH group",
+  alkane: "alkanes are saturated hydrocarbons with only single bonds and the formula CnH2n+2",
+  ester: "esters contain the -COO- linkage",
+  amine: "amines contain the -NH2 group",
+};
+
+const EXPLAIN: Record<string, (item: string, answer: string) => string> = {
+  "periodic-groups": (x, a) => `"${x}" describes the ${a}: ${GROUP_NOTE[a]}.`,
+  "balancing-equations": (x, a) => {
+    const eq = x.match(/^Balance (.+?) using/)?.[1] ?? "";
+    return `Balance each element so both sides have the same number of atoms. The balanced equation is ${BALANCED[eq]}, so the coefficient is ${a}.`;
+  },
+  "neutralisation-salts": (_x, a) =>
+    `An acid + a base makes a salt + water. The first part of the salt's name comes from the metal in the base and the second part from the acid (hydrochloric gives chloride, sulfuric gives sulfate, nitric gives nitrate). So the salt is ${a}.`,
+  "physical-chemical-change": (x, a) => `${x} is a ${a}: ${CHANGE_NOTE[x]}. A chemical change makes a new substance and a physical change does not.`,
+  "le-chatelier": (x, a) => `${LE_CHATELIER_NOTE[x]}. Le Chatelier's principle says an equilibrium shifts to oppose any change, so: ${a}.`,
+  "oxidation-numbers": (x, a) => `The oxidation numbers in a neutral compound add up to 0. For ${x}: ${OXIDATION_WORKING[x]}. The answer is ${a}.`,
+  "functional-groups": (x, a) => `A compound with ${x} belongs to the ${a} family: ${FAMILY_NOTE[a]}.`,
+  "gas-tests": (_x, a) => `${GAS_NOTE[a]}. So the gas is ${a}.`,
+  "separation-methods": (_x, a) => `${a[0].toUpperCase()}${a.slice(1)} works because ${SEPARATION_NOTE[a]}.`,
+};
+
 function bankTopic(
   id: string,
   label: string,
@@ -22,7 +124,7 @@ function bankTopic(
   return bankMCQ(
     id,
     label,
-    bank.map(([item, answer]) => ({ prompt: prompt(item), answer })),
+    bank.map(([item, answer]) => ({ prompt: prompt(item), answer, explanation: EXPLAIN[id]?.(item, answer) })),
     pool,
   );
 }
@@ -61,12 +163,24 @@ function atomicStructure(): Topic {
       const kind = pick(["neutrons", "protons", "electrons"] as const);
       const intro = `An atom of ${el.name} has atomic number ${el.z} and mass number ${el.a}.`;
       if (kind === "neutrons") {
-        return { prompt: `${intro} How many neutrons does it contain?`, answer: String(el.a - el.z) };
+        return {
+          prompt: `${intro} How many neutrons does it contain?`,
+          answer: String(el.a - el.z),
+          explanation: `Neutrons = mass number - atomic number = ${el.a} - ${el.z} = ${el.a - el.z}.`,
+        };
       }
       if (kind === "protons") {
-        return { prompt: `${intro} How many protons does it contain?`, answer: String(el.z) };
+        return {
+          prompt: `${intro} How many protons does it contain?`,
+          answer: String(el.z),
+          explanation: `The atomic number is the number of protons, so ${el.name} has ${el.z}.`,
+        };
       }
-      return { prompt: `${intro} How many electrons does a neutral atom of ${el.name} contain?`, answer: String(el.z) };
+      return {
+        prompt: `${intro} How many electrons does a neutral atom of ${el.name} contain?`,
+        answer: String(el.z),
+        explanation: `A neutral atom has as many electrons as protons. The atomic number is ${el.z}, so it has ${el.z} electrons.`,
+      };
     },
   };
 }
@@ -95,6 +209,7 @@ function phClassification(): Topic {
         prompt: `A solution has a pH of ${ph}. Is it acidic, neutral or alkaline?`,
         answer: ph < 7 ? "acidic" : ph === 7 ? "neutral" : "alkaline",
         options: ["acidic", "neutral", "alkaline"],
+        explanation: `A pH below 7 is acidic, exactly 7 is neutral and above 7 is alkaline. ${ph} is ${ph < 7 ? "below" : ph === 7 ? "equal to" : "above"} 7, so it is ${ph < 7 ? "acidic" : ph === 7 ? "neutral" : "alkaline"}.`,
       };
     },
   };
@@ -129,11 +244,13 @@ function moleCalculations(): Topic {
         return {
           prompt: `What is the mass of ${moles} mol of ${name} (molar mass ${molarMass} g/mol)?`,
           answer: `${mass} g`,
+          explanation: `Mass = moles x molar mass = ${moles} x ${molarMass} = ${mass} g.`,
         };
       }
       return {
         prompt: `How many moles are in ${mass} g of ${name} (molar mass ${molarMass} g/mol)?`,
         answer: String(moles),
+        explanation: `Moles = mass / molar mass = ${mass} / ${molarMass} = ${moles} mol.`,
       };
     },
   };
@@ -172,6 +289,7 @@ function stoichiometry(): Topic {
       return {
         prompt: `Given the equation ${r.eq}, how many moles of ${r.to} are produced from ${r.fc * k} mol of ${r.from}?`,
         answer: String(r.tc * k),
+        explanation: `The coefficients show that ${r.fc} mol of ${r.from} makes ${r.tc} mol of ${r.to}. ${r.fc * k} mol is ${k} times ${r.fc} mol, so the product is ${k} x ${r.tc} = ${r.tc * k} mol.`,
       };
     },
   };
@@ -189,11 +307,13 @@ function concentration(): Topic {
         return {
           prompt: `${moles} mol of solute is dissolved to make ${volume} L of solution. What is the concentration in mol/L?`,
           answer: String(conc),
+          explanation: `Concentration = moles / volume = ${moles} / ${volume} = ${conc} mol/L.`,
         };
       }
       return {
         prompt: `How many moles of solute are in ${volume} L of a ${conc} mol/L solution?`,
         answer: String(moles),
+        explanation: `Moles = concentration x volume = ${conc} x ${volume} = ${moles} mol.`,
       };
     },
   };
@@ -249,11 +369,13 @@ function alkanes(): Topic {
           prompt: `What is the name of the alkane with ${n} carbon ${n === 1 ? "atom" : "atoms"}?`,
           answer: ALKANES[n - 1],
           options: shuffle([ALKANES[n - 1], ...wrong]),
+          explanation: `Alkane names use a stem for the number of carbons: meth- 1, eth- 2, prop- 3, but- 4, pent- 5, hex- 6, hept- 7, oct- 8, then the ending -ane. ${n} carbon ${n === 1 ? "atom is" : "atoms is"} "${ALKANES[n - 1].slice(0, -3)}", so the alkane is ${ALKANES[n - 1]}.`,
         };
       }
       return {
         prompt: `What is the molecular formula of the alkane with ${n} carbon ${n === 1 ? "atom" : "atoms"}? (for example, C2H6)`,
         answer: `C${n}H${2 * n + 2}`,
+        explanation: `Alkanes have the general formula CnH2n+2. With n = ${n}, hydrogens = 2 x ${n} + 2 = ${2 * n + 2}, so the formula is C${n}H${2 * n + 2}.`,
       };
     },
   };
@@ -269,6 +391,7 @@ function calorimetry(): Topic {
       return {
         prompt: `${mass} g of water is heated and its temperature rises by ${rise} degrees C. Calculate the heat energy absorbed (specific heat capacity of water = 4.18 J/g/degree C).`,
         answer: `${(mass * 418 * rise) / 100} J`,
+        explanation: `Heat energy = mass x specific heat capacity x temperature change = ${mass} x 4.18 x ${rise} = ${(mass * 418 * rise) / 100} J.`,
       };
     },
   };
@@ -287,6 +410,7 @@ function dilution(): Topic {
       return {
         prompt: `${v1} mL of a ${c1} mol/L solution is diluted with water to ${v1 * factor} mL. What is the new concentration in mol/L?`,
         answer: String(c1 / factor),
+        explanation: `The amount of solute stays the same, so c1 x V1 = c2 x V2. c2 = ${c1} x ${v1} / ${v1 * factor} = ${c1 / factor} mol/L. (The volume grew ${factor} times, so the concentration fell to 1/${factor}.)`,
       };
     },
   };
@@ -306,6 +430,7 @@ function limitingReagent(): Topic {
         prompt: `For the reaction 2H2 + O2 -> 2H2O, a mixture contains ${h2} mol of H2 and ${o2} mol of O2. Which is the limiting reagent?`,
         answer: h2 / 2 < o2 ? "H2" : "O2",
         options: ["H2", "O2"],
+        explanation: `The equation needs 2 mol of H2 for every 1 mol of O2. ${h2} mol of H2 needs ${h2 / 2} mol of O2, and you have ${o2} mol of O2. ${h2 / 2 < o2 ? `That is more than enough O2, so the H2 runs out first` : `There is not enough O2, so the O2 runs out first`}, and the limiting reagent is ${h2 / 2 < o2 ? "H2" : "O2"}.`,
       };
     },
   };
@@ -322,6 +447,9 @@ function strongAcidBasePh(): Topic {
       return {
         prompt: `What is the pH of a ${conc} mol/L solution of ${acid ? "hydrochloric acid" : "sodium hydroxide"} at 25 degrees C? (Assume it is fully dissociated.)`,
         answer: String(acid ? n : 14 - n),
+        explanation: acid
+          ? `Hydrochloric acid is a strong acid, so [H+] = ${conc} mol/L. pH = -log(${conc}) = ${n}.`
+          : `Sodium hydroxide is a strong base, so [OH-] = ${conc} mol/L. pOH = -log(${conc}) = ${n}, and pH = 14 - ${n} = ${14 - n}.`,
       };
     },
   };
@@ -377,9 +505,24 @@ function relativeFormulaMass(): Topic {
     label: "Relative formula mass",
     generate: () => {
       const [formula, mass] = pick(FORMULA_MASSES);
+      const working: Record<string, string> = {
+        H2SO4: "2 x 1 + 32 + 4 x 16 = 2 + 32 + 64",
+        "Ca(OH)2": "40 + 2 x (16 + 1) = 40 + 34",
+        "Mg(NO3)2": "24 + 2 x (14 + 3 x 16) = 24 + 2 x 62",
+        NaOH: "23 + 16 + 1",
+        CaCO3: "40 + 12 + 3 x 16 = 40 + 12 + 48",
+        "(NH4)2SO4": "2 x (14 + 4 x 1) + 32 + 4 x 16 = 36 + 32 + 64",
+        Al2O3: "2 x 27 + 3 x 16 = 54 + 48",
+        CO2: "12 + 2 x 16 = 12 + 32",
+        HNO3: "1 + 14 + 3 x 16 = 1 + 14 + 48",
+        KOH: "39 + 16 + 1",
+        CuSO4: "64 + 32 + 4 x 16 = 64 + 32 + 64",
+        Na2CO3: "2 x 23 + 12 + 3 x 16 = 46 + 12 + 48",
+      };
       return {
         prompt: `Calculate the relative formula mass (Mr) of ${formula}. (Ar: H = 1, C = 12, N = 14, O = 16, Na = 23, Mg = 24, Al = 27, S = 32, K = 39, Ca = 40, Cu = 64)`,
         answer: String(mass),
+        explanation: `Add the relative atomic masses of every atom in the formula: Mr of ${formula} = ${working[formula]} = ${mass}.`,
       };
     },
   };

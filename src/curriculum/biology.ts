@@ -14,6 +14,73 @@ const CELL_LOCATIONS: [string, string][] = unpack("W1siR2x5Y29seXNpcyIsImN5dG9wb
 const CHARACTERISTICS: [string, string][] = unpack("W1siaXMgdGhlIGFiaWxpdHkgdG8gZGV0ZWN0IGFuZCByZXNwb25kIHRvIGNoYW5nZXMgaW4gdGhlIHN1cnJvdW5kaW5ncyIsInNlbnNpdGl2aXR5Il0sWyJpcyB0aGUgcmVtb3ZhbCBvZiB3YXN0ZSBwcm9kdWN0cyBvZiBtZXRhYm9saXNtIiwiZXhjcmV0aW9uIl0sWyJpcyBhIHBlcm1hbmVudCBpbmNyZWFzZSBpbiBzaXplIGFuZCBtYXNzIiwiZ3Jvd3RoIl0sWyJpcyB0aGUgcHJvZHVjdGlvbiBvZiBvZmZzcHJpbmciLCJyZXByb2R1Y3Rpb24iXSxbImlzIHRoZSB0YWtpbmcgaW4gb2YgbWF0ZXJpYWxzIGZvciBlbmVyZ3kgYW5kIGdyb3d0aCIsIm51dHJpdGlvbiJdLFsiaXMgdGhlIGNoZW1pY2FsIHJlYWN0aW9ucyB0aGF0IHJlbGVhc2UgZW5lcmd5IGZyb20gZm9vZCIsInJlc3BpcmF0aW9uIl0sWyJpcyBhbiBhY3Rpb24gYnkgYW4gb3JnYW5pc20gb3IgcGFydCBvZiBpdCB0aGF0IGNoYW5nZXMgaXRzIHBvc2l0aW9uIiwibW92ZW1lbnQiXV0=");
 const OSMOSIS: [string, string][] = unpack("W1siQSBwb3RhdG8gY3lsaW5kZXIgaXMgcGxhY2VkIGluIGRpc3RpbGxlZCB3YXRlci4iLCJnYWlucyB3YXRlciJdLFsiQSBwb3RhdG8gY3lsaW5kZXIgaXMgcGxhY2VkIGluIGEgdmVyeSBjb25jZW50cmF0ZWQgc3VnYXIgc29sdXRpb24uIiwibG9zZXMgd2F0ZXIiXSxbIkEgcG90YXRvIGN5bGluZGVyIGlzIHBsYWNlZCBpbiBhIHNvbHV0aW9uIHdpdGggdGhlIHNhbWUgY29uY2VudHJhdGlvbiBhcyBpdHMgY2VsbHMuIiwibm8gbmV0IG1vdmVtZW50Il0sWyJBIHJlZCBibG9vZCBjZWxsIGlzIHBsYWNlZCBpbiBwdXJlIHdhdGVyLiIsImdhaW5zIHdhdGVyIl0sWyJBIHBsYW50IGNlbGwgaXMgcGxhY2VkIGluIGEgc3Ryb25nIHNhbHQgc29sdXRpb24uIiwibG9zZXMgd2F0ZXIiXSxbIkEgY2Fycm90IHN0aWNrIGlzIHBsYWNlZCBpbiBhIGRpbHV0ZSBzb2x1dGlvbi4iLCJnYWlucyB3YXRlciJdXQ==");
 
+const article = (word: string) => (/^[aeiou]/i.test(word) ? "an" : "a");
+
+const ORGANELLE_NOTE: Record<string, string> = {
+  nucleus: "It holds the DNA, so it is the cell's control centre",
+  mitochondria: "It releases energy from glucose, so it is the cell's power station",
+  chloroplast: "It contains chlorophyll and makes food by photosynthesis, so only plant cells have it",
+  "cell membrane": "It is a thin, partially permeable barrier that controls what passes in and out",
+  ribosome: "It joins amino acids together to make proteins",
+  "cell wall": "It is a tough layer outside the membrane of plant cells that gives them a fixed shape",
+  vacuole: "In plant cells it is a large sac that stores water and dissolved substances",
+};
+
+const LEVEL_NOTE: Record<string, string> = {
+  cell: "the basic unit of life",
+  tissue: "a group of similar cells doing the same job",
+  organ: "a group of different tissues working together for one function",
+  "organ system": "a group of organs working together",
+  organism: "a whole living individual made of organ systems",
+};
+
+const PROCESS_NOTE: Record<string, string> = {
+  replication: "DNA is copied before a cell divides, so each new cell gets a full set",
+  transcription: "a gene in the DNA in the nucleus is copied into mRNA",
+  translation: "a ribosome reads the mRNA codons and builds a protein",
+  mutation: "a permanent change in the DNA base sequence",
+};
+
+const FEEDBACK_NOTE: Record<string, string> = {
+  "negative feedback": "the response reverses the change and brings the level back towards normal",
+  "positive feedback": "the response makes the original change bigger, pushing the level further away from where it started",
+};
+
+const ENZYME_NOTE: Record<string, string> = {
+  increases: "particles move faster or meet more often, so there are more successful enzyme-substrate collisions",
+  decreases: "the enzyme's active site changes shape, so the substrate no longer fits and fewer reactions happen",
+  "stays the same": "the enzyme is already working at its maximum, so adding more of the other factor makes no difference",
+};
+
+const LOCATION_NOTE: Record<string, string> = {
+  cytoplasm: "the jelly-like fluid of the cell, where reactions that need no organelle happen",
+  "mitochondrial matrix": "the fluid inside the mitochondrion, where the enzymes of the Krebs cycle are found",
+  "inner mitochondrial membrane": "the folded inner membrane, which holds the electron transport chain",
+  "thylakoid membranes": "the membranes inside the chloroplast that hold the chlorophyll and capture light",
+  stroma: "the fluid around the thylakoids, where the Calvin cycle builds sugar",
+};
+
+const OSMOSIS_NOTE: Record<string, string> = {
+  "gains water": "Water moves by osmosis from the more dilute solution to the more concentrated one. The cells are more concentrated than the surroundings, so water moves in",
+  "loses water": "Water moves by osmosis from the more dilute solution to the more concentrated one. The surroundings are more concentrated than the cells, so water moves out",
+  "no net movement": "Water moves in and out at the same rate when both sides have the same concentration, so there is no net movement",
+};
+
+const EXPLAIN: Record<string, (item: string, answer: string) => string> = {
+  "cell-structures": (d, a) => `The ${a} ${a === "mitochondria" ? d.replace(/^is /, "are ") : d}. ${ORGANELLE_NOTE[a]}.`,
+  "levels-of-organisation": (x, a) => `"${x}" is ${article(a)} ${a}: ${LEVEL_NOTE[a]}. Levels run cell, tissue, organ, organ system, organism.`,
+  "body-systems": (d, a) => `The ${a} system ${d}.`,
+  "photosynthesis-respiration": (x, a) =>
+    `The missing word is ${a}, so the sentence reads: "${x.replace("___", a)}" Remember the two equations. Photosynthesis is carbon dioxide + water -> glucose + oxygen (using light). Respiration is glucose + oxygen -> carbon dioxide + water + energy.`,
+  "dna-processes": (x, a) => `"${x}" describes ${a}: ${PROCESS_NOTE[a]}.`,
+  "natural-selection": (d, a) => `${a[0].toUpperCase()}${a.slice(1)} ${d}.`,
+  "feedback-loops": (x, a) => `"${x}" is ${a}: ${FEEDBACK_NOTE[a]}.`,
+  "enzyme-activity": (x, a) => `When ${x}, the rate ${a}: ${ENZYME_NOTE[a]}.`,
+  "cell-process-locations": (x, a) => `${x} takes place in the ${a}, which is ${LOCATION_NOTE[a]}.`,
+  "characteristics-of-life": (d, a) => `${a[0].toUpperCase()}${a.slice(1)} ${d}.`,
+  "osmosis-predictions": (_x, a) => `${OSMOSIS_NOTE[a]}. So: ${a}.`,
+};
+
 function bankTopic(
   id: string,
   label: string,
@@ -24,7 +91,7 @@ function bankTopic(
   return bankMCQ(
     id,
     label,
-    bank.map(([item, answer]) => ({ prompt: prompt(item), answer })),
+    bank.map(([item, answer]) => ({ prompt: prompt(item), answer, explanation: EXPLAIN[id]?.(item, answer) })),
     pool,
   );
 }
@@ -88,17 +155,21 @@ function monohybridCross(): Topic {
       const [p1, p2] = pick(crosses);
       let tall = 0;
       let total = 0;
+      const boxes: string[] = [];
       for (const a of p1) {
         for (const b of p2) {
           total++;
           if (a === "T" || b === "T") tall++;
+          boxes.push([a, b].sort().join(""));
         }
       }
       const wantTall = Math.random() < 0.5;
-      const pct = ((wantTall ? tall : total - tall) / total) * 100;
+      const count = wantTall ? tall : total - tall;
+      const pct = (count / total) * 100;
       return {
         prompt: `In pea plants, tall (T) is dominant over short (t). Two plants with genotypes ${p1} and ${p2} are crossed. What percentage of the offspring are expected to be ${wantTall ? "tall" : "short"}?`,
         answer: `${pct}%`,
+        explanation: `Fill the Punnett square: each parent gives one allele. ${p1} x ${p2} gives the offspring ${boxes.join(", ")}. A plant is tall if it has at least one T, so ${tall} of the ${total} boxes are tall and ${total - tall} are short. ${count}/${total} = ${pct}%.`,
       };
     },
   };
@@ -112,9 +183,11 @@ function energyTransfer(): Topic {
     generate: () => {
       const energy = randInt(1, 9) * 10000;
       const level = randInt(1, 3);
+      const steps = Array.from({ length: level + 1 }, (_, i) => energy / 10 ** i);
       return {
         prompt: `Producers in a food chain capture ${energy} kJ of energy. Assuming only 10% of the energy is passed on at each level, how much energy reaches the ${levels[level - 1]}?`,
         answer: `${energy / 10 ** level} kJ`,
+        explanation: `Only 10% is passed on at each step, so divide by 10 each time: ${steps.map((e) => `${e} kJ`).join(" -> ")}. The ${levels[level - 1]} is ${level} step${level > 1 ? "s" : ""} after the producers, so it receives ${energy / 10 ** level} kJ.`,
       };
     },
   };
@@ -144,11 +217,13 @@ function dnaComplement(): Topic {
         return {
           prompt: `A DNA strand has the base sequence ${seq}. Write the sequence of the complementary DNA strand.`,
           answer: [...seq].map((b) => dnaPair[b]).join(""),
+          explanation: `Pair each base with its partner: A with T and G with C. ${[...seq].map((b) => `${b}-${dnaPair[b]}`).join(", ")} gives ${[...seq].map((b) => dnaPair[b]).join("")}.`,
         };
       }
       return {
         prompt: `A DNA template strand has the base sequence ${seq}. Write the sequence of the mRNA transcribed from it.`,
         answer: [...seq].map((b) => rnaPair[b]).join(""),
+        explanation: `mRNA pairs with the DNA template: A with U (RNA has no T), T with A, G with C, C with G. ${[...seq].map((b) => `${b}-${rnaPair[b]}`).join(", ")} gives ${[...seq].map((b) => rnaPair[b]).join("")}.`,
       };
     },
   };
@@ -169,6 +244,7 @@ function dihybridCross(): Topic {
       return {
         prompt: `In a dihybrid cross between two AaBb parents (A and B are dominant, and the genes assort independently), what fraction of the offspring are expected to show ${o.desc}?`,
         answer: o.frac,
+        explanation: `An AaBb x AaBb cross gives 16 equal combinations in the ratio 9 : 3 : 3 : 1 (both dominant : one dominant : the other dominant : both recessive). For ${o.desc}, that is ${o.frac}.`,
       };
     },
   };
@@ -215,6 +291,7 @@ function magnification(): Topic {
       return {
         prompt: `A specimen has an actual length of ${actual} micrometres. In a micrograph its image is ${actual * mag} micrometres long. Calculate the magnification (as a number).`,
         answer: String(mag),
+        explanation: `Magnification = image size / actual size = ${actual * mag} / ${actual} = ${mag}.`,
       };
     },
   };
@@ -229,6 +306,7 @@ function surfaceAreaToVolume(): Topic {
       return {
         prompt: `A cube-shaped cell has sides of length ${side} cm. Calculate its surface area to volume ratio (write your answer as x:1).`,
         answer: `${6 / side}:1`,
+        explanation: `A cube has 6 faces, so surface area = 6 x ${side}^2 = ${6 * side * side} cm^2. Volume = ${side}^3 = ${side ** 3} cm^3. Ratio = ${6 * side * side} : ${side ** 3}, which simplifies to ${6 / side} : 1.`,
       };
     },
   };
@@ -245,6 +323,7 @@ function hardyWeinberg(): Topic {
       return {
         prompt: `In a population in Hardy-Weinberg equilibrium, the frequency of the homozygous recessive genotype (q^2) is ${(q * q).toFixed(2)}. What is the frequency of heterozygous carriers (2pq)?`,
         answer: (2 * (1 - q) * q).toFixed(2),
+        explanation: `q^2 = ${(q * q).toFixed(2)}, so q = the square root = ${q}. Then p = 1 - q = ${(1 - q).toFixed(1)}. Carriers are 2pq = 2 x ${(1 - q).toFixed(1)} x ${q} = ${(2 * (1 - q) * q).toFixed(2)}.`,
       };
     },
   };
@@ -262,9 +341,21 @@ function cellProcessLocations(): Topic {
 
 function xLinkedInheritance(): Topic {
   const questions = [
-    { q: "What is the probability that a son is affected?", a: "50%" },
-    { q: "What is the probability that a daughter is affected?", a: "0%" },
-    { q: "What is the probability that a daughter is a carrier?", a: "50%" },
+    {
+      q: "What is the probability that a son is affected?",
+      a: "50%",
+      why: "A son gets his X from his mother. Half of her eggs carry the recessive allele (Xa) and half carry the normal one (XA), and his Y from his father, so 50% of sons are affected.",
+    },
+    {
+      q: "What is the probability that a daughter is affected?",
+      a: "0%",
+      why: "A daughter gets an X from each parent. Her father is unaffected (XAY), so she always gets his normal XA and cannot be affected, so the probability is 0%.",
+    },
+    {
+      q: "What is the probability that a daughter is a carrier?",
+      a: "50%",
+      why: "A daughter always gets the normal XA from her father. She is a carrier (XAXa) only if she also gets the Xa from her mother, which happens for half of the eggs, so 50%.",
+    },
   ];
   return {
     id: "x-linked",
@@ -274,6 +365,7 @@ function xLinkedInheritance(): Topic {
       return {
         prompt: `A mother is a carrier of an X-linked recessive condition and the father is unaffected. ${item.q}`,
         answer: item.a,
+        explanation: `The mother is XAXa and the father is XAY. ${item.why}`,
       };
     },
   };
@@ -313,6 +405,7 @@ function osmosisPercentageChange(): Topic {
       return {
         prompt: `A potato cylinder has a mass of ${initial} g before and ${final} g after being left in a solution. Calculate the percentage ${increase ? "increase" : "decrease"} in mass.`,
         answer: `${pct}%`,
+        explanation: `Percentage change = (change / original) x 100. The change is ${Math.abs(final - initial)} g, so ${Math.abs(final - initial)} / ${initial} x 100 = ${pct}%.`,
       };
     },
   };
