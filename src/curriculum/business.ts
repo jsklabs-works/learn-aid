@@ -1,6 +1,7 @@
 import type { Difficulty, Syllabus, Topic } from "../types";
 import { unpack } from "./codec";
 import { bankMCQ, pick, randInt } from "./utils";
+import { moreBusinessTopics } from "./electivesMore";
 
 const OWNERSHIP: [string, string][] = unpack("W1siaXMgb3duZWQgYW5kIHJ1biBieSBvbmUgcGVyc29uIHdobyBpcyBwZXJzb25hbGx5IHJlc3BvbnNpYmxlIGZvciBhbGwgYnVzaW5lc3MgZGVidHMiLCJzb2xlIHRyYWRlciJdLFsiaXMgb3duZWQgYnkgdHdvIG9yIG1vcmUgcGVvcGxlIHdobyBzaGFyZSB0aGUgcHJvZml0cyBhbmQgZGVjaXNpb24tbWFraW5nIiwicGFydG5lcnNoaXAiXSxbImlzIGEgc2VwYXJhdGUgbGVnYWwgZW50aXR5IG93bmVkIGJ5IHNoYXJlaG9sZGVycyB3aG8gaGF2ZSBsaW1pdGVkIGxpYWJpbGl0eSIsImNvbXBhbnkiXSxbImlzIHRoZSBlYXNpZXN0IGFuZCBjaGVhcGVzdCBzdHJ1Y3R1cmUgdG8gc2V0IHVwLCBhbmQgdGhlIG93bmVyIGtlZXBzIGFsbCB0aGUgcHJvZml0Iiwic29sZSB0cmFkZXIiXSxbImNhbiByYWlzZSBsYXJnZSBhbW91bnRzIG9mIGNhcGl0YWwgYnkgaXNzdWluZyBzaGFyZXMiLCJjb21wYW55Il0sWyJoYXMgb3duZXJzIHdobyBjYW4gYmUgcGVyc29uYWxseSBsaWFibGUgZm9yIGVhY2ggb3RoZXIncyBidXNpbmVzcyBkZWJ0cyIsInBhcnRuZXJzaGlwIl0sWyJtdXN0IHB1Ymxpc2ggYW5udWFsIGFjY291bnRzIGFuZCBwYXkgY29tcGFueSB0YXgiLCJjb21wYW55Il0sWyJtYWtlcyBkZWNpc2lvbnMgcXVpY2tseSBiZWNhdXNlIHRoZXJlIGlzIG9ubHkgb25lIG93bmVyIiwic29sZSB0cmFkZXIiXV0=");
 const MARKETING_MIX: [string, string][] = unpack("W1siT2ZmZXJpbmcgYSBkaXNjb3VudCBmb3IgdGhlIGZpcnN0IHdlZWsgb2Ygc2FsZXMiLCJwcmljZSJdLFsiQWR2ZXJ0aXNpbmcgb24gc29jaWFsIG1lZGlhIiwicHJvbW90aW9uIl0sWyJTZWxsaW5nIHRocm91Z2ggYW4gb25saW5lIHN0b3JlIGFuZCBpbiBzdXBlcm1hcmtldHMiLCJwbGFjZSJdLFsiRGVzaWduaW5nIGEgYmF0dGVyeSB0aGF0IGxhc3RzIGxvbmdlciIsInByb2R1Y3QiXSxbIlNwb25zb3JpbmcgYSBsb2NhbCBzcG9ydHMgdGVhbSIsInByb21vdGlvbiJdLFsiT3BlbmluZyBhIHN0b3JlIGluIGEgYnVzeSBzaG9wcGluZyBjZW50cmUiLCJwbGFjZSJdLFsiT2ZmZXJpbmcgY3VzdG9tZXJzIGludGVyZXN0LWZyZWUgcGF5bWVudCBwbGFucyIsInByaWNlIl0sWyJDaG9vc2luZyB0aGUgcGFja2FnaW5nIGFuZCBmZWF0dXJlcyBvZiBhIG5ldyBkcmluayIsInByb2R1Y3QiXV0=");
@@ -353,7 +354,7 @@ export function getBusinessTopics(
   syllabus: Syllabus = "vic",
   difficulty: Difficulty = "standard",
 ): Topic[] {
-  const base = baseBusinessTopics(grade);
+  const base = [...baseBusinessTopics(grade), ...moreBusinessTopics(grade)];
   const advanced = difficulty === "advanced" ? advancedBusinessExtras(grade) : [];
   const cambridge = syllabus === "cambridge" ? cambridgeBusinessExtras(grade) : [];
   return [...base, ...advanced, ...cambridge];

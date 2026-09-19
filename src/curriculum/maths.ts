@@ -1,5 +1,6 @@
 import type { Difficulty, Question, Syllabus, Topic } from "../types";
 import { gcd, ordinal, pick, randInt, simplifyFraction } from "./utils";
+import { moreMathsTopics } from "./mathsMore";
 import { mathsWordProblems } from "./wordProblems";
 
 // ---------- Grades 1-2 ----------
@@ -1136,7 +1137,7 @@ function cambridgeExtras(grade: number): Topic[] {
 }
 
 function baseMathsTopics(grade: number): Topic[] {
-  return [...coreMathsTopics(grade), mathsWordProblems(grade)];
+  return [...coreMathsTopics(grade), ...moreMathsTopics(grade), mathsWordProblems(grade)];
 }
 
 function coreMathsTopics(grade: number): Topic[] {

@@ -1,6 +1,7 @@
 import type { Difficulty, Syllabus, Topic } from "../types";
 import { unpack } from "./codec";
 import { bankMCQ, pick, randInt } from "./utils";
+import { morePhysicsTopics } from "./electivesMore";
 
 const ENERGY_TRANSFORMS: [string, string][] = unpack("W1siQSBzb2xhciBwYW5lbCBnZW5lcmF0aW5nIGVsZWN0cmljaXR5IiwibGlnaHQgdG8gZWxlY3RyaWNhbCJdLFsiQSBjYXIgZW5naW5lIGJ1cm5pbmcgcGV0cm9sIiwiY2hlbWljYWwgdG8ga2luZXRpYyJdLFsiQSB3aW5kIHR1cmJpbmUgY29ubmVjdGVkIHRvIGEgZ2VuZXJhdG9yIiwia2luZXRpYyB0byBlbGVjdHJpY2FsIl0sWyJBIGxvdWRzcGVha2VyIHBsYXlpbmcgbXVzaWMiLCJlbGVjdHJpY2FsIHRvIHNvdW5kIl0sWyJBIGNhbXBmaXJlIiwiY2hlbWljYWwgdG8gdGhlcm1hbCJdLFsiQSBmaWxhbWVudCBsaWdodCBidWxiICh1c2VmdWwgb3V0cHV0KSIsImVsZWN0cmljYWwgdG8gbGlnaHQiXV0=");
 const WAVE_BEHAVIOUR: [string, string][] = unpack("W1siV2F2ZXMgYm91bmNlIGJhY2sgZnJvbSBhIHN1cmZhY2UiLCJyZWZsZWN0aW9uIl0sWyJXYXZlcyBjaGFuZ2UgZGlyZWN0aW9uIGFzIHRoZXkgZW50ZXIgYSBkaWZmZXJlbnQgbWVkaXVtIiwicmVmcmFjdGlvbiJdLFsiV2F2ZXMgc3ByZWFkIG91dCBhZnRlciBwYXNzaW5nIHRocm91Z2ggYSBuYXJyb3cgZ2FwIiwiZGlmZnJhY3Rpb24iXSxbIlR3byB3YXZlcyBvdmVybGFwIGFuZCBjb21iaW5lIGludG8gYSBzaW5nbGUgd2F2ZSIsImludGVyZmVyZW5jZSJdLFsiUmlwcGxlcyBjaGFuZ2Ugc3BlZWQgYW5kIGRpcmVjdGlvbiB3aGVuIGVudGVyaW5nIHNoYWxsb3cgd2F0ZXIiLCJyZWZyYWN0aW9uIl0sWyJTb3VuZCBpcyBoZWFyZCBhcm91bmQgYSBjb3JuZXIiLCJkaWZmcmFjdGlvbiJdLFsiQW4gZWNobyBoZWFyZCBmcm9tIGEgY2xpZmYiLCJyZWZsZWN0aW9uIl1d");
@@ -592,7 +593,7 @@ export function getPhysicsTopics(
   syllabus: Syllabus = "vic",
   difficulty: Difficulty = "standard",
 ): Topic[] {
-  const base = basePhysicsTopics(grade);
+  const base = [...basePhysicsTopics(grade), ...morePhysicsTopics(grade)];
   const advanced = difficulty === "advanced" ? advancedPhysicsExtras(grade) : [];
   const cambridge = syllabus === "cambridge" ? cambridgePhysicsExtras(grade) : [];
   return [...base, ...advanced, ...cambridge];

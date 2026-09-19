@@ -1,6 +1,7 @@
 import type { Difficulty, Syllabus, Topic } from "../types";
 import { unpack } from "./codec";
 import { bankMCQ, pick, randInt } from "./utils";
+import { moreEconomicsTopics } from "./electivesMore";
 
 const SUPPLY_DEMAND: [string, string][] = unpack("W1siRGVtYW5kIGluY3JlYXNlcyB3aGlsZSBzdXBwbHkgc3RheXMgdGhlIHNhbWUuIiwicHJpY2UgcmlzZXMiXSxbIkRlbWFuZCBkZWNyZWFzZXMgd2hpbGUgc3VwcGx5IHN0YXlzIHRoZSBzYW1lLiIsInByaWNlIGZhbGxzIl0sWyJTdXBwbHkgaW5jcmVhc2VzIHdoaWxlIGRlbWFuZCBzdGF5cyB0aGUgc2FtZS4iLCJwcmljZSBmYWxscyJdLFsiU3VwcGx5IGRlY3JlYXNlcyB3aGlsZSBkZW1hbmQgc3RheXMgdGhlIHNhbWUuIiwicHJpY2UgcmlzZXMiXSxbIkEgaG90IHN1bW1lciBncmVhdGx5IGluY3JlYXNlcyBkZW1hbmQgZm9yIGljZSBjcmVhbSAoc3VwcGx5IGlzIHVuY2hhbmdlZCkuIiwicHJpY2UgcmlzZXMiXSxbIkEgbmV3IHRlY2hub2xvZ3kgbG93ZXJzIHByb2R1Y3Rpb24gY29zdHMgYW5kIGluY3JlYXNlcyBzdXBwbHkgKGRlbWFuZCBpcyB1bmNoYW5nZWQpLiIsInByaWNlIGZhbGxzIl0sWyJBIHBvb3IgaGFydmVzdCByZWR1Y2VzIHRoZSBzdXBwbHkgb2Ygd2hlYXQgKGRlbWFuZCBpcyB1bmNoYW5nZWQpLiIsInByaWNlIHJpc2VzIl0sWyJBIGhlYWx0aCBzY2FyZSByZWR1Y2VzIGRlbWFuZCBmb3IgYSBmb29kIChzdXBwbHkgaXMgdW5jaGFuZ2VkKS4iLCJwcmljZSBmYWxscyJdXQ==");
 const SYSTEMS: [string, string][] = unpack("W1siYWxsb2NhdGVzIHJlc291cmNlcyBtYWlubHkgdGhyb3VnaCBwcmljZXMgaW4gbWFya2V0cywgd2l0aCBsaXR0bGUgZ292ZXJubWVudCBpbnZvbHZlbWVudCIsIm1hcmtldCBlY29ub215Il0sWyJoYXMgdGhlIGdvdmVybm1lbnQgZGVjaWRlIHdoYXQsIGhvdyBhbmQgZm9yIHdob20gdG8gcHJvZHVjZSIsImNvbW1hbmQgZWNvbm9teSJdLFsiY29tYmluZXMgcHJpdmF0ZSBtYXJrZXRzIHdpdGggc29tZSBnb3Zlcm5tZW50IGRpcmVjdGlvbiIsIm1peGVkIGVjb25vbXkiXSxbInJlbGllcyBvbiBjdXN0b20gYW5kIHRyYWRpdGlvbiB0byBkZWNpZGUgd2hhdCBpcyBwcm9kdWNlZCIsInRyYWRpdGlvbmFsIGVjb25vbXkiXSxbImlzIGJlc3QgZGVzY3JpYmVkIGJ5IGNlbnRyYWwgcGxhbm5pbmcgb2YgYWxtb3N0IGFsbCBwcm9kdWN0aW9uIiwiY29tbWFuZCBlY29ub215Il0sWyJpcyB0eXBpY2FsIG9mIG1vc3QgbW9kZXJuIGNvdW50cmllcywgd2l0aCBib3RoIHByaXZhdGUgZmlybXMgYW5kIHB1YmxpYyBzZXJ2aWNlcyIsIm1peGVkIGVjb25vbXkiXV0=");
@@ -341,7 +342,7 @@ export function getEconomicsTopics(
   syllabus: Syllabus = "vic",
   difficulty: Difficulty = "standard",
 ): Topic[] {
-  const base = baseEconomicsTopics(grade);
+  const base = [...baseEconomicsTopics(grade), ...moreEconomicsTopics(grade)];
   const advanced = difficulty === "advanced" ? advancedEconomicsExtras(grade) : [];
   const cambridge = syllabus === "cambridge" ? cambridgeEconomicsExtras(grade) : [];
   return [...base, ...advanced, ...cambridge];

@@ -5,7 +5,9 @@ A free, browser-only worksheet and online-test generator, Grades 1–12. Built f
 - Pick a **syllabus** (Victorian Curriculum or Cambridge International), **subject** (Maths, English, or a Grade 9+ elective: Accounting, Business Studies, Economics, Biology, Chemistry, Physics), **grade** (1–12) and **difficulty** (Standard or Advanced)
 - Choose which **topics** to include and how many **questions** you want (up to 50)
 - **Worksheet mode**: generate, preview (with diagrams for geometry questions), then **download a PDF** with a matching answer key on the last page
-- **Online test mode**: answer questions right in the browser (multiple choice or free text), submit, and get an instant score with a per-question breakdown
+- **Online test mode**: answer questions right in the browser (multiple choice or free text), submit, and get an instant score with a per-question breakdown. Wrong answers show the correct answer and a short explanation or worked steps (the same explanations appear under "Show answers" and in the PDF answer key)
+- Answers are checked leniently: units are optional (`45`, `45°` and `45 degrees` all count), unit spellings are flexible (`m²`, `sq m`, `square metres`) and coordinates like `(3,4)` and `(3, 4)` match
+- No question is ever repeated within one worksheet or test
 
 Everything runs client-side — no backend, no accounts, no data collection.
 
@@ -15,23 +17,23 @@ Everything runs client-side — no backend, no accounts, no data collection.
 
 | Grades | Topics |
 |---|---|
-| 1–2 | Addition/subtraction, skip counting, number sequences, shapes |
-| 3–4 | Times tables, division facts, simple fractions, time, money, perimeter |
-| 5–6 | Multi-digit multiplication/division, fractions, decimals, percentages, area, order of operations, negative numbers |
-| 7–8 | Integers, algebra (like terms, one-step equations), ratio, percentage change, angles, probability |
-| 9–10 | Two-step/simultaneous equations, factoring quadratics, Pythagoras, trigonometry, index laws, gradients |
-| 11–12 | Differentiation (power rule), log laws, compound interest, sequences, exact trig values, the discriminant |
+| 1–2 | Addition/subtraction, skip counting, number sequences, shapes, comparing numbers, tens and ones, doubling/halving, missing numbers, odd/even |
+| 3–4 | Times tables, division facts, simple fractions, time, money, perimeter, place value, rounding, equivalent fractions, unit conversion, elapsed time |
+| 5–6 | Multi-digit multiplication/division, fractions, decimals, percentages, area, order of operations, negative numbers, HCF/LCM, prime numbers, mean/median/mode, fractions of an amount, volume, the Cartesian plane (Grade 6) |
+| 7–8 | Integers, algebra (like terms, one-step equations, expanding brackets, x on both sides, substitution), ratio, percentage change, angles, polygons, probability, circles, simple interest, mean/median/mode |
+| 9–10 | Two-step/simultaneous equations, factoring and expanding quadratics, Pythagoras, trigonometry, index laws, gradients, cylinders, reverse percentages, probability of two events |
+| 11–12 | Differentiation (power rule), stationary points, log laws, compound interest, sequences and series, exact trig values, the discriminant, permutations and combinations, vectors |
 
 **English**, banded by grade (Standard):
 
 | Grades | Topics |
 |---|---|
-| 1–2 | Opposites, plurals, rhyming words, punctuation, nouns/verbs |
-| 3–4 | Synonyms, antonyms, contractions, punctuation, parts of speech |
-| 5–6 | Verb tenses, figurative language, homophones, prefixes |
-| 7–8 | Active/passive voice, clauses, persuasive techniques, vocabulary in context |
-| 9–10 | Grammar editing, literary devices, word roots, run-on sentences |
-| 11–12 | Advanced vocabulary, rhetorical techniques, grammar editing, text purpose |
+| 1–2 | Opposites, plurals, rhyming words, punctuation, nouns/verbs, compound words, types of sentences, spelling |
+| 3–4 | Synonyms, antonyms, contractions, punctuation, parts of speech, sentence types, tricky spellings, suffixes, subject-verb agreement |
+| 5–6 | Verb tenses, figurative language, homophones, prefixes, suffixes, agreement, apostrophes for belonging, simple/compound/complex sentences |
+| 7–8 | Active/passive voice, clauses, persuasive techniques, vocabulary in context, commonly confused words, colons and semicolons, point of view |
+| 9–10 | Grammar editing, literary devices, word roots, run-on sentences, connotation, ethos/pathos/logos |
+| 11–12 | Advanced vocabulary, rhetorical techniques, grammar editing, text purpose, connotation, ethos/pathos/logos, parallel structure, concise writing |
 
 Every Maths grade band and both Accounting bands include a **Word problems** topic: short real-world stories (shopping, time, ratios, savings, ladders, depreciation, cash budgets and so on) with randomised names and numbers, which you can tick on or off like any other topic.
 

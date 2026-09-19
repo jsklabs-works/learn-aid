@@ -1,6 +1,23 @@
 import type { Difficulty, Syllabus, Topic } from "../types";
 import { bankFill, bankMCQ, pick } from "./utils";
 import { unpack } from "./codec";
+import {
+  commonlyConfused,
+  compoundWords,
+  conciseWriting,
+  connotation,
+  parallelStructure,
+  pointOfView,
+  possessiveApostrophes,
+  punctuationChoice,
+  rhetoricalAppeals,
+  sentenceStructure,
+  sentenceTypes,
+  spellingEasy,
+  spellingHard,
+  subjectVerbAgreement,
+  suffixes,
+} from "./englishMore";
 
 const DEFINITIONS: Record<string, string> = {
   personification: "gives human qualities or actions to something that is not human",
@@ -592,21 +609,79 @@ function cambridgeEnglishExtras(grade: number): Topic[] {
 
 function baseEnglishTopics(grade: number): Topic[] {
   if (grade <= 2) {
-    return [opposites(), plurals(), rhymingWords(), punctuationBasic(), nounsAndVerbs()];
+    return [
+      opposites(),
+      plurals(),
+      rhymingWords(),
+      punctuationBasic(),
+      nounsAndVerbs(),
+      compoundWords(),
+      sentenceTypes(),
+      spellingEasy(),
+    ];
   }
   if (grade <= 4) {
-    return [synonymsEasy(), antonymsMid(), contractions(), punctuationMid(), partsOfSpeech()];
+    return [
+      synonymsEasy(),
+      antonymsMid(),
+      contractions(),
+      punctuationMid(),
+      partsOfSpeech(),
+      sentenceTypes(),
+      spellingHard(),
+      suffixes(),
+      subjectVerbAgreement(),
+    ];
   }
   if (grade <= 6) {
-    return [verbTenses(), figurativeLanguage(), homophones(), prefixMeanings()];
+    return [
+      verbTenses(),
+      figurativeLanguage(),
+      homophones(),
+      prefixMeanings(),
+      suffixes(),
+      subjectVerbAgreement(),
+      possessiveApostrophes(),
+      sentenceStructure(),
+      spellingHard(),
+    ];
   }
   if (grade <= 8) {
-    return [activePassive(), clauseTypes(), persuasiveTechniques(), vocabularyInContext()];
+    return [
+      activePassive(),
+      clauseTypes(),
+      persuasiveTechniques(),
+      vocabularyInContext(),
+      possessiveApostrophes(),
+      sentenceStructure(),
+      commonlyConfused(),
+      punctuationChoice(),
+      pointOfView(),
+    ];
   }
   if (grade <= 10) {
-    return [grammarEditing(), literaryDevices(), wordRoots(), fixRunOnSentences()];
+    return [
+      grammarEditing(),
+      literaryDevices(),
+      wordRoots(),
+      fixRunOnSentences(),
+      commonlyConfused(),
+      punctuationChoice(),
+      pointOfView(),
+      connotation(),
+      rhetoricalAppeals(),
+    ];
   }
-  return [advancedVocabulary(), rhetoricalTechniques(), advancedGrammarEditing(), textPurpose()];
+  return [
+    advancedVocabulary(),
+    rhetoricalTechniques(),
+    advancedGrammarEditing(),
+    textPurpose(),
+    connotation(),
+    rhetoricalAppeals(),
+    parallelStructure(),
+    conciseWriting(),
+  ];
 }
 
 export function getEnglishTopics(

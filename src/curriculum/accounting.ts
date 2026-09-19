@@ -2,6 +2,7 @@ import type { Difficulty, Syllabus, Topic } from "../types";
 import { unpack } from "./codec";
 import { bankMCQ, pick, randInt } from "./utils";
 import { accountingWordProblems } from "./wordProblems";
+import { moreAccountingTopics } from "./electivesMore";
 
 const ACCOUNT_TYPE_MEANING: Record<string, string> = {
   asset: "something the business owns that has value",
@@ -436,7 +437,7 @@ export function getAccountingTopics(
   syllabus: Syllabus = "vic",
   difficulty: Difficulty = "standard",
 ): Topic[] {
-  const base = baseAccountingTopics(grade);
+  const base = [...baseAccountingTopics(grade), ...moreAccountingTopics(grade)];
   const advanced = difficulty === "advanced" ? advancedAccountingExtras(grade) : [];
   const cambridge = syllabus === "cambridge" ? cambridgeAccountingExtras(grade) : [];
   return [...base, ...advanced, ...cambridge];

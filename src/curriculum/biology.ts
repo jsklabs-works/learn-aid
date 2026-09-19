@@ -1,6 +1,7 @@
 import type { Difficulty, Syllabus, Topic } from "../types";
 import { unpack } from "./codec";
 import { bankMCQ, pick, randInt } from "./utils";
+import { moreBiologyTopics } from "./electivesMore";
 
 const ORGANELLES: [string, string][] = unpack("W1siY29udHJvbHMgdGhlIGNlbGwncyBhY3Rpdml0aWVzIGFuZCBjb250YWlucyBpdHMgRE5BIiwibnVjbGV1cyJdLFsicmVsZWFzZXMgZW5lcmd5IGZyb20gZ2x1Y29zZSBkdXJpbmcgcmVzcGlyYXRpb24iLCJtaXRvY2hvbmRyaWEiXSxbImFic29yYnMgbGlnaHQgZW5lcmd5IGZvciBwaG90b3N5bnRoZXNpcyIsImNobG9yb3BsYXN0Il0sWyJjb250cm9scyB3aGF0IGVudGVycyBhbmQgbGVhdmVzIHRoZSBjZWxsIiwiY2VsbCBtZW1icmFuZSJdLFsibWFrZXMgcHJvdGVpbnMiLCJyaWJvc29tZSJdLFsiZ2l2ZXMgcGxhbnQgY2VsbHMgYSByaWdpZCwgc3VwcG9ydGl2ZSBzaGFwZSIsImNlbGwgd2FsbCJdLFsic3RvcmVzIHdhdGVyIGFuZCBkaXNzb2x2ZWQgc3Vic3RhbmNlcyBpbiBwbGFudCBjZWxscyIsInZhY3VvbGUiXSxbImNvbnRhaW5zIHRoZSBncmVlbiBwaWdtZW50IGNobG9yb3BoeWxsIiwiY2hsb3JvcGxhc3QiXSxbImlzIHRoZSBzaXRlIHdoZXJlIG1vc3Qgb2YgdGhlIGNlbGwncyBBVFAgaXMgbWFkZSIsIm1pdG9jaG9uZHJpYSJdLFsiaXMgYSBwYXJ0aWFsbHkgcGVybWVhYmxlIGJhcnJpZXIgYXJvdW5kIHRoZSBjeXRvcGxhc20iLCJjZWxsIG1lbWJyYW5lIl1d");
 const LEVELS: [string, string][] = unpack("W1siQSBncm91cCBvZiBzaW1pbGFyIGNlbGxzIHdvcmtpbmcgdG9nZXRoZXIiLCJ0aXNzdWUiXSxbIkEgZ3JvdXAgb2YgZGlmZmVyZW50IHRpc3N1ZXMgd29ya2luZyB0b2dldGhlciIsIm9yZ2FuIl0sWyJBIGdyb3VwIG9mIG9yZ2FucyB3b3JraW5nIHRvZ2V0aGVyIiwib3JnYW4gc3lzdGVtIl0sWyJUaGUgYmFzaWMgdW5pdCBvZiBsaWZlIiwiY2VsbCJdLFsiVGhlIHN0b21hY2giLCJvcmdhbiJdLFsiWHlsZW0gaW4gYSBwbGFudCBzdGVtIiwidGlzc3VlIl0sWyJUaGUgZGlnZXN0aXZlIHN5c3RlbSIsIm9yZ2FuIHN5c3RlbSJdLFsiQSBzaW5nbGUgbGl2aW5nIGluZGl2aWR1YWwgbWFkZSBvZiBvcmdhbiBzeXN0ZW1zIiwib3JnYW5pc20iXSxbIkEgcmVkIGJsb29kIGNlbGwiLCJjZWxsIl0sWyJUaGUgaGVhcnQiLCJvcmdhbiJdXQ==");
@@ -449,7 +450,7 @@ export function getBiologyTopics(
   syllabus: Syllabus = "vic",
   difficulty: Difficulty = "standard",
 ): Topic[] {
-  const base = baseBiologyTopics(grade);
+  const base = [...baseBiologyTopics(grade), ...moreBiologyTopics(grade)];
   const advanced = difficulty === "advanced" ? advancedBiologyExtras(grade) : [];
   const cambridge = syllabus === "cambridge" ? cambridgeBiologyExtras(grade) : [];
   return [...base, ...advanced, ...cambridge];
