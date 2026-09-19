@@ -36,12 +36,11 @@ Everything runs client-side — no backend, no accounts, no data collection.
 | 9–10 | Grammar editing, literary devices, word roots, run-on sentences, connotation, ethos/pathos/logos |
 | 11–12 | Advanced vocabulary, rhetorical techniques, grammar editing, text purpose, connotation, ethos/pathos/logos, parallel structure, concise writing |
 
-**General knowledge** (all grades) is a set of multiple-choice quizzes rather than curriculum drills:
+**General knowledge** (Grade 6 and up) is a set of multiple-choice quizzes rather than curriculum drills:
 
 | Grades | Topics |
 |---|---|
-| 1–4 | Animals and nature, our world, body and health, space and weather, fun riddles and odd-one-out |
-| 5–8 | World history, Australian history, geography, science facts, inventors and discoveries, fun true-or-false |
+| 6–8 | World history, Australian history, geography, science facts, inventors and discoveries, fun true-or-false |
 | 9–12 | Modern world history, government and civics, current topics, world geography, arts and books, fun brain teasers |
 
 Advanced adds the next band's topics (and, at Grade 9–12, political ideas and great scientists). The "current topics" quiz covers evergreen themes (climate, technology and AI literacy, media literacy, economics basics). It does not track the news, so it never goes out of date.

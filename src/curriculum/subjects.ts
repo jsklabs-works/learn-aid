@@ -20,7 +20,7 @@ export interface SubjectDef {
 export const SUBJECTS: SubjectDef[] = [
   { id: "maths", label: "Maths", minGrade: 1, group: "core", getTopics: getMathsTopics },
   { id: "english", label: "English", minGrade: 1, group: "core", getTopics: getEnglishTopics },
-  { id: "general", label: "General knowledge", minGrade: 1, group: "core", getTopics: getGeneralTopics },
+  { id: "general", label: "General knowledge", minGrade: 6, group: "core", getTopics: getGeneralTopics },
   { id: "accounting", label: "Accounting", minGrade: 9, group: "elective", getTopics: getAccountingTopics },
   { id: "business", label: "Business Studies", minGrade: 9, group: "elective", getTopics: getBusinessTopics },
   { id: "economics", label: "Economics", minGrade: 9, group: "elective", getTopics: getEconomicsTopics },
