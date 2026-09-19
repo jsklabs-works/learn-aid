@@ -90,7 +90,7 @@ function App() {
     <div className="page">
       <header className="page-header">
         <div className="page-header-top">
-          <h1>Worksheet Generator</h1>
+          <h1>Learn Aid</h1>
           <div className="theme-toggle" role="radiogroup" aria-label="Theme">
             {(["light", "system", "dark"] as Theme[]).map((t) => (
               <button
