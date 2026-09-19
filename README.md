@@ -44,6 +44,10 @@ Questions are procedurally generated (maths) or randomly sampled from curated it
 
 Free-text answers are graded with a lenient, case-insensitive string match (whitespace/punctuation-tolerant) — fine for numeric and short-phrase answers, but sentence-correction style answers need an exact match, so the results screen always shows your answer next to the correct one for transparency. There's no backend, so scores aren't saved anywhere — the test lives for the current browser session only.
 
+### About the English item banks
+
+The repo is public, so the static English question/answer banks in [`src/curriculum/english.ts`](src/curriculum/english.ts) are stored as base64 blobs (see [`src/curriculum/codec.ts`](src/curriculum/codec.ts)) rather than plain arrays, so an answer isn't sitting as literal, greppable text next to its question in the source or the shipped JS. This is **not real security** — anyone who reads `codec.ts` can decode it in one line, and it does nothing to stop someone inspecting a live online test's React state in dev tools. Properly hiding answers from a determined user would need a backend to check answers server-side, which this project deliberately doesn't have. Maths answers are computed live from random numbers, so there's nothing to encode there.
+
 ## Development
 
 ```bash

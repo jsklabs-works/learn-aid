@@ -1,25 +1,10 @@
 import type { Difficulty, Syllabus, Topic } from "../types";
 import { bankFill, bankMCQ, pick } from "./utils";
+import { unpack } from "./codec";
 
 // ---------- Grades 1-2 ----------
 
-const OPPOSITES: [string, string][] = [
-  ["hot", "cold"],
-  ["big", "small"],
-  ["up", "down"],
-  ["fast", "slow"],
-  ["happy", "sad"],
-  ["open", "closed"],
-  ["day", "night"],
-  ["wet", "dry"],
-  ["in", "out"],
-  ["full", "empty"],
-  ["old", "new"],
-  ["light", "dark"],
-  ["loud", "quiet"],
-  ["clean", "dirty"],
-  ["hard", "soft"],
-];
+const OPPOSITES: [string, string][] = unpack("W1siaG90IiwiY29sZCJdLFsiYmlnIiwic21hbGwiXSxbInVwIiwiZG93biJdLFsiZmFzdCIsInNsb3ciXSxbImhhcHB5Iiwic2FkIl0sWyJvcGVuIiwiY2xvc2VkIl0sWyJkYXkiLCJuaWdodCJdLFsid2V0IiwiZHJ5Il0sWyJpbiIsIm91dCJdLFsiZnVsbCIsImVtcHR5Il0sWyJvbGQiLCJuZXciXSxbImxpZ2h0IiwiZGFyayJdLFsibG91ZCIsInF1aWV0Il0sWyJjbGVhbiIsImRpcnR5Il0sWyJoYXJkIiwic29mdCJdXQ==");
 
 function opposites(): Topic {
   const items = OPPOSITES.flatMap(([a, b]) => [
@@ -29,22 +14,7 @@ function opposites(): Topic {
   return bankMCQ("opposites", "Opposites", items);
 }
 
-const PLURALS: [string, string][] = [
-  ["cat", "cats"],
-  ["dog", "dogs"],
-  ["book", "books"],
-  ["box", "boxes"],
-  ["brush", "brushes"],
-  ["glass", "glasses"],
-  ["baby", "babies"],
-  ["city", "cities"],
-  ["leaf", "leaves"],
-  ["child", "children"],
-  ["mouse", "mice"],
-  ["foot", "feet"],
-  ["bus", "buses"],
-  ["fox", "foxes"],
-];
+const PLURALS: [string, string][] = unpack("W1siY2F0IiwiY2F0cyJdLFsiZG9nIiwiZG9ncyJdLFsiYm9vayIsImJvb2tzIl0sWyJib3giLCJib3hlcyJdLFsiYnJ1c2giLCJicnVzaGVzIl0sWyJnbGFzcyIsImdsYXNzZXMiXSxbImJhYnkiLCJiYWJpZXMiXSxbImNpdHkiLCJjaXRpZXMiXSxbImxlYWYiLCJsZWF2ZXMiXSxbImNoaWxkIiwiY2hpbGRyZW4iXSxbIm1vdXNlIiwibWljZSJdLFsiZm9vdCIsImZlZXQiXSxbImJ1cyIsImJ1c2VzIl0sWyJmb3giLCJmb3hlcyJdXQ==");
 
 function plurals(): Topic {
   const items = PLURALS.map(([word, plural]) => ({
@@ -54,36 +24,14 @@ function plurals(): Topic {
   return bankFill("plurals", "Plurals", items);
 }
 
-const RHYMES: { word: string; rhyme: string }[] = [
-  { word: "cat", rhyme: "hat" },
-  { word: "dog", rhyme: "log" },
-  { word: "sun", rhyme: "fun" },
-  { word: "tree", rhyme: "bee" },
-  { word: "car", rhyme: "star" },
-  { word: "ball", rhyme: "wall" },
-  { word: "cake", rhyme: "lake" },
-  { word: "frog", rhyme: "jog" },
-  { word: "boat", rhyme: "coat" },
-  { word: "bug", rhyme: "rug" },
-];
+const RHYMES: { word: string; rhyme: string }[] = unpack("W3sid29yZCI6ImNhdCIsInJoeW1lIjoiaGF0In0seyJ3b3JkIjoiZG9nIiwicmh5bWUiOiJsb2cifSx7IndvcmQiOiJzdW4iLCJyaHltZSI6ImZ1biJ9LHsid29yZCI6InRyZWUiLCJyaHltZSI6ImJlZSJ9LHsid29yZCI6ImNhciIsInJoeW1lIjoic3RhciJ9LHsid29yZCI6ImJhbGwiLCJyaHltZSI6IndhbGwifSx7IndvcmQiOiJjYWtlIiwicmh5bWUiOiJsYWtlIn0seyJ3b3JkIjoiZnJvZyIsInJoeW1lIjoiam9nIn0seyJ3b3JkIjoiYm9hdCIsInJoeW1lIjoiY29hdCJ9LHsid29yZCI6ImJ1ZyIsInJoeW1lIjoicnVnIn1d");
 
 function rhymingWords(): Topic {
   const items = RHYMES.map((r) => ({ prompt: `Which word rhymes with "${r.word}"?`, answer: r.rhyme }));
   return bankMCQ("rhyming-words", "Rhyming words", items, RHYMES.map((r) => r.rhyme));
 }
 
-const PUNCTUATION_BASIC: [string, string][] = [
-  ["the cat is sleeping", "The cat is sleeping."],
-  ["where is my bag", "Where is my bag?"],
-  ["i like ice cream", "I like ice cream."],
-  ["can you help me", "Can you help me?"],
-  ["my dog is brown", "My dog is brown."],
-  ["what a great day", "What a great day!"],
-  ["we went to the park", "We went to the park."],
-  ["is it raining", "Is it raining?"],
-  ["she has a red bike", "She has a red bike."],
-  ["stop right there", "Stop right there!"],
-];
+const PUNCTUATION_BASIC: [string, string][] = unpack("W1sidGhlIGNhdCBpcyBzbGVlcGluZyIsIlRoZSBjYXQgaXMgc2xlZXBpbmcuIl0sWyJ3aGVyZSBpcyBteSBiYWciLCJXaGVyZSBpcyBteSBiYWc/Il0sWyJpIGxpa2UgaWNlIGNyZWFtIiwiSSBsaWtlIGljZSBjcmVhbS4iXSxbImNhbiB5b3UgaGVscCBtZSIsIkNhbiB5b3UgaGVscCBtZT8iXSxbIm15IGRvZyBpcyBicm93biIsIk15IGRvZyBpcyBicm93bi4iXSxbIndoYXQgYSBncmVhdCBkYXkiLCJXaGF0IGEgZ3JlYXQgZGF5ISJdLFsid2Ugd2VudCB0byB0aGUgcGFyayIsIldlIHdlbnQgdG8gdGhlIHBhcmsuIl0sWyJpcyBpdCByYWluaW5nIiwiSXMgaXQgcmFpbmluZz8iXSxbInNoZSBoYXMgYSByZWQgYmlrZSIsIlNoZSBoYXMgYSByZWQgYmlrZS4iXSxbInN0b3AgcmlnaHQgdGhlcmUiLCJTdG9wIHJpZ2h0IHRoZXJlISJdXQ==");
 
 function punctuationBasic(): Topic {
   const items = PUNCTUATION_BASIC.map(([broken, fixed]) => ({
@@ -93,18 +41,7 @@ function punctuationBasic(): Topic {
   return bankFill("punctuation-basic", "Capital letters and punctuation", items);
 }
 
-const NOUN_VERB_SENTENCES: { sentence: string; word: string; pos: "noun" | "verb" }[] = [
-  { sentence: "The dog runs fast.", word: "runs", pos: "verb" },
-  { sentence: "The dog runs fast.", word: "dog", pos: "noun" },
-  { sentence: "She reads a book.", word: "book", pos: "noun" },
-  { sentence: "She reads a book.", word: "reads", pos: "verb" },
-  { sentence: "The bird flies high.", word: "flies", pos: "verb" },
-  { sentence: "The bird flies high.", word: "bird", pos: "noun" },
-  { sentence: "He kicks the ball.", word: "ball", pos: "noun" },
-  { sentence: "He kicks the ball.", word: "kicks", pos: "verb" },
-  { sentence: "The children play outside.", word: "play", pos: "verb" },
-  { sentence: "The children play outside.", word: "children", pos: "noun" },
-];
+const NOUN_VERB_SENTENCES: { sentence: string; word: string; pos: "noun" | "verb" }[] = unpack("W3sic2VudGVuY2UiOiJUaGUgZG9nIHJ1bnMgZmFzdC4iLCJ3b3JkIjoicnVucyIsInBvcyI6InZlcmIifSx7InNlbnRlbmNlIjoiVGhlIGRvZyBydW5zIGZhc3QuIiwid29yZCI6ImRvZyIsInBvcyI6Im5vdW4ifSx7InNlbnRlbmNlIjoiU2hlIHJlYWRzIGEgYm9vay4iLCJ3b3JkIjoiYm9vayIsInBvcyI6Im5vdW4ifSx7InNlbnRlbmNlIjoiU2hlIHJlYWRzIGEgYm9vay4iLCJ3b3JkIjoicmVhZHMiLCJwb3MiOiJ2ZXJiIn0seyJzZW50ZW5jZSI6IlRoZSBiaXJkIGZsaWVzIGhpZ2guIiwid29yZCI6ImZsaWVzIiwicG9zIjoidmVyYiJ9LHsic2VudGVuY2UiOiJUaGUgYmlyZCBmbGllcyBoaWdoLiIsIndvcmQiOiJiaXJkIiwicG9zIjoibm91biJ9LHsic2VudGVuY2UiOiJIZSBraWNrcyB0aGUgYmFsbC4iLCJ3b3JkIjoiYmFsbCIsInBvcyI6Im5vdW4ifSx7InNlbnRlbmNlIjoiSGUga2lja3MgdGhlIGJhbGwuIiwid29yZCI6ImtpY2tzIiwicG9zIjoidmVyYiJ9LHsic2VudGVuY2UiOiJUaGUgY2hpbGRyZW4gcGxheSBvdXRzaWRlLiIsIndvcmQiOiJwbGF5IiwicG9zIjoidmVyYiJ9LHsic2VudGVuY2UiOiJUaGUgY2hpbGRyZW4gcGxheSBvdXRzaWRlLiIsIndvcmQiOiJjaGlsZHJlbiIsInBvcyI6Im5vdW4ifV0=");
 
 function nounsAndVerbs(): Topic {
   const items = NOUN_VERB_SENTENCES.map((s) => ({
@@ -116,20 +53,7 @@ function nounsAndVerbs(): Topic {
 
 // ---------- Grades 3-4 ----------
 
-const SYNONYMS_EASY: [string, string][] = [
-  ["happy", "joyful"],
-  ["big", "large"],
-  ["small", "tiny"],
-  ["fast", "quick"],
-  ["smart", "clever"],
-  ["sad", "unhappy"],
-  ["angry", "mad"],
-  ["pretty", "beautiful"],
-  ["scared", "afraid"],
-  ["tired", "sleepy"],
-  ["begin", "start"],
-  ["end", "finish"],
-];
+const SYNONYMS_EASY: [string, string][] = unpack("W1siaGFwcHkiLCJqb3lmdWwiXSxbImJpZyIsImxhcmdlIl0sWyJzbWFsbCIsInRpbnkiXSxbImZhc3QiLCJxdWljayJdLFsic21hcnQiLCJjbGV2ZXIiXSxbInNhZCIsInVuaGFwcHkiXSxbImFuZ3J5IiwibWFkIl0sWyJwcmV0dHkiLCJiZWF1dGlmdWwiXSxbInNjYXJlZCIsImFmcmFpZCJdLFsidGlyZWQiLCJzbGVlcHkiXSxbImJlZ2luIiwic3RhcnQiXSxbImVuZCIsImZpbmlzaCJdXQ==");
 
 function synonymsEasy(): Topic {
   const items = SYNONYMS_EASY.map(([word, syn]) => ({
@@ -139,18 +63,7 @@ function synonymsEasy(): Topic {
   return bankMCQ("synonyms-easy", "Synonyms", items, SYNONYMS_EASY.map((s) => s[1]));
 }
 
-const ANTONYMS_MID: [string, string][] = [
-  ["ancient", "modern"],
-  ["generous", "stingy"],
-  ["polite", "rude"],
-  ["brave", "cowardly"],
-  ["victory", "defeat"],
-  ["arrive", "depart"],
-  ["increase", "decrease"],
-  ["genuine", "fake"],
-  ["permit", "forbid"],
-  ["expand", "shrink"],
-];
+const ANTONYMS_MID: [string, string][] = unpack("W1siYW5jaWVudCIsIm1vZGVybiJdLFsiZ2VuZXJvdXMiLCJzdGluZ3kiXSxbInBvbGl0ZSIsInJ1ZGUiXSxbImJyYXZlIiwiY293YXJkbHkiXSxbInZpY3RvcnkiLCJkZWZlYXQiXSxbImFycml2ZSIsImRlcGFydCJdLFsiaW5jcmVhc2UiLCJkZWNyZWFzZSJdLFsiZ2VudWluZSIsImZha2UiXSxbInBlcm1pdCIsImZvcmJpZCJdLFsiZXhwYW5kIiwic2hyaW5rIl1d");
 
 function antonymsMid(): Topic {
   const items = ANTONYMS_MID.map(([word, ant]) => ({
@@ -160,18 +73,7 @@ function antonymsMid(): Topic {
   return bankMCQ("antonyms-mid", "Antonyms", items, ANTONYMS_MID.map((s) => s[1]));
 }
 
-const CONTRACTIONS: [string, string][] = [
-  ["do not", "don't"],
-  ["cannot", "can't"],
-  ["will not", "won't"],
-  ["I am", "I'm"],
-  ["they are", "they're"],
-  ["we will", "we'll"],
-  ["is not", "isn't"],
-  ["did not", "didn't"],
-  ["you are", "you're"],
-  ["should not", "shouldn't"],
-];
+const CONTRACTIONS: [string, string][] = unpack("W1siZG8gbm90IiwiZG9uJ3QiXSxbImNhbm5vdCIsImNhbid0Il0sWyJ3aWxsIG5vdCIsIndvbid0Il0sWyJJIGFtIiwiSSdtIl0sWyJ0aGV5IGFyZSIsInRoZXkncmUiXSxbIndlIHdpbGwiLCJ3ZSdsbCJdLFsiaXMgbm90IiwiaXNuJ3QiXSxbImRpZCBub3QiLCJkaWRuJ3QiXSxbInlvdSBhcmUiLCJ5b3UncmUiXSxbInNob3VsZCBub3QiLCJzaG91bGRuJ3QiXV0=");
 
 function contractions(): Topic {
   const items = CONTRACTIONS.map(([words, contraction]) => ({
@@ -181,21 +83,7 @@ function contractions(): Topic {
   return bankFill("contractions", "Contractions", items);
 }
 
-const PUNCTUATION_MID: [string, string][] = [
-  ["my favourite fruits are apples oranges and grapes", "My favourite fruits are apples, oranges, and grapes."],
-  ["thats jasons bike", "That's Jason's bike."],
-  ["after school we went to the library", "After school, we went to the library."],
-  ["yes i would love to come", "Yes, I would love to come."],
-  ["the dogs bone was buried in the yard", "The dog's bone was buried in the yard."],
-  ["well i suppose we could try", "Well, I suppose we could try."],
-  ["my sisters name is emma", "My sister's name is Emma."],
-  ["on saturday we visited nan and pop", "On Saturday, we visited Nan and Pop."],
-  ["the movie which we watched last night was terrifying", "The movie, which we watched last night, was terrifying."],
-  ["please bring a pen a notebook and a ruler", "Please bring a pen, a notebook, and a ruler."],
-  ["wow that was an amazing goal", "Wow, that was an amazing goal!"],
-  ["marks favourite subjects are science and art", "Mark's favourite subjects are science and art."],
-  ["no i havent finished my homework yet", "No, I haven't finished my homework yet."],
-];
+const PUNCTUATION_MID: [string, string][] = unpack("W1sibXkgZmF2b3VyaXRlIGZydWl0cyBhcmUgYXBwbGVzIG9yYW5nZXMgYW5kIGdyYXBlcyIsIk15IGZhdm91cml0ZSBmcnVpdHMgYXJlIGFwcGxlcywgb3JhbmdlcywgYW5kIGdyYXBlcy4iXSxbInRoYXRzIGphc29ucyBiaWtlIiwiVGhhdCdzIEphc29uJ3MgYmlrZS4iXSxbImFmdGVyIHNjaG9vbCB3ZSB3ZW50IHRvIHRoZSBsaWJyYXJ5IiwiQWZ0ZXIgc2Nob29sLCB3ZSB3ZW50IHRvIHRoZSBsaWJyYXJ5LiJdLFsieWVzIGkgd291bGQgbG92ZSB0byBjb21lIiwiWWVzLCBJIHdvdWxkIGxvdmUgdG8gY29tZS4iXSxbInRoZSBkb2dzIGJvbmUgd2FzIGJ1cmllZCBpbiB0aGUgeWFyZCIsIlRoZSBkb2cncyBib25lIHdhcyBidXJpZWQgaW4gdGhlIHlhcmQuIl0sWyJ3ZWxsIGkgc3VwcG9zZSB3ZSBjb3VsZCB0cnkiLCJXZWxsLCBJIHN1cHBvc2Ugd2UgY291bGQgdHJ5LiJdLFsibXkgc2lzdGVycyBuYW1lIGlzIGVtbWEiLCJNeSBzaXN0ZXIncyBuYW1lIGlzIEVtbWEuIl0sWyJvbiBzYXR1cmRheSB3ZSB2aXNpdGVkIG5hbiBhbmQgcG9wIiwiT24gU2F0dXJkYXksIHdlIHZpc2l0ZWQgTmFuIGFuZCBQb3AuIl0sWyJ0aGUgbW92aWUgd2hpY2ggd2Ugd2F0Y2hlZCBsYXN0IG5pZ2h0IHdhcyB0ZXJyaWZ5aW5nIiwiVGhlIG1vdmllLCB3aGljaCB3ZSB3YXRjaGVkIGxhc3QgbmlnaHQsIHdhcyB0ZXJyaWZ5aW5nLiJdLFsicGxlYXNlIGJyaW5nIGEgcGVuIGEgbm90ZWJvb2sgYW5kIGEgcnVsZXIiLCJQbGVhc2UgYnJpbmcgYSBwZW4sIGEgbm90ZWJvb2ssIGFuZCBhIHJ1bGVyLiJdLFsid293IHRoYXQgd2FzIGFuIGFtYXppbmcgZ29hbCIsIldvdywgdGhhdCB3YXMgYW4gYW1hemluZyBnb2FsISJdLFsibWFya3MgZmF2b3VyaXRlIHN1YmplY3RzIGFyZSBzY2llbmNlIGFuZCBhcnQiLCJNYXJrJ3MgZmF2b3VyaXRlIHN1YmplY3RzIGFyZSBzY2llbmNlIGFuZCBhcnQuIl0sWyJubyBpIGhhdmVudCBmaW5pc2hlZCBteSBob21ld29yayB5ZXQiLCJObywgSSBoYXZlbid0IGZpbmlzaGVkIG15IGhvbWV3b3JrIHlldC4iXV0=");
 
 function punctuationMid(): Topic {
   const items = PUNCTUATION_MID.map(([broken, fixed]) => ({
@@ -205,23 +93,7 @@ function punctuationMid(): Topic {
   return bankFill("punctuation-mid", "Punctuation practice", items);
 }
 
-const PARTS_OF_SPEECH: { sentence: string; word: string; pos: "noun" | "verb" | "adjective" }[] = [
-  { sentence: "The tall boy jumped over the fence.", word: "tall", pos: "adjective" },
-  { sentence: "The tall boy jumped over the fence.", word: "jumped", pos: "verb" },
-  { sentence: "The tall boy jumped over the fence.", word: "fence", pos: "noun" },
-  { sentence: "A bright light filled the dark room.", word: "bright", pos: "adjective" },
-  { sentence: "A bright light filled the dark room.", word: "filled", pos: "verb" },
-  { sentence: "A bright light filled the dark room.", word: "room", pos: "noun" },
-  { sentence: "The old man walked slowly to the shiny car.", word: "old", pos: "adjective" },
-  { sentence: "The old man walked slowly to the shiny car.", word: "walked", pos: "verb" },
-  { sentence: "The old man walked slowly to the shiny car.", word: "shiny", pos: "adjective" },
-  { sentence: "The curious cat explored the empty house.", word: "curious", pos: "adjective" },
-  { sentence: "The curious cat explored the empty house.", word: "explored", pos: "verb" },
-  { sentence: "The curious cat explored the empty house.", word: "house", pos: "noun" },
-  { sentence: "A gentle breeze cooled the tired hikers.", word: "gentle", pos: "adjective" },
-  { sentence: "A gentle breeze cooled the tired hikers.", word: "cooled", pos: "verb" },
-  { sentence: "A gentle breeze cooled the tired hikers.", word: "hikers", pos: "noun" },
-];
+const PARTS_OF_SPEECH: { sentence: string; word: string; pos: "noun" | "verb" | "adjective" }[] = unpack("W3sic2VudGVuY2UiOiJUaGUgdGFsbCBib3kganVtcGVkIG92ZXIgdGhlIGZlbmNlLiIsIndvcmQiOiJ0YWxsIiwicG9zIjoiYWRqZWN0aXZlIn0seyJzZW50ZW5jZSI6IlRoZSB0YWxsIGJveSBqdW1wZWQgb3ZlciB0aGUgZmVuY2UuIiwid29yZCI6Imp1bXBlZCIsInBvcyI6InZlcmIifSx7InNlbnRlbmNlIjoiVGhlIHRhbGwgYm95IGp1bXBlZCBvdmVyIHRoZSBmZW5jZS4iLCJ3b3JkIjoiZmVuY2UiLCJwb3MiOiJub3VuIn0seyJzZW50ZW5jZSI6IkEgYnJpZ2h0IGxpZ2h0IGZpbGxlZCB0aGUgZGFyayByb29tLiIsIndvcmQiOiJicmlnaHQiLCJwb3MiOiJhZGplY3RpdmUifSx7InNlbnRlbmNlIjoiQSBicmlnaHQgbGlnaHQgZmlsbGVkIHRoZSBkYXJrIHJvb20uIiwid29yZCI6ImZpbGxlZCIsInBvcyI6InZlcmIifSx7InNlbnRlbmNlIjoiQSBicmlnaHQgbGlnaHQgZmlsbGVkIHRoZSBkYXJrIHJvb20uIiwid29yZCI6InJvb20iLCJwb3MiOiJub3VuIn0seyJzZW50ZW5jZSI6IlRoZSBvbGQgbWFuIHdhbGtlZCBzbG93bHkgdG8gdGhlIHNoaW55IGNhci4iLCJ3b3JkIjoib2xkIiwicG9zIjoiYWRqZWN0aXZlIn0seyJzZW50ZW5jZSI6IlRoZSBvbGQgbWFuIHdhbGtlZCBzbG93bHkgdG8gdGhlIHNoaW55IGNhci4iLCJ3b3JkIjoid2Fsa2VkIiwicG9zIjoidmVyYiJ9LHsic2VudGVuY2UiOiJUaGUgb2xkIG1hbiB3YWxrZWQgc2xvd2x5IHRvIHRoZSBzaGlueSBjYXIuIiwid29yZCI6InNoaW55IiwicG9zIjoiYWRqZWN0aXZlIn0seyJzZW50ZW5jZSI6IlRoZSBjdXJpb3VzIGNhdCBleHBsb3JlZCB0aGUgZW1wdHkgaG91c2UuIiwid29yZCI6ImN1cmlvdXMiLCJwb3MiOiJhZGplY3RpdmUifSx7InNlbnRlbmNlIjoiVGhlIGN1cmlvdXMgY2F0IGV4cGxvcmVkIHRoZSBlbXB0eSBob3VzZS4iLCJ3b3JkIjoiZXhwbG9yZWQiLCJwb3MiOiJ2ZXJiIn0seyJzZW50ZW5jZSI6IlRoZSBjdXJpb3VzIGNhdCBleHBsb3JlZCB0aGUgZW1wdHkgaG91c2UuIiwid29yZCI6ImhvdXNlIiwicG9zIjoibm91biJ9LHsic2VudGVuY2UiOiJBIGdlbnRsZSBicmVlemUgY29vbGVkIHRoZSB0aXJlZCBoaWtlcnMuIiwid29yZCI6ImdlbnRsZSIsInBvcyI6ImFkamVjdGl2ZSJ9LHsic2VudGVuY2UiOiJBIGdlbnRsZSBicmVlemUgY29vbGVkIHRoZSB0aXJlZCBoaWtlcnMuIiwid29yZCI6ImNvb2xlZCIsInBvcyI6InZlcmIifSx7InNlbnRlbmNlIjoiQSBnZW50bGUgYnJlZXplIGNvb2xlZCB0aGUgdGlyZWQgaGlrZXJzLiIsIndvcmQiOiJoaWtlcnMiLCJwb3MiOiJub3VuIn1d");
 
 function partsOfSpeech(): Topic {
   const items = PARTS_OF_SPEECH.map((s) => ({
@@ -233,23 +105,7 @@ function partsOfSpeech(): Topic {
 
 // ---------- Grades 5-6 ----------
 
-const VERB_TENSES: [string, string][] = [
-  ["go", "went"],
-  ["run", "ran"],
-  ["eat", "ate"],
-  ["see", "saw"],
-  ["write", "wrote"],
-  ["speak", "spoke"],
-  ["take", "took"],
-  ["give", "gave"],
-  ["begin", "began"],
-  ["swim", "swam"],
-  ["walk", "walked"],
-  ["jump", "jumped"],
-  ["laugh", "laughed"],
-  ["carry", "carried"],
-  ["fly", "flew"],
-];
+const VERB_TENSES: [string, string][] = unpack("W1siZ28iLCJ3ZW50Il0sWyJydW4iLCJyYW4iXSxbImVhdCIsImF0ZSJdLFsic2VlIiwic2F3Il0sWyJ3cml0ZSIsIndyb3RlIl0sWyJzcGVhayIsInNwb2tlIl0sWyJ0YWtlIiwidG9vayJdLFsiZ2l2ZSIsImdhdmUiXSxbImJlZ2luIiwiYmVnYW4iXSxbInN3aW0iLCJzd2FtIl0sWyJ3YWxrIiwid2Fsa2VkIl0sWyJqdW1wIiwianVtcGVkIl0sWyJsYXVnaCIsImxhdWdoZWQiXSxbImNhcnJ5IiwiY2FycmllZCJdLFsiZmx5IiwiZmxldyJdXQ==");
 
 function verbTenses(): Topic {
   const items = VERB_TENSES.map(([present, past]) => ({
@@ -259,18 +115,7 @@ function verbTenses(): Topic {
   return bankFill("verb-tenses", "Verb tenses", items);
 }
 
-const FIGURATIVE_LANGUAGE: { sentence: string; technique: string }[] = [
-  { sentence: "The stars danced in the sky.", technique: "personification" },
-  { sentence: "Her smile was as bright as the sun.", technique: "simile" },
-  { sentence: "He is a couch potato.", technique: "metaphor" },
-  { sentence: "I've told you a million times.", technique: "hyperbole" },
-  { sentence: "Peter Piper picked a peck of pickled peppers.", technique: "alliteration" },
-  { sentence: "The wind whispered through the trees.", technique: "personification" },
-  { sentence: "Life is a rollercoaster.", technique: "metaphor" },
-  { sentence: "She was as brave as a lion.", technique: "simile" },
-  { sentence: "The bees buzzed busily by the blossoms.", technique: "alliteration" },
-  { sentence: "I'm so hungry I could eat a horse.", technique: "hyperbole" },
-];
+const FIGURATIVE_LANGUAGE: { sentence: string; technique: string }[] = unpack("W3sic2VudGVuY2UiOiJUaGUgc3RhcnMgZGFuY2VkIGluIHRoZSBza3kuIiwidGVjaG5pcXVlIjoicGVyc29uaWZpY2F0aW9uIn0seyJzZW50ZW5jZSI6IkhlciBzbWlsZSB3YXMgYXMgYnJpZ2h0IGFzIHRoZSBzdW4uIiwidGVjaG5pcXVlIjoic2ltaWxlIn0seyJzZW50ZW5jZSI6IkhlIGlzIGEgY291Y2ggcG90YXRvLiIsInRlY2huaXF1ZSI6Im1ldGFwaG9yIn0seyJzZW50ZW5jZSI6IkkndmUgdG9sZCB5b3UgYSBtaWxsaW9uIHRpbWVzLiIsInRlY2huaXF1ZSI6Imh5cGVyYm9sZSJ9LHsic2VudGVuY2UiOiJQZXRlciBQaXBlciBwaWNrZWQgYSBwZWNrIG9mIHBpY2tsZWQgcGVwcGVycy4iLCJ0ZWNobmlxdWUiOiJhbGxpdGVyYXRpb24ifSx7InNlbnRlbmNlIjoiVGhlIHdpbmQgd2hpc3BlcmVkIHRocm91Z2ggdGhlIHRyZWVzLiIsInRlY2huaXF1ZSI6InBlcnNvbmlmaWNhdGlvbiJ9LHsic2VudGVuY2UiOiJMaWZlIGlzIGEgcm9sbGVyY29hc3Rlci4iLCJ0ZWNobmlxdWUiOiJtZXRhcGhvciJ9LHsic2VudGVuY2UiOiJTaGUgd2FzIGFzIGJyYXZlIGFzIGEgbGlvbi4iLCJ0ZWNobmlxdWUiOiJzaW1pbGUifSx7InNlbnRlbmNlIjoiVGhlIGJlZXMgYnV6emVkIGJ1c2lseSBieSB0aGUgYmxvc3NvbXMuIiwidGVjaG5pcXVlIjoiYWxsaXRlcmF0aW9uIn0seyJzZW50ZW5jZSI6IkknbSBzbyBodW5ncnkgSSBjb3VsZCBlYXQgYSBob3JzZS4iLCJ0ZWNobmlxdWUiOiJoeXBlcmJvbGUifV0=");
 
 function figurativeLanguage(): Topic {
   const items = FIGURATIVE_LANGUAGE.map((f) => ({
@@ -286,24 +131,7 @@ function figurativeLanguage(): Topic {
   ]);
 }
 
-const HOMOPHONES: { sentence: string; answer: string; distractors: string[] }[] = [
-  { sentence: "___ going to the shop later.", answer: "They're", distractors: ["There", "Their"] },
-  { sentence: "Put the book over ___.", answer: "there", distractors: ["their", "they're"] },
-  { sentence: "That is ___ house.", answer: "their", distractors: ["there", "they're"] },
-  { sentence: "I can ___ the music from here.", answer: "hear", distractors: ["here"] },
-  { sentence: "Come over ___, please.", answer: "here", distractors: ["hear"] },
-  { sentence: "The knight rode his ___ into battle.", answer: "horse", distractors: ["hoarse"] },
-  { sentence: "My voice is ___ from shouting.", answer: "hoarse", distractors: ["horse"] },
-  { sentence: "She wore a new ___ to the party.", answer: "dress", distractors: [] },
-  { sentence: "Please ___ the door.", answer: "close", distractors: ["clothes"] },
-  { sentence: "I bought new ___ for winter.", answer: "clothes", distractors: ["close"] },
-  { sentence: "We ate a delicious ___ for dessert.", answer: "pie", distractors: ["pi"] },
-  { sentence: "The value of ___ is roughly 3.14.", answer: "pi", distractors: ["pie"] },
-  { sentence: "She will ___ the ball to her teammate.", answer: "pass", distractors: ["past"] },
-  { sentence: "That happened in the ___.", answer: "past", distractors: ["pass"] },
-  { sentence: "I need to buy a new pair of ___.", answer: "shoes", distractors: ["choose"] },
-  { sentence: "Which one will you ___?", answer: "choose", distractors: ["shoes"] },
-];
+const HOMOPHONES: { sentence: string; answer: string; distractors: string[] }[] = unpack("W3sic2VudGVuY2UiOiJfX18gZ29pbmcgdG8gdGhlIHNob3AgbGF0ZXIuIiwiYW5zd2VyIjoiVGhleSdyZSIsImRpc3RyYWN0b3JzIjpbIlRoZXJlIiwiVGhlaXIiXX0seyJzZW50ZW5jZSI6IlB1dCB0aGUgYm9vayBvdmVyIF9fXy4iLCJhbnN3ZXIiOiJ0aGVyZSIsImRpc3RyYWN0b3JzIjpbInRoZWlyIiwidGhleSdyZSJdfSx7InNlbnRlbmNlIjoiVGhhdCBpcyBfX18gaG91c2UuIiwiYW5zd2VyIjoidGhlaXIiLCJkaXN0cmFjdG9ycyI6WyJ0aGVyZSIsInRoZXkncmUiXX0seyJzZW50ZW5jZSI6IkkgY2FuIF9fXyB0aGUgbXVzaWMgZnJvbSBoZXJlLiIsImFuc3dlciI6ImhlYXIiLCJkaXN0cmFjdG9ycyI6WyJoZXJlIl19LHsic2VudGVuY2UiOiJDb21lIG92ZXIgX19fLCBwbGVhc2UuIiwiYW5zd2VyIjoiaGVyZSIsImRpc3RyYWN0b3JzIjpbImhlYXIiXX0seyJzZW50ZW5jZSI6IlRoZSBrbmlnaHQgcm9kZSBoaXMgX19fIGludG8gYmF0dGxlLiIsImFuc3dlciI6ImhvcnNlIiwiZGlzdHJhY3RvcnMiOlsiaG9hcnNlIl19LHsic2VudGVuY2UiOiJNeSB2b2ljZSBpcyBfX18gZnJvbSBzaG91dGluZy4iLCJhbnN3ZXIiOiJob2Fyc2UiLCJkaXN0cmFjdG9ycyI6WyJob3JzZSJdfSx7InNlbnRlbmNlIjoiU2hlIHdvcmUgYSBuZXcgX19fIHRvIHRoZSBwYXJ0eS4iLCJhbnN3ZXIiOiJkcmVzcyIsImRpc3RyYWN0b3JzIjpbXX0seyJzZW50ZW5jZSI6IlBsZWFzZSBfX18gdGhlIGRvb3IuIiwiYW5zd2VyIjoiY2xvc2UiLCJkaXN0cmFjdG9ycyI6WyJjbG90aGVzIl19LHsic2VudGVuY2UiOiJJIGJvdWdodCBuZXcgX19fIGZvciB3aW50ZXIuIiwiYW5zd2VyIjoiY2xvdGhlcyIsImRpc3RyYWN0b3JzIjpbImNsb3NlIl19LHsic2VudGVuY2UiOiJXZSBhdGUgYSBkZWxpY2lvdXMgX19fIGZvciBkZXNzZXJ0LiIsImFuc3dlciI6InBpZSIsImRpc3RyYWN0b3JzIjpbInBpIl19LHsic2VudGVuY2UiOiJUaGUgdmFsdWUgb2YgX19fIGlzIHJvdWdobHkgMy4xNC4iLCJhbnN3ZXIiOiJwaSIsImRpc3RyYWN0b3JzIjpbInBpZSJdfSx7InNlbnRlbmNlIjoiU2hlIHdpbGwgX19fIHRoZSBiYWxsIHRvIGhlciB0ZWFtbWF0ZS4iLCJhbnN3ZXIiOiJwYXNzIiwiZGlzdHJhY3RvcnMiOlsicGFzdCJdfSx7InNlbnRlbmNlIjoiVGhhdCBoYXBwZW5lZCBpbiB0aGUgX19fLiIsImFuc3dlciI6InBhc3QiLCJkaXN0cmFjdG9ycyI6WyJwYXNzIl19LHsic2VudGVuY2UiOiJJIG5lZWQgdG8gYnV5IGEgbmV3IHBhaXIgb2YgX19fLiIsImFuc3dlciI6InNob2VzIiwiZGlzdHJhY3RvcnMiOlsiY2hvb3NlIl19LHsic2VudGVuY2UiOiJXaGljaCBvbmUgd2lsbCB5b3UgX19fPyIsImFuc3dlciI6ImNob29zZSIsImRpc3RyYWN0b3JzIjpbInNob2VzIl19XQ==");
 
 function homophones(): Topic {
   const items = HOMOPHONES.filter((h) => h.distractors.length > 0).map((h) => ({
@@ -322,22 +150,7 @@ function homophones(): Topic {
   };
 }
 
-const PREFIXES: { word: string; prefix: string; meaning: string }[] = [
-  { word: "unhappy", prefix: "un-", meaning: "not" },
-  { word: "rewrite", prefix: "re-", meaning: "again" },
-  { word: "disagree", prefix: "dis-", meaning: "not / opposite of" },
-  { word: "preheat", prefix: "pre-", meaning: "before" },
-  { word: "misspell", prefix: "mis-", meaning: "wrongly" },
-  { word: "impossible", prefix: "im-", meaning: "not" },
-  { word: "nonsense", prefix: "non-", meaning: "not" },
-  { word: "overeat", prefix: "over-", meaning: "too much" },
-  { word: "submarine", prefix: "sub-", meaning: "under" },
-  { word: "bicycle", prefix: "bi-", meaning: "two" },
-  { word: "triangle", prefix: "tri-", meaning: "three" },
-  { word: "export", prefix: "ex-", meaning: "out" },
-  { word: "international", prefix: "inter-", meaning: "between" },
-  { word: "autograph", prefix: "auto-", meaning: "self" },
-];
+const PREFIXES: { word: string; prefix: string; meaning: string }[] = unpack("W3sid29yZCI6InVuaGFwcHkiLCJwcmVmaXgiOiJ1bi0iLCJtZWFuaW5nIjoibm90In0seyJ3b3JkIjoicmV3cml0ZSIsInByZWZpeCI6InJlLSIsIm1lYW5pbmciOiJhZ2FpbiJ9LHsid29yZCI6ImRpc2FncmVlIiwicHJlZml4IjoiZGlzLSIsIm1lYW5pbmciOiJub3QgLyBvcHBvc2l0ZSBvZiJ9LHsid29yZCI6InByZWhlYXQiLCJwcmVmaXgiOiJwcmUtIiwibWVhbmluZyI6ImJlZm9yZSJ9LHsid29yZCI6Im1pc3NwZWxsIiwicHJlZml4IjoibWlzLSIsIm1lYW5pbmciOiJ3cm9uZ2x5In0seyJ3b3JkIjoiaW1wb3NzaWJsZSIsInByZWZpeCI6ImltLSIsIm1lYW5pbmciOiJub3QifSx7IndvcmQiOiJub25zZW5zZSIsInByZWZpeCI6Im5vbi0iLCJtZWFuaW5nIjoibm90In0seyJ3b3JkIjoib3ZlcmVhdCIsInByZWZpeCI6Im92ZXItIiwibWVhbmluZyI6InRvbyBtdWNoIn0seyJ3b3JkIjoic3VibWFyaW5lIiwicHJlZml4Ijoic3ViLSIsIm1lYW5pbmciOiJ1bmRlciJ9LHsid29yZCI6ImJpY3ljbGUiLCJwcmVmaXgiOiJiaS0iLCJtZWFuaW5nIjoidHdvIn0seyJ3b3JkIjoidHJpYW5nbGUiLCJwcmVmaXgiOiJ0cmktIiwibWVhbmluZyI6InRocmVlIn0seyJ3b3JkIjoiZXhwb3J0IiwicHJlZml4IjoiZXgtIiwibWVhbmluZyI6Im91dCJ9LHsid29yZCI6ImludGVybmF0aW9uYWwiLCJwcmVmaXgiOiJpbnRlci0iLCJtZWFuaW5nIjoiYmV0d2VlbiJ9LHsid29yZCI6ImF1dG9ncmFwaCIsInByZWZpeCI6ImF1dG8tIiwibWVhbmluZyI6InNlbGYifV0=");
 
 function prefixMeanings(): Topic {
   const items = PREFIXES.map((p) => ({
@@ -349,19 +162,7 @@ function prefixMeanings(): Topic {
 
 // ---------- Grades 7-8 ----------
 
-const ACTIVE_PASSIVE: [string, string][] = [
-  ["The chef cooked the meal.", "The meal was cooked by the chef."],
-  ["The teacher graded the tests.", "The tests were graded by the teacher."],
-  ["Lightning struck the tree.", "The tree was struck by lightning."],
-  ["The company launched a new product.", "A new product was launched by the company."],
-  ["The dog chased the cat.", "The cat was chased by the dog."],
-  ["The artist painted the mural.", "The mural was painted by the artist."],
-  ["The storm damaged the roof.", "The roof was damaged by the storm."],
-  ["The committee approved the plan.", "The plan was approved by the committee."],
-  ["The gardener planted the roses.", "The roses were planted by the gardener."],
-  ["A famous author wrote the novel.", "The novel was written by a famous author."],
-  ["The earthquake destroyed the bridge.", "The bridge was destroyed by the earthquake."],
-];
+const ACTIVE_PASSIVE: [string, string][] = unpack("W1siVGhlIGNoZWYgY29va2VkIHRoZSBtZWFsLiIsIlRoZSBtZWFsIHdhcyBjb29rZWQgYnkgdGhlIGNoZWYuIl0sWyJUaGUgdGVhY2hlciBncmFkZWQgdGhlIHRlc3RzLiIsIlRoZSB0ZXN0cyB3ZXJlIGdyYWRlZCBieSB0aGUgdGVhY2hlci4iXSxbIkxpZ2h0bmluZyBzdHJ1Y2sgdGhlIHRyZWUuIiwiVGhlIHRyZWUgd2FzIHN0cnVjayBieSBsaWdodG5pbmcuIl0sWyJUaGUgY29tcGFueSBsYXVuY2hlZCBhIG5ldyBwcm9kdWN0LiIsIkEgbmV3IHByb2R1Y3Qgd2FzIGxhdW5jaGVkIGJ5IHRoZSBjb21wYW55LiJdLFsiVGhlIGRvZyBjaGFzZWQgdGhlIGNhdC4iLCJUaGUgY2F0IHdhcyBjaGFzZWQgYnkgdGhlIGRvZy4iXSxbIlRoZSBhcnRpc3QgcGFpbnRlZCB0aGUgbXVyYWwuIiwiVGhlIG11cmFsIHdhcyBwYWludGVkIGJ5IHRoZSBhcnRpc3QuIl0sWyJUaGUgc3Rvcm0gZGFtYWdlZCB0aGUgcm9vZi4iLCJUaGUgcm9vZiB3YXMgZGFtYWdlZCBieSB0aGUgc3Rvcm0uIl0sWyJUaGUgY29tbWl0dGVlIGFwcHJvdmVkIHRoZSBwbGFuLiIsIlRoZSBwbGFuIHdhcyBhcHByb3ZlZCBieSB0aGUgY29tbWl0dGVlLiJdLFsiVGhlIGdhcmRlbmVyIHBsYW50ZWQgdGhlIHJvc2VzLiIsIlRoZSByb3NlcyB3ZXJlIHBsYW50ZWQgYnkgdGhlIGdhcmRlbmVyLiJdLFsiQSBmYW1vdXMgYXV0aG9yIHdyb3RlIHRoZSBub3ZlbC4iLCJUaGUgbm92ZWwgd2FzIHdyaXR0ZW4gYnkgYSBmYW1vdXMgYXV0aG9yLiJdLFsiVGhlIGVhcnRocXVha2UgZGVzdHJveWVkIHRoZSBicmlkZ2UuIiwiVGhlIGJyaWRnZSB3YXMgZGVzdHJveWVkIGJ5IHRoZSBlYXJ0aHF1YWtlLiJdXQ==");
 
 function activePassive(): Topic {
   const items = ACTIVE_PASSIVE.map(([active, passive]) => ({
@@ -371,20 +172,7 @@ function activePassive(): Topic {
   return bankFill("active-passive", "Active and passive voice", items);
 }
 
-const CLAUSES: { sentence: string; clause: string; kind: "independent" | "dependent" }[] = [
-  { sentence: "Although it was raining, we went for a walk.", clause: "Although it was raining", kind: "dependent" },
-  { sentence: "Although it was raining, we went for a walk.", clause: "we went for a walk", kind: "independent" },
-  { sentence: "She finished her homework before she watched TV.", clause: "before she watched TV", kind: "dependent" },
-  { sentence: "She finished her homework before she watched TV.", clause: "she finished her homework", kind: "independent" },
-  { sentence: "Because he was tired, he went to bed early.", clause: "Because he was tired", kind: "dependent" },
-  { sentence: "Because he was tired, he went to bed early.", clause: "he went to bed early", kind: "independent" },
-  { sentence: "When the bell rang, the students rushed outside.", clause: "When the bell rang", kind: "dependent" },
-  { sentence: "When the bell rang, the students rushed outside.", clause: "the students rushed outside", kind: "independent" },
-  { sentence: "The movie, which we watched twice, was excellent.", clause: "which we watched twice", kind: "dependent" },
-  { sentence: "The movie, which we watched twice, was excellent.", clause: "The movie was excellent", kind: "independent" },
-  { sentence: "Unless you study, you will fail the test.", clause: "Unless you study", kind: "dependent" },
-  { sentence: "Unless you study, you will fail the test.", clause: "you will fail the test", kind: "independent" },
-];
+const CLAUSES: { sentence: string; clause: string; kind: "independent" | "dependent" }[] = unpack("W3sic2VudGVuY2UiOiJBbHRob3VnaCBpdCB3YXMgcmFpbmluZywgd2Ugd2VudCBmb3IgYSB3YWxrLiIsImNsYXVzZSI6IkFsdGhvdWdoIGl0IHdhcyByYWluaW5nIiwia2luZCI6ImRlcGVuZGVudCJ9LHsic2VudGVuY2UiOiJBbHRob3VnaCBpdCB3YXMgcmFpbmluZywgd2Ugd2VudCBmb3IgYSB3YWxrLiIsImNsYXVzZSI6IndlIHdlbnQgZm9yIGEgd2FsayIsImtpbmQiOiJpbmRlcGVuZGVudCJ9LHsic2VudGVuY2UiOiJTaGUgZmluaXNoZWQgaGVyIGhvbWV3b3JrIGJlZm9yZSBzaGUgd2F0Y2hlZCBUVi4iLCJjbGF1c2UiOiJiZWZvcmUgc2hlIHdhdGNoZWQgVFYiLCJraW5kIjoiZGVwZW5kZW50In0seyJzZW50ZW5jZSI6IlNoZSBmaW5pc2hlZCBoZXIgaG9tZXdvcmsgYmVmb3JlIHNoZSB3YXRjaGVkIFRWLiIsImNsYXVzZSI6InNoZSBmaW5pc2hlZCBoZXIgaG9tZXdvcmsiLCJraW5kIjoiaW5kZXBlbmRlbnQifSx7InNlbnRlbmNlIjoiQmVjYXVzZSBoZSB3YXMgdGlyZWQsIGhlIHdlbnQgdG8gYmVkIGVhcmx5LiIsImNsYXVzZSI6IkJlY2F1c2UgaGUgd2FzIHRpcmVkIiwia2luZCI6ImRlcGVuZGVudCJ9LHsic2VudGVuY2UiOiJCZWNhdXNlIGhlIHdhcyB0aXJlZCwgaGUgd2VudCB0byBiZWQgZWFybHkuIiwiY2xhdXNlIjoiaGUgd2VudCB0byBiZWQgZWFybHkiLCJraW5kIjoiaW5kZXBlbmRlbnQifSx7InNlbnRlbmNlIjoiV2hlbiB0aGUgYmVsbCByYW5nLCB0aGUgc3R1ZGVudHMgcnVzaGVkIG91dHNpZGUuIiwiY2xhdXNlIjoiV2hlbiB0aGUgYmVsbCByYW5nIiwia2luZCI6ImRlcGVuZGVudCJ9LHsic2VudGVuY2UiOiJXaGVuIHRoZSBiZWxsIHJhbmcsIHRoZSBzdHVkZW50cyBydXNoZWQgb3V0c2lkZS4iLCJjbGF1c2UiOiJ0aGUgc3R1ZGVudHMgcnVzaGVkIG91dHNpZGUiLCJraW5kIjoiaW5kZXBlbmRlbnQifSx7InNlbnRlbmNlIjoiVGhlIG1vdmllLCB3aGljaCB3ZSB3YXRjaGVkIHR3aWNlLCB3YXMgZXhjZWxsZW50LiIsImNsYXVzZSI6IndoaWNoIHdlIHdhdGNoZWQgdHdpY2UiLCJraW5kIjoiZGVwZW5kZW50In0seyJzZW50ZW5jZSI6IlRoZSBtb3ZpZSwgd2hpY2ggd2Ugd2F0Y2hlZCB0d2ljZSwgd2FzIGV4Y2VsbGVudC4iLCJjbGF1c2UiOiJUaGUgbW92aWUgd2FzIGV4Y2VsbGVudCIsImtpbmQiOiJpbmRlcGVuZGVudCJ9LHsic2VudGVuY2UiOiJVbmxlc3MgeW91IHN0dWR5LCB5b3Ugd2lsbCBmYWlsIHRoZSB0ZXN0LiIsImNsYXVzZSI6IlVubGVzcyB5b3Ugc3R1ZHkiLCJraW5kIjoiZGVwZW5kZW50In0seyJzZW50ZW5jZSI6IlVubGVzcyB5b3Ugc3R1ZHksIHlvdSB3aWxsIGZhaWwgdGhlIHRlc3QuIiwiY2xhdXNlIjoieW91IHdpbGwgZmFpbCB0aGUgdGVzdCIsImtpbmQiOiJpbmRlcGVuZGVudCJ9XQ==");
 
 function clauseTypes(): Topic {
   const items = CLAUSES.map((c) => ({
@@ -394,20 +182,7 @@ function clauseTypes(): Topic {
   return bankMCQ("clauses", "Independent and dependent clauses", items, ["independent", "dependent"]);
 }
 
-const PERSUASIVE_TECHNIQUES: { example: string; technique: string }[] = [
-  { example: "9 out of 10 dentists recommend this toothpaste.", technique: "statistics" },
-  { example: "Don't you want the best for your family?", technique: "rhetorical question" },
-  { example: "Buy now, buy now, buy now!", technique: "repetition" },
-  { example: "Leading scientists agree that this is the safest option.", technique: "expert opinion" },
-  { example: "This heartbreaking story will change how you see the world.", technique: "emotive language" },
-  { example: "Everyone who matters already owns one.", technique: "bandwagon" },
-  { example: "Only 3 seats left at this price — book now!", technique: "urgency" },
-  { example: "As a parent, don't you want to keep your kids safe?", technique: "rhetorical question" },
-  { example: "This product will change your life forever.", technique: "emotive language" },
-  { example: "Studies show 87% of users saw results within a week.", technique: "statistics" },
-  { example: "Our founder, a former surgeon, designed this for real safety.", technique: "expert opinion" },
-  { example: "Join the millions who have already made the switch.", technique: "bandwagon" },
-];
+const PERSUASIVE_TECHNIQUES: { example: string; technique: string }[] = unpack("W3siZXhhbXBsZSI6Ijkgb3V0IG9mIDEwIGRlbnRpc3RzIHJlY29tbWVuZCB0aGlzIHRvb3RocGFzdGUuIiwidGVjaG5pcXVlIjoic3RhdGlzdGljcyJ9LHsiZXhhbXBsZSI6IkRvbid0IHlvdSB3YW50IHRoZSBiZXN0IGZvciB5b3VyIGZhbWlseT8iLCJ0ZWNobmlxdWUiOiJyaGV0b3JpY2FsIHF1ZXN0aW9uIn0seyJleGFtcGxlIjoiQnV5IG5vdywgYnV5IG5vdywgYnV5IG5vdyEiLCJ0ZWNobmlxdWUiOiJyZXBldGl0aW9uIn0seyJleGFtcGxlIjoiTGVhZGluZyBzY2llbnRpc3RzIGFncmVlIHRoYXQgdGhpcyBpcyB0aGUgc2FmZXN0IG9wdGlvbi4iLCJ0ZWNobmlxdWUiOiJleHBlcnQgb3BpbmlvbiJ9LHsiZXhhbXBsZSI6IlRoaXMgaGVhcnRicmVha2luZyBzdG9yeSB3aWxsIGNoYW5nZSBob3cgeW91IHNlZSB0aGUgd29ybGQuIiwidGVjaG5pcXVlIjoiZW1vdGl2ZSBsYW5ndWFnZSJ9LHsiZXhhbXBsZSI6IkV2ZXJ5b25lIHdobyBtYXR0ZXJzIGFscmVhZHkgb3ducyBvbmUuIiwidGVjaG5pcXVlIjoiYmFuZHdhZ29uIn0seyJleGFtcGxlIjoiT25seSAzIHNlYXRzIGxlZnQgYXQgdGhpcyBwcmljZSDigJQgYm9vayBub3chIiwidGVjaG5pcXVlIjoidXJnZW5jeSJ9LHsiZXhhbXBsZSI6IkFzIGEgcGFyZW50LCBkb24ndCB5b3Ugd2FudCB0byBrZWVwIHlvdXIga2lkcyBzYWZlPyIsInRlY2huaXF1ZSI6InJoZXRvcmljYWwgcXVlc3Rpb24ifSx7ImV4YW1wbGUiOiJUaGlzIHByb2R1Y3Qgd2lsbCBjaGFuZ2UgeW91ciBsaWZlIGZvcmV2ZXIuIiwidGVjaG5pcXVlIjoiZW1vdGl2ZSBsYW5ndWFnZSJ9LHsiZXhhbXBsZSI6IlN0dWRpZXMgc2hvdyA4NyUgb2YgdXNlcnMgc2F3IHJlc3VsdHMgd2l0aGluIGEgd2Vlay4iLCJ0ZWNobmlxdWUiOiJzdGF0aXN0aWNzIn0seyJleGFtcGxlIjoiT3VyIGZvdW5kZXIsIGEgZm9ybWVyIHN1cmdlb24sIGRlc2lnbmVkIHRoaXMgZm9yIHJlYWwgc2FmZXR5LiIsInRlY2huaXF1ZSI6ImV4cGVydCBvcGluaW9uIn0seyJleGFtcGxlIjoiSm9pbiB0aGUgbWlsbGlvbnMgd2hvIGhhdmUgYWxyZWFkeSBtYWRlIHRoZSBzd2l0Y2guIiwidGVjaG5pcXVlIjoiYmFuZHdhZ29uIn1d");
 
 function persuasiveTechniques(): Topic {
   const items = PERSUASIVE_TECHNIQUES.map((p) => ({
@@ -422,20 +197,7 @@ function persuasiveTechniques(): Topic {
   );
 }
 
-const VOCAB_CONTEXT: { sentence: string; word: string; meaning: string; distractors: string[] }[] = [
-  { sentence: "The abundant harvest fed the whole village.", word: "abundant", meaning: "plentiful", distractors: ["scarce", "rotten", "expensive"] },
-  { sentence: "He was reluctant to admit his mistake.", word: "reluctant", meaning: "unwilling", distractors: ["eager", "proud", "certain"] },
-  { sentence: "Her persistent efforts finally paid off.", word: "persistent", meaning: "determined", distractors: ["lazy", "brief", "quiet"] },
-  { sentence: "The ancient ruins were a mystery to archaeologists.", word: "ancient", meaning: "very old", distractors: ["newly built", "hidden", "dangerous"] },
-  { sentence: "The politician's speech was full of ambiguous statements.", word: "ambiguous", meaning: "unclear", distractors: ["honest", "loud", "brief"] },
-  { sentence: "The volunteers worked with great diligence to finish on time.", word: "diligence", meaning: "careful effort", distractors: ["laziness", "anger", "speed"] },
-  { sentence: "His candid response surprised the interviewer.", word: "candid", meaning: "honest and direct", distractors: ["evasive", "rude", "nervous"] },
-  { sentence: "The city's infrastructure was in a dilapidated state.", word: "dilapidated", meaning: "run-down", distractors: ["brand new", "colourful", "expensive"] },
-  { sentence: "She gave a succinct summary of the report.", word: "succinct", meaning: "brief and clear", distractors: ["lengthy", "confusing", "boring"] },
-  { sentence: "The crowd was subdued after the announcement.", word: "subdued", meaning: "quiet and reserved", distractors: ["excited", "furious", "confused"] },
-  { sentence: "His arguments were both cogent and persuasive.", word: "cogent", meaning: "clear and convincing", distractors: ["weak", "irrelevant", "aggressive"] },
-  { sentence: "The detective was known for her tenacity.", word: "tenacity", meaning: "persistence", distractors: ["kindness", "carelessness", "shyness"] },
-];
+const VOCAB_CONTEXT: { sentence: string; word: string; meaning: string; distractors: string[] }[] = unpack("W3sic2VudGVuY2UiOiJUaGUgYWJ1bmRhbnQgaGFydmVzdCBmZWQgdGhlIHdob2xlIHZpbGxhZ2UuIiwid29yZCI6ImFidW5kYW50IiwibWVhbmluZyI6InBsZW50aWZ1bCIsImRpc3RyYWN0b3JzIjpbInNjYXJjZSIsInJvdHRlbiIsImV4cGVuc2l2ZSJdfSx7InNlbnRlbmNlIjoiSGUgd2FzIHJlbHVjdGFudCB0byBhZG1pdCBoaXMgbWlzdGFrZS4iLCJ3b3JkIjoicmVsdWN0YW50IiwibWVhbmluZyI6InVud2lsbGluZyIsImRpc3RyYWN0b3JzIjpbImVhZ2VyIiwicHJvdWQiLCJjZXJ0YWluIl19LHsic2VudGVuY2UiOiJIZXIgcGVyc2lzdGVudCBlZmZvcnRzIGZpbmFsbHkgcGFpZCBvZmYuIiwid29yZCI6InBlcnNpc3RlbnQiLCJtZWFuaW5nIjoiZGV0ZXJtaW5lZCIsImRpc3RyYWN0b3JzIjpbImxhenkiLCJicmllZiIsInF1aWV0Il19LHsic2VudGVuY2UiOiJUaGUgYW5jaWVudCBydWlucyB3ZXJlIGEgbXlzdGVyeSB0byBhcmNoYWVvbG9naXN0cy4iLCJ3b3JkIjoiYW5jaWVudCIsIm1lYW5pbmciOiJ2ZXJ5IG9sZCIsImRpc3RyYWN0b3JzIjpbIm5ld2x5IGJ1aWx0IiwiaGlkZGVuIiwiZGFuZ2Vyb3VzIl19LHsic2VudGVuY2UiOiJUaGUgcG9saXRpY2lhbidzIHNwZWVjaCB3YXMgZnVsbCBvZiBhbWJpZ3VvdXMgc3RhdGVtZW50cy4iLCJ3b3JkIjoiYW1iaWd1b3VzIiwibWVhbmluZyI6InVuY2xlYXIiLCJkaXN0cmFjdG9ycyI6WyJob25lc3QiLCJsb3VkIiwiYnJpZWYiXX0seyJzZW50ZW5jZSI6IlRoZSB2b2x1bnRlZXJzIHdvcmtlZCB3aXRoIGdyZWF0IGRpbGlnZW5jZSB0byBmaW5pc2ggb24gdGltZS4iLCJ3b3JkIjoiZGlsaWdlbmNlIiwibWVhbmluZyI6ImNhcmVmdWwgZWZmb3J0IiwiZGlzdHJhY3RvcnMiOlsibGF6aW5lc3MiLCJhbmdlciIsInNwZWVkIl19LHsic2VudGVuY2UiOiJIaXMgY2FuZGlkIHJlc3BvbnNlIHN1cnByaXNlZCB0aGUgaW50ZXJ2aWV3ZXIuIiwid29yZCI6ImNhbmRpZCIsIm1lYW5pbmciOiJob25lc3QgYW5kIGRpcmVjdCIsImRpc3RyYWN0b3JzIjpbImV2YXNpdmUiLCJydWRlIiwibmVydm91cyJdfSx7InNlbnRlbmNlIjoiVGhlIGNpdHkncyBpbmZyYXN0cnVjdHVyZSB3YXMgaW4gYSBkaWxhcGlkYXRlZCBzdGF0ZS4iLCJ3b3JkIjoiZGlsYXBpZGF0ZWQiLCJtZWFuaW5nIjoicnVuLWRvd24iLCJkaXN0cmFjdG9ycyI6WyJicmFuZCBuZXciLCJjb2xvdXJmdWwiLCJleHBlbnNpdmUiXX0seyJzZW50ZW5jZSI6IlNoZSBnYXZlIGEgc3VjY2luY3Qgc3VtbWFyeSBvZiB0aGUgcmVwb3J0LiIsIndvcmQiOiJzdWNjaW5jdCIsIm1lYW5pbmciOiJicmllZiBhbmQgY2xlYXIiLCJkaXN0cmFjdG9ycyI6WyJsZW5ndGh5IiwiY29uZnVzaW5nIiwiYm9yaW5nIl19LHsic2VudGVuY2UiOiJUaGUgY3Jvd2Qgd2FzIHN1YmR1ZWQgYWZ0ZXIgdGhlIGFubm91bmNlbWVudC4iLCJ3b3JkIjoic3ViZHVlZCIsIm1lYW5pbmciOiJxdWlldCBhbmQgcmVzZXJ2ZWQiLCJkaXN0cmFjdG9ycyI6WyJleGNpdGVkIiwiZnVyaW91cyIsImNvbmZ1c2VkIl19LHsic2VudGVuY2UiOiJIaXMgYXJndW1lbnRzIHdlcmUgYm90aCBjb2dlbnQgYW5kIHBlcnN1YXNpdmUuIiwid29yZCI6ImNvZ2VudCIsIm1lYW5pbmciOiJjbGVhciBhbmQgY29udmluY2luZyIsImRpc3RyYWN0b3JzIjpbIndlYWsiLCJpcnJlbGV2YW50IiwiYWdncmVzc2l2ZSJdfSx7InNlbnRlbmNlIjoiVGhlIGRldGVjdGl2ZSB3YXMga25vd24gZm9yIGhlciB0ZW5hY2l0eS4iLCJ3b3JkIjoidGVuYWNpdHkiLCJtZWFuaW5nIjoicGVyc2lzdGVuY2UiLCJkaXN0cmFjdG9ycyI6WyJraW5kbmVzcyIsImNhcmVsZXNzbmVzcyIsInNoeW5lc3MiXX1d");
 
 function vocabularyInContext(): Topic {
   return {
@@ -455,21 +217,7 @@ function vocabularyInContext(): Topic {
 
 // ---------- Grades 9-10 ----------
 
-const GRAMMAR_EDITING: [string, string][] = [
-  ["Me and him went to the store.", "He and I went to the store."],
-  ["Neither of the answers are correct.", "Neither of the answers is correct."],
-  ["She don't like vegetables.", "She doesn't like vegetables."],
-  ["Their going to the concert tonight.", "They're going to the concert tonight."],
-  ["The team are playing well this season.", "The team is playing well this season."],
-  ["I could of finished it yesterday.", "I could have finished it yesterday."],
-  ["Everyone should bring their own lunch.", "Everyone should bring his or her own lunch."],
-  ["He is the tallest out of the two.", "He is the taller of the two."],
-  ["Between you and I, this is a bad idea.", "Between you and me, this is a bad idea."],
-  ["Its raining outside, bring your umbrella.", "It's raining outside, bring your umbrella."],
-  ["The reason he failed is because he didn't study.", "The reason he failed is that he didn't study."],
-  ["Less people came than we expected.", "Fewer people came than we expected."],
-  ["Whom do you think will win?", "Who do you think will win?"],
-];
+const GRAMMAR_EDITING: [string, string][] = unpack("W1siTWUgYW5kIGhpbSB3ZW50IHRvIHRoZSBzdG9yZS4iLCJIZSBhbmQgSSB3ZW50IHRvIHRoZSBzdG9yZS4iXSxbIk5laXRoZXIgb2YgdGhlIGFuc3dlcnMgYXJlIGNvcnJlY3QuIiwiTmVpdGhlciBvZiB0aGUgYW5zd2VycyBpcyBjb3JyZWN0LiJdLFsiU2hlIGRvbid0IGxpa2UgdmVnZXRhYmxlcy4iLCJTaGUgZG9lc24ndCBsaWtlIHZlZ2V0YWJsZXMuIl0sWyJUaGVpciBnb2luZyB0byB0aGUgY29uY2VydCB0b25pZ2h0LiIsIlRoZXkncmUgZ29pbmcgdG8gdGhlIGNvbmNlcnQgdG9uaWdodC4iXSxbIlRoZSB0ZWFtIGFyZSBwbGF5aW5nIHdlbGwgdGhpcyBzZWFzb24uIiwiVGhlIHRlYW0gaXMgcGxheWluZyB3ZWxsIHRoaXMgc2Vhc29uLiJdLFsiSSBjb3VsZCBvZiBmaW5pc2hlZCBpdCB5ZXN0ZXJkYXkuIiwiSSBjb3VsZCBoYXZlIGZpbmlzaGVkIGl0IHllc3RlcmRheS4iXSxbIkV2ZXJ5b25lIHNob3VsZCBicmluZyB0aGVpciBvd24gbHVuY2guIiwiRXZlcnlvbmUgc2hvdWxkIGJyaW5nIGhpcyBvciBoZXIgb3duIGx1bmNoLiJdLFsiSGUgaXMgdGhlIHRhbGxlc3Qgb3V0IG9mIHRoZSB0d28uIiwiSGUgaXMgdGhlIHRhbGxlciBvZiB0aGUgdHdvLiJdLFsiQmV0d2VlbiB5b3UgYW5kIEksIHRoaXMgaXMgYSBiYWQgaWRlYS4iLCJCZXR3ZWVuIHlvdSBhbmQgbWUsIHRoaXMgaXMgYSBiYWQgaWRlYS4iXSxbIkl0cyByYWluaW5nIG91dHNpZGUsIGJyaW5nIHlvdXIgdW1icmVsbGEuIiwiSXQncyByYWluaW5nIG91dHNpZGUsIGJyaW5nIHlvdXIgdW1icmVsbGEuIl0sWyJUaGUgcmVhc29uIGhlIGZhaWxlZCBpcyBiZWNhdXNlIGhlIGRpZG4ndCBzdHVkeS4iLCJUaGUgcmVhc29uIGhlIGZhaWxlZCBpcyB0aGF0IGhlIGRpZG4ndCBzdHVkeS4iXSxbIkxlc3MgcGVvcGxlIGNhbWUgdGhhbiB3ZSBleHBlY3RlZC4iLCJGZXdlciBwZW9wbGUgY2FtZSB0aGFuIHdlIGV4cGVjdGVkLiJdLFsiV2hvbSBkbyB5b3UgdGhpbmsgd2lsbCB3aW4/IiwiV2hvIGRvIHlvdSB0aGluayB3aWxsIHdpbj8iXV0=");
 
 function grammarEditing(): Topic {
   const items = GRAMMAR_EDITING.map(([wrong, right]) => ({
@@ -479,19 +227,7 @@ function grammarEditing(): Topic {
   return bankFill("grammar-editing", "Grammar editing", items);
 }
 
-const LITERARY_DEVICES: { example: string; device: string }[] = [
-  { example: "It's raining cats and dogs.", device: "idiom" },
-  { example: "The fire fighter was as brave as a lion.", device: "simile" },
-  { example: "The classroom was a zoo.", device: "metaphor" },
-  { example: "The buzzing bees flew by.", device: "onomatopoeia" },
-  { example: "A fire station burned down.", device: "irony" },
-  { example: "The silence was deafening.", device: "oxymoron" },
-  { example: "Death lay his icy hand on kings.", device: "personification" },
-  { example: "The crash of thunder shook the house.", device: "onomatopoeia" },
-  { example: "This is a jumbo shrimp of a problem.", device: "oxymoron" },
-  { example: "He's been working like a machine all day.", device: "simile" },
-  { example: "The world is a stage.", device: "metaphor" },
-];
+const LITERARY_DEVICES: { example: string; device: string }[] = unpack("W3siZXhhbXBsZSI6Ikl0J3MgcmFpbmluZyBjYXRzIGFuZCBkb2dzLiIsImRldmljZSI6ImlkaW9tIn0seyJleGFtcGxlIjoiVGhlIGZpcmUgZmlnaHRlciB3YXMgYXMgYnJhdmUgYXMgYSBsaW9uLiIsImRldmljZSI6InNpbWlsZSJ9LHsiZXhhbXBsZSI6IlRoZSBjbGFzc3Jvb20gd2FzIGEgem9vLiIsImRldmljZSI6Im1ldGFwaG9yIn0seyJleGFtcGxlIjoiVGhlIGJ1enppbmcgYmVlcyBmbGV3IGJ5LiIsImRldmljZSI6Im9ub21hdG9wb2VpYSJ9LHsiZXhhbXBsZSI6IkEgZmlyZSBzdGF0aW9uIGJ1cm5lZCBkb3duLiIsImRldmljZSI6Imlyb255In0seyJleGFtcGxlIjoiVGhlIHNpbGVuY2Ugd2FzIGRlYWZlbmluZy4iLCJkZXZpY2UiOiJveHltb3JvbiJ9LHsiZXhhbXBsZSI6IkRlYXRoIGxheSBoaXMgaWN5IGhhbmQgb24ga2luZ3MuIiwiZGV2aWNlIjoicGVyc29uaWZpY2F0aW9uIn0seyJleGFtcGxlIjoiVGhlIGNyYXNoIG9mIHRodW5kZXIgc2hvb2sgdGhlIGhvdXNlLiIsImRldmljZSI6Im9ub21hdG9wb2VpYSJ9LHsiZXhhbXBsZSI6IlRoaXMgaXMgYSBqdW1ibyBzaHJpbXAgb2YgYSBwcm9ibGVtLiIsImRldmljZSI6Im94eW1vcm9uIn0seyJleGFtcGxlIjoiSGUncyBiZWVuIHdvcmtpbmcgbGlrZSBhIG1hY2hpbmUgYWxsIGRheS4iLCJkZXZpY2UiOiJzaW1pbGUifSx7ImV4YW1wbGUiOiJUaGUgd29ybGQgaXMgYSBzdGFnZS4iLCJkZXZpY2UiOiJtZXRhcGhvciJ9XQ==");
 
 function literaryDevices(): Topic {
   const items = LITERARY_DEVICES.map((l) => ({
@@ -501,20 +237,7 @@ function literaryDevices(): Topic {
   return bankMCQ("literary-devices", "Literary devices", items, LITERARY_DEVICES.map((l) => l.device));
 }
 
-const WORD_ROOTS: { root: string; meaning: string; example: string }[] = [
-  { root: "bio", meaning: "life", example: "biology" },
-  { root: "graph", meaning: "write", example: "autograph" },
-  { root: "tele", meaning: "far", example: "telescope" },
-  { root: "aud", meaning: "hear", example: "audience" },
-  { root: "vis/vid", meaning: "see", example: "visible" },
-  { root: "chron", meaning: "time", example: "chronology" },
-  { root: "geo", meaning: "earth", example: "geography" },
-  { root: "phon", meaning: "sound", example: "telephone" },
-  { root: "port", meaning: "carry", example: "transport" },
-  { root: "scrib/script", meaning: "write", example: "manuscript" },
-  { root: "dict", meaning: "speak", example: "predict" },
-  { root: "spect", meaning: "look", example: "inspect" },
-];
+const WORD_ROOTS: { root: string; meaning: string; example: string }[] = unpack("W3sicm9vdCI6ImJpbyIsIm1lYW5pbmciOiJsaWZlIiwiZXhhbXBsZSI6ImJpb2xvZ3kifSx7InJvb3QiOiJncmFwaCIsIm1lYW5pbmciOiJ3cml0ZSIsImV4YW1wbGUiOiJhdXRvZ3JhcGgifSx7InJvb3QiOiJ0ZWxlIiwibWVhbmluZyI6ImZhciIsImV4YW1wbGUiOiJ0ZWxlc2NvcGUifSx7InJvb3QiOiJhdWQiLCJtZWFuaW5nIjoiaGVhciIsImV4YW1wbGUiOiJhdWRpZW5jZSJ9LHsicm9vdCI6InZpcy92aWQiLCJtZWFuaW5nIjoic2VlIiwiZXhhbXBsZSI6InZpc2libGUifSx7InJvb3QiOiJjaHJvbiIsIm1lYW5pbmciOiJ0aW1lIiwiZXhhbXBsZSI6ImNocm9ub2xvZ3kifSx7InJvb3QiOiJnZW8iLCJtZWFuaW5nIjoiZWFydGgiLCJleGFtcGxlIjoiZ2VvZ3JhcGh5In0seyJyb290IjoicGhvbiIsIm1lYW5pbmciOiJzb3VuZCIsImV4YW1wbGUiOiJ0ZWxlcGhvbmUifSx7InJvb3QiOiJwb3J0IiwibWVhbmluZyI6ImNhcnJ5IiwiZXhhbXBsZSI6InRyYW5zcG9ydCJ9LHsicm9vdCI6InNjcmliL3NjcmlwdCIsIm1lYW5pbmciOiJ3cml0ZSIsImV4YW1wbGUiOiJtYW51c2NyaXB0In0seyJyb290IjoiZGljdCIsIm1lYW5pbmciOiJzcGVhayIsImV4YW1wbGUiOiJwcmVkaWN0In0seyJyb290Ijoic3BlY3QiLCJtZWFuaW5nIjoibG9vayIsImV4YW1wbGUiOiJpbnNwZWN0In1d");
 
 function wordRoots(): Topic {
   const items = WORD_ROOTS.map((w) => ({
@@ -524,17 +247,7 @@ function wordRoots(): Topic {
   return bankFill("word-roots", "Word roots", items);
 }
 
-const RUN_ON_SENTENCES: [string, string][] = [
-  ["I went to the shop I bought some milk.", "I went to the shop. I bought some milk."],
-  ["It started to rain we ran inside.", "It started to rain, so we ran inside."],
-  ["She loves to read she visits the library every week.", "She loves to read, and she visits the library every week."],
-  ["He was tired he kept working.", "He was tired, but he kept working."],
-  ["The movie was long we still enjoyed it.", "The movie was long, but we still enjoyed it."],
-  ["We arrived early the doors were still locked.", "We arrived early, but the doors were still locked."],
-  ["The sun set the sky turned orange.", "The sun set, and the sky turned orange."],
-  ["I called her twice she never answered.", "I called her twice, but she never answered."],
-  ["The recipe looked simple it took hours to make.", "The recipe looked simple, but it took hours to make."],
-];
+const RUN_ON_SENTENCES: [string, string][] = unpack("W1siSSB3ZW50IHRvIHRoZSBzaG9wIEkgYm91Z2h0IHNvbWUgbWlsay4iLCJJIHdlbnQgdG8gdGhlIHNob3AuIEkgYm91Z2h0IHNvbWUgbWlsay4iXSxbIkl0IHN0YXJ0ZWQgdG8gcmFpbiB3ZSByYW4gaW5zaWRlLiIsIkl0IHN0YXJ0ZWQgdG8gcmFpbiwgc28gd2UgcmFuIGluc2lkZS4iXSxbIlNoZSBsb3ZlcyB0byByZWFkIHNoZSB2aXNpdHMgdGhlIGxpYnJhcnkgZXZlcnkgd2Vlay4iLCJTaGUgbG92ZXMgdG8gcmVhZCwgYW5kIHNoZSB2aXNpdHMgdGhlIGxpYnJhcnkgZXZlcnkgd2Vlay4iXSxbIkhlIHdhcyB0aXJlZCBoZSBrZXB0IHdvcmtpbmcuIiwiSGUgd2FzIHRpcmVkLCBidXQgaGUga2VwdCB3b3JraW5nLiJdLFsiVGhlIG1vdmllIHdhcyBsb25nIHdlIHN0aWxsIGVuam95ZWQgaXQuIiwiVGhlIG1vdmllIHdhcyBsb25nLCBidXQgd2Ugc3RpbGwgZW5qb3llZCBpdC4iXSxbIldlIGFycml2ZWQgZWFybHkgdGhlIGRvb3JzIHdlcmUgc3RpbGwgbG9ja2VkLiIsIldlIGFycml2ZWQgZWFybHksIGJ1dCB0aGUgZG9vcnMgd2VyZSBzdGlsbCBsb2NrZWQuIl0sWyJUaGUgc3VuIHNldCB0aGUgc2t5IHR1cm5lZCBvcmFuZ2UuIiwiVGhlIHN1biBzZXQsIGFuZCB0aGUgc2t5IHR1cm5lZCBvcmFuZ2UuIl0sWyJJIGNhbGxlZCBoZXIgdHdpY2Ugc2hlIG5ldmVyIGFuc3dlcmVkLiIsIkkgY2FsbGVkIGhlciB0d2ljZSwgYnV0IHNoZSBuZXZlciBhbnN3ZXJlZC4iXSxbIlRoZSByZWNpcGUgbG9va2VkIHNpbXBsZSBpdCB0b29rIGhvdXJzIHRvIG1ha2UuIiwiVGhlIHJlY2lwZSBsb29rZWQgc2ltcGxlLCBidXQgaXQgdG9vayBob3VycyB0byBtYWtlLiJdXQ==");
 
 function fixRunOnSentences(): Topic {
   const items = RUN_ON_SENTENCES.map(([runOn, fixed]) => ({
@@ -546,24 +259,7 @@ function fixRunOnSentences(): Topic {
 
 // ---------- Grades 11-12 ----------
 
-const ADVANCED_VOCAB: { word: string; meaning: string; distractors: string[] }[] = [
-  { word: "ubiquitous", meaning: "present everywhere", distractors: ["rare", "expensive", "dangerous"] },
-  { word: "ephemeral", meaning: "lasting a short time", distractors: ["permanent", "enormous", "colourful"] },
-  { word: "cogent", meaning: "clear and convincing", distractors: ["confusing", "boring", "aggressive"] },
-  { word: "ambivalent", meaning: "having mixed feelings", distractors: ["confident", "furious", "indifferent"] },
-  { word: "pragmatic", meaning: "practical", distractors: ["idealistic", "emotional", "chaotic"] },
-  { word: "meticulous", meaning: "very careful and precise", distractors: ["careless", "hurried", "generous"] },
-  { word: "resilient", meaning: "able to recover quickly", distractors: ["fragile", "stubborn", "loud"] },
-  { word: "candid", meaning: "honest and direct", distractors: ["secretive", "shy", "arrogant"] },
-  { word: "austere", meaning: "plain and severe", distractors: ["luxurious", "colourful", "friendly"] },
-  { word: "benevolent", meaning: "kind and generous", distractors: ["cruel", "selfish", "nervous"] },
-  { word: "conspicuous", meaning: "easily noticed", distractors: ["hidden", "boring", "small"] },
-  { word: "vindicate", meaning: "clear of blame", distractors: ["accuse", "ignore", "punish"] },
-  { word: "impetuous", meaning: "acting without thinking", distractors: ["careful", "patient", "shy"] },
-  { word: "fastidious", meaning: "very attentive to detail", distractors: ["careless", "lazy", "generous"] },
-  { word: "obsequious", meaning: "excessively eager to please", distractors: ["rebellious", "indifferent", "confident"] },
-  { word: "prudent", meaning: "sensible and cautious", distractors: ["reckless", "arrogant", "naive"] },
-];
+const ADVANCED_VOCAB: { word: string; meaning: string; distractors: string[] }[] = unpack("W3sid29yZCI6InViaXF1aXRvdXMiLCJtZWFuaW5nIjoicHJlc2VudCBldmVyeXdoZXJlIiwiZGlzdHJhY3RvcnMiOlsicmFyZSIsImV4cGVuc2l2ZSIsImRhbmdlcm91cyJdfSx7IndvcmQiOiJlcGhlbWVyYWwiLCJtZWFuaW5nIjoibGFzdGluZyBhIHNob3J0IHRpbWUiLCJkaXN0cmFjdG9ycyI6WyJwZXJtYW5lbnQiLCJlbm9ybW91cyIsImNvbG91cmZ1bCJdfSx7IndvcmQiOiJjb2dlbnQiLCJtZWFuaW5nIjoiY2xlYXIgYW5kIGNvbnZpbmNpbmciLCJkaXN0cmFjdG9ycyI6WyJjb25mdXNpbmciLCJib3JpbmciLCJhZ2dyZXNzaXZlIl19LHsid29yZCI6ImFtYml2YWxlbnQiLCJtZWFuaW5nIjoiaGF2aW5nIG1peGVkIGZlZWxpbmdzIiwiZGlzdHJhY3RvcnMiOlsiY29uZmlkZW50IiwiZnVyaW91cyIsImluZGlmZmVyZW50Il19LHsid29yZCI6InByYWdtYXRpYyIsIm1lYW5pbmciOiJwcmFjdGljYWwiLCJkaXN0cmFjdG9ycyI6WyJpZGVhbGlzdGljIiwiZW1vdGlvbmFsIiwiY2hhb3RpYyJdfSx7IndvcmQiOiJtZXRpY3Vsb3VzIiwibWVhbmluZyI6InZlcnkgY2FyZWZ1bCBhbmQgcHJlY2lzZSIsImRpc3RyYWN0b3JzIjpbImNhcmVsZXNzIiwiaHVycmllZCIsImdlbmVyb3VzIl19LHsid29yZCI6InJlc2lsaWVudCIsIm1lYW5pbmciOiJhYmxlIHRvIHJlY292ZXIgcXVpY2tseSIsImRpc3RyYWN0b3JzIjpbImZyYWdpbGUiLCJzdHViYm9ybiIsImxvdWQiXX0seyJ3b3JkIjoiY2FuZGlkIiwibWVhbmluZyI6ImhvbmVzdCBhbmQgZGlyZWN0IiwiZGlzdHJhY3RvcnMiOlsic2VjcmV0aXZlIiwic2h5IiwiYXJyb2dhbnQiXX0seyJ3b3JkIjoiYXVzdGVyZSIsIm1lYW5pbmciOiJwbGFpbiBhbmQgc2V2ZXJlIiwiZGlzdHJhY3RvcnMiOlsibHV4dXJpb3VzIiwiY29sb3VyZnVsIiwiZnJpZW5kbHkiXX0seyJ3b3JkIjoiYmVuZXZvbGVudCIsIm1lYW5pbmciOiJraW5kIGFuZCBnZW5lcm91cyIsImRpc3RyYWN0b3JzIjpbImNydWVsIiwic2VsZmlzaCIsIm5lcnZvdXMiXX0seyJ3b3JkIjoiY29uc3BpY3VvdXMiLCJtZWFuaW5nIjoiZWFzaWx5IG5vdGljZWQiLCJkaXN0cmFjdG9ycyI6WyJoaWRkZW4iLCJib3JpbmciLCJzbWFsbCJdfSx7IndvcmQiOiJ2aW5kaWNhdGUiLCJtZWFuaW5nIjoiY2xlYXIgb2YgYmxhbWUiLCJkaXN0cmFjdG9ycyI6WyJhY2N1c2UiLCJpZ25vcmUiLCJwdW5pc2giXX0seyJ3b3JkIjoiaW1wZXR1b3VzIiwibWVhbmluZyI6ImFjdGluZyB3aXRob3V0IHRoaW5raW5nIiwiZGlzdHJhY3RvcnMiOlsiY2FyZWZ1bCIsInBhdGllbnQiLCJzaHkiXX0seyJ3b3JkIjoiZmFzdGlkaW91cyIsIm1lYW5pbmciOiJ2ZXJ5IGF0dGVudGl2ZSB0byBkZXRhaWwiLCJkaXN0cmFjdG9ycyI6WyJjYXJlbGVzcyIsImxhenkiLCJnZW5lcm91cyJdfSx7IndvcmQiOiJvYnNlcXVpb3VzIiwibWVhbmluZyI6ImV4Y2Vzc2l2ZWx5IGVhZ2VyIHRvIHBsZWFzZSIsImRpc3RyYWN0b3JzIjpbInJlYmVsbGlvdXMiLCJpbmRpZmZlcmVudCIsImNvbmZpZGVudCJdfSx7IndvcmQiOiJwcnVkZW50IiwibWVhbmluZyI6InNlbnNpYmxlIGFuZCBjYXV0aW91cyIsImRpc3RyYWN0b3JzIjpbInJlY2tsZXNzIiwiYXJyb2dhbnQiLCJuYWl2ZSJdfV0=");
 
 function advancedVocabulary(): Topic {
   return {
@@ -577,16 +273,7 @@ function advancedVocabulary(): Topic {
   };
 }
 
-const RHETORICAL_TECHNIQUES: { example: string; technique: string }[] = [
-  { example: "We shall fight on the beaches, we shall fight on the landing grounds...", technique: "anaphora" },
-  { example: "Is it not time we demanded better from our leaders?", technique: "rhetorical question" },
-  { example: "As the leading expert has confirmed, this policy works.", technique: "appeal to authority" },
-  { example: "These reckless criminals threaten everything we hold dear.", technique: "loaded language" },
-  { example: "Either we act now, or we lose everything.", technique: "false dichotomy" },
-  { example: "Freedom. Opportunity. Prosperity. That is what we offer.", technique: "asyndeton" },
-  { example: "Ask not what your country can do for you.", technique: "antithesis" },
-  { example: "This so-called 'expert' has never even run a business.", technique: "ad hominem" },
-];
+const RHETORICAL_TECHNIQUES: { example: string; technique: string }[] = unpack("W3siZXhhbXBsZSI6IldlIHNoYWxsIGZpZ2h0IG9uIHRoZSBiZWFjaGVzLCB3ZSBzaGFsbCBmaWdodCBvbiB0aGUgbGFuZGluZyBncm91bmRzLi4uIiwidGVjaG5pcXVlIjoiYW5hcGhvcmEifSx7ImV4YW1wbGUiOiJJcyBpdCBub3QgdGltZSB3ZSBkZW1hbmRlZCBiZXR0ZXIgZnJvbSBvdXIgbGVhZGVycz8iLCJ0ZWNobmlxdWUiOiJyaGV0b3JpY2FsIHF1ZXN0aW9uIn0seyJleGFtcGxlIjoiQXMgdGhlIGxlYWRpbmcgZXhwZXJ0IGhhcyBjb25maXJtZWQsIHRoaXMgcG9saWN5IHdvcmtzLiIsInRlY2huaXF1ZSI6ImFwcGVhbCB0byBhdXRob3JpdHkifSx7ImV4YW1wbGUiOiJUaGVzZSByZWNrbGVzcyBjcmltaW5hbHMgdGhyZWF0ZW4gZXZlcnl0aGluZyB3ZSBob2xkIGRlYXIuIiwidGVjaG5pcXVlIjoibG9hZGVkIGxhbmd1YWdlIn0seyJleGFtcGxlIjoiRWl0aGVyIHdlIGFjdCBub3csIG9yIHdlIGxvc2UgZXZlcnl0aGluZy4iLCJ0ZWNobmlxdWUiOiJmYWxzZSBkaWNob3RvbXkifSx7ImV4YW1wbGUiOiJGcmVlZG9tLiBPcHBvcnR1bml0eS4gUHJvc3Blcml0eS4gVGhhdCBpcyB3aGF0IHdlIG9mZmVyLiIsInRlY2huaXF1ZSI6ImFzeW5kZXRvbiJ9LHsiZXhhbXBsZSI6IkFzayBub3Qgd2hhdCB5b3VyIGNvdW50cnkgY2FuIGRvIGZvciB5b3UuIiwidGVjaG5pcXVlIjoiYW50aXRoZXNpcyJ9LHsiZXhhbXBsZSI6IlRoaXMgc28tY2FsbGVkICdleHBlcnQnIGhhcyBuZXZlciBldmVuIHJ1biBhIGJ1c2luZXNzLiIsInRlY2huaXF1ZSI6ImFkIGhvbWluZW0ifV0=");
 
 function rhetoricalTechniques(): Topic {
   const items = RHETORICAL_TECHNIQUES.map((r) => ({
@@ -601,17 +288,7 @@ function rhetoricalTechniques(): Topic {
   );
 }
 
-const ADVANCED_GRAMMAR_EDITING: [string, string][] = [
-  ["Each of the students have submitted their essay.", "Each of the students has submitted his or her essay."],
-  ["Walking into the room, the lights were turned on by her.", "Walking into the room, she turned on the lights."],
-  ["The data shows that the results are inconclusive, it needs more analysis.", "The data shows that the results are inconclusive; it needs more analysis."],
-  ["By the time we arrived, the meeting already started.", "By the time we arrived, the meeting had already started."],
-  ["One should always proofread your work.", "One should always proofread one's own work."],
-  ["Having finished the exam, the room felt quiet.", "Having finished the exam, she noticed the room felt quiet."],
-  ["Its important that everyone submits their form on time.", "It's important that everyone submits their form on time."],
-  ["The company are planning to relocate its headquarters.", "The company is planning to relocate its headquarters."],
-  ["He is one of the students who is always on time.", "He is one of the students who are always on time."],
-];
+const ADVANCED_GRAMMAR_EDITING: [string, string][] = unpack("W1siRWFjaCBvZiB0aGUgc3R1ZGVudHMgaGF2ZSBzdWJtaXR0ZWQgdGhlaXIgZXNzYXkuIiwiRWFjaCBvZiB0aGUgc3R1ZGVudHMgaGFzIHN1Ym1pdHRlZCBoaXMgb3IgaGVyIGVzc2F5LiJdLFsiV2Fsa2luZyBpbnRvIHRoZSByb29tLCB0aGUgbGlnaHRzIHdlcmUgdHVybmVkIG9uIGJ5IGhlci4iLCJXYWxraW5nIGludG8gdGhlIHJvb20sIHNoZSB0dXJuZWQgb24gdGhlIGxpZ2h0cy4iXSxbIlRoZSBkYXRhIHNob3dzIHRoYXQgdGhlIHJlc3VsdHMgYXJlIGluY29uY2x1c2l2ZSwgaXQgbmVlZHMgbW9yZSBhbmFseXNpcy4iLCJUaGUgZGF0YSBzaG93cyB0aGF0IHRoZSByZXN1bHRzIGFyZSBpbmNvbmNsdXNpdmU7IGl0IG5lZWRzIG1vcmUgYW5hbHlzaXMuIl0sWyJCeSB0aGUgdGltZSB3ZSBhcnJpdmVkLCB0aGUgbWVldGluZyBhbHJlYWR5IHN0YXJ0ZWQuIiwiQnkgdGhlIHRpbWUgd2UgYXJyaXZlZCwgdGhlIG1lZXRpbmcgaGFkIGFscmVhZHkgc3RhcnRlZC4iXSxbIk9uZSBzaG91bGQgYWx3YXlzIHByb29mcmVhZCB5b3VyIHdvcmsuIiwiT25lIHNob3VsZCBhbHdheXMgcHJvb2ZyZWFkIG9uZSdzIG93biB3b3JrLiJdLFsiSGF2aW5nIGZpbmlzaGVkIHRoZSBleGFtLCB0aGUgcm9vbSBmZWx0IHF1aWV0LiIsIkhhdmluZyBmaW5pc2hlZCB0aGUgZXhhbSwgc2hlIG5vdGljZWQgdGhlIHJvb20gZmVsdCBxdWlldC4iXSxbIkl0cyBpbXBvcnRhbnQgdGhhdCBldmVyeW9uZSBzdWJtaXRzIHRoZWlyIGZvcm0gb24gdGltZS4iLCJJdCdzIGltcG9ydGFudCB0aGF0IGV2ZXJ5b25lIHN1Ym1pdHMgdGhlaXIgZm9ybSBvbiB0aW1lLiJdLFsiVGhlIGNvbXBhbnkgYXJlIHBsYW5uaW5nIHRvIHJlbG9jYXRlIGl0cyBoZWFkcXVhcnRlcnMuIiwiVGhlIGNvbXBhbnkgaXMgcGxhbm5pbmcgdG8gcmVsb2NhdGUgaXRzIGhlYWRxdWFydGVycy4iXSxbIkhlIGlzIG9uZSBvZiB0aGUgc3R1ZGVudHMgd2hvIGlzIGFsd2F5cyBvbiB0aW1lLiIsIkhlIGlzIG9uZSBvZiB0aGUgc3R1ZGVudHMgd2hvIGFyZSBhbHdheXMgb24gdGltZS4iXV0=");
 
 function advancedGrammarEditing(): Topic {
   const items = ADVANCED_GRAMMAR_EDITING.map(([wrong, right]) => ({
@@ -621,17 +298,7 @@ function advancedGrammarEditing(): Topic {
   return bankFill("advanced-grammar", "Advanced grammar editing", items);
 }
 
-const TEXT_PURPOSE: { excerpt: string; purpose: string }[] = [
-  { excerpt: "Mix two cups of flour with one teaspoon of baking soda.", purpose: "to instruct" },
-  { excerpt: "Vote yes to protect our local parks for future generations.", purpose: "to persuade" },
-  { excerpt: "The bustling markets of Marrakech overwhelmed the senses.", purpose: "to describe" },
-  { excerpt: "Unemployment fell by 0.4% in the last quarter, new data shows.", purpose: "to inform" },
-  { excerpt: "Once upon a time, in a village by the sea, lived a curious girl.", purpose: "to entertain" },
-  { excerpt: "Turn off the power supply before removing the back panel.", purpose: "to instruct" },
-  { excerpt: "This policy will devastate small businesses across the region.", purpose: "to persuade" },
-  { excerpt: "The old library smelled of dust and forgotten stories.", purpose: "to describe" },
-  { excerpt: "The council will vote on the new budget next Tuesday.", purpose: "to inform" },
-];
+const TEXT_PURPOSE: { excerpt: string; purpose: string }[] = unpack("W3siZXhjZXJwdCI6Ik1peCB0d28gY3VwcyBvZiBmbG91ciB3aXRoIG9uZSB0ZWFzcG9vbiBvZiBiYWtpbmcgc29kYS4iLCJwdXJwb3NlIjoidG8gaW5zdHJ1Y3QifSx7ImV4Y2VycHQiOiJWb3RlIHllcyB0byBwcm90ZWN0IG91ciBsb2NhbCBwYXJrcyBmb3IgZnV0dXJlIGdlbmVyYXRpb25zLiIsInB1cnBvc2UiOiJ0byBwZXJzdWFkZSJ9LHsiZXhjZXJwdCI6IlRoZSBidXN0bGluZyBtYXJrZXRzIG9mIE1hcnJha2VjaCBvdmVyd2hlbG1lZCB0aGUgc2Vuc2VzLiIsInB1cnBvc2UiOiJ0byBkZXNjcmliZSJ9LHsiZXhjZXJwdCI6IlVuZW1wbG95bWVudCBmZWxsIGJ5IDAuNCUgaW4gdGhlIGxhc3QgcXVhcnRlciwgbmV3IGRhdGEgc2hvd3MuIiwicHVycG9zZSI6InRvIGluZm9ybSJ9LHsiZXhjZXJwdCI6Ik9uY2UgdXBvbiBhIHRpbWUsIGluIGEgdmlsbGFnZSBieSB0aGUgc2VhLCBsaXZlZCBhIGN1cmlvdXMgZ2lybC4iLCJwdXJwb3NlIjoidG8gZW50ZXJ0YWluIn0seyJleGNlcnB0IjoiVHVybiBvZmYgdGhlIHBvd2VyIHN1cHBseSBiZWZvcmUgcmVtb3ZpbmcgdGhlIGJhY2sgcGFuZWwuIiwicHVycG9zZSI6InRvIGluc3RydWN0In0seyJleGNlcnB0IjoiVGhpcyBwb2xpY3kgd2lsbCBkZXZhc3RhdGUgc21hbGwgYnVzaW5lc3NlcyBhY3Jvc3MgdGhlIHJlZ2lvbi4iLCJwdXJwb3NlIjoidG8gcGVyc3VhZGUifSx7ImV4Y2VycHQiOiJUaGUgb2xkIGxpYnJhcnkgc21lbGxlZCBvZiBkdXN0IGFuZCBmb3Jnb3R0ZW4gc3Rvcmllcy4iLCJwdXJwb3NlIjoidG8gZGVzY3JpYmUifSx7ImV4Y2VycHQiOiJUaGUgY291bmNpbCB3aWxsIHZvdGUgb24gdGhlIG5ldyBidWRnZXQgbmV4dCBUdWVzZGF5LiIsInB1cnBvc2UiOiJ0byBpbmZvcm0ifV0=");
 
 function textPurpose(): Topic {
   const items = TEXT_PURPOSE.map((t) => ({
@@ -643,16 +310,7 @@ function textPurpose(): Topic {
 
 // ---------- Advanced extension topics (Grade 11-12 "Advanced" only) ----------
 
-const IDIOMS: { idiom: string; meaning: string; distractors: string[] }[] = [
-  { idiom: "bite the bullet", meaning: "face a difficult situation bravely", distractors: ["avoid a problem", "celebrate a win", "give up quickly"] },
-  { idiom: "cost an arm and a leg", meaning: "be very expensive", distractors: ["be free", "be dangerous", "be quick"] },
-  { idiom: "once in a blue moon", meaning: "very rarely", distractors: ["very often", "at midnight", "unexpectedly"] },
-  { idiom: "the ball is in your court", meaning: "it's your decision now", distractors: ["you are losing", "the game is over", "it's a team effort"] },
-  { idiom: "let the cat out of the bag", meaning: "reveal a secret", distractors: ["cause chaos", "adopt a pet", "make a mistake"] },
-  { idiom: "burn the midnight oil", meaning: "work late into the night", distractors: ["waste time", "start a fire", "wake up early"] },
-  { idiom: "a blessing in disguise", meaning: "something good that seemed bad at first", distractors: ["an obvious gift", "bad luck", "a religious event"] },
-  { idiom: "beat around the bush", meaning: "avoid getting to the point", distractors: ["work outdoors", "argue loudly", "speak honestly"] },
-];
+const IDIOMS: { idiom: string; meaning: string; distractors: string[] }[] = unpack("W3siaWRpb20iOiJiaXRlIHRoZSBidWxsZXQiLCJtZWFuaW5nIjoiZmFjZSBhIGRpZmZpY3VsdCBzaXR1YXRpb24gYnJhdmVseSIsImRpc3RyYWN0b3JzIjpbImF2b2lkIGEgcHJvYmxlbSIsImNlbGVicmF0ZSBhIHdpbiIsImdpdmUgdXAgcXVpY2tseSJdfSx7ImlkaW9tIjoiY29zdCBhbiBhcm0gYW5kIGEgbGVnIiwibWVhbmluZyI6ImJlIHZlcnkgZXhwZW5zaXZlIiwiZGlzdHJhY3RvcnMiOlsiYmUgZnJlZSIsImJlIGRhbmdlcm91cyIsImJlIHF1aWNrIl19LHsiaWRpb20iOiJvbmNlIGluIGEgYmx1ZSBtb29uIiwibWVhbmluZyI6InZlcnkgcmFyZWx5IiwiZGlzdHJhY3RvcnMiOlsidmVyeSBvZnRlbiIsImF0IG1pZG5pZ2h0IiwidW5leHBlY3RlZGx5Il19LHsiaWRpb20iOiJ0aGUgYmFsbCBpcyBpbiB5b3VyIGNvdXJ0IiwibWVhbmluZyI6Iml0J3MgeW91ciBkZWNpc2lvbiBub3ciLCJkaXN0cmFjdG9ycyI6WyJ5b3UgYXJlIGxvc2luZyIsInRoZSBnYW1lIGlzIG92ZXIiLCJpdCdzIGEgdGVhbSBlZmZvcnQiXX0seyJpZGlvbSI6ImxldCB0aGUgY2F0IG91dCBvZiB0aGUgYmFnIiwibWVhbmluZyI6InJldmVhbCBhIHNlY3JldCIsImRpc3RyYWN0b3JzIjpbImNhdXNlIGNoYW9zIiwiYWRvcHQgYSBwZXQiLCJtYWtlIGEgbWlzdGFrZSJdfSx7ImlkaW9tIjoiYnVybiB0aGUgbWlkbmlnaHQgb2lsIiwibWVhbmluZyI6IndvcmsgbGF0ZSBpbnRvIHRoZSBuaWdodCIsImRpc3RyYWN0b3JzIjpbIndhc3RlIHRpbWUiLCJzdGFydCBhIGZpcmUiLCJ3YWtlIHVwIGVhcmx5Il19LHsiaWRpb20iOiJhIGJsZXNzaW5nIGluIGRpc2d1aXNlIiwibWVhbmluZyI6InNvbWV0aGluZyBnb29kIHRoYXQgc2VlbWVkIGJhZCBhdCBmaXJzdCIsImRpc3RyYWN0b3JzIjpbImFuIG9idmlvdXMgZ2lmdCIsImJhZCBsdWNrIiwiYSByZWxpZ2lvdXMgZXZlbnQiXX0seyJpZGlvbSI6ImJlYXQgYXJvdW5kIHRoZSBidXNoIiwibWVhbmluZyI6ImF2b2lkIGdldHRpbmcgdG8gdGhlIHBvaW50IiwiZGlzdHJhY3RvcnMiOlsid29yayBvdXRkb29ycyIsImFyZ3VlIGxvdWRseSIsInNwZWFrIGhvbmVzdGx5Il19XQ==");
 
 function idioms(): Topic {
   const items = IDIOMS.map((i) => ({
@@ -671,14 +329,7 @@ function idioms(): Topic {
   };
 }
 
-const TONE_EXAMPLES: { excerpt: string; tone: string }[] = [
-  { excerpt: "How wonderful — another Monday morning meeting.", tone: "sarcastic" },
-  { excerpt: "We must act immediately; every second we delay costs lives.", tone: "urgent" },
-  { excerpt: "I remember the smell of Grandma's kitchen every autumn.", tone: "nostalgic" },
-  { excerpt: "The undersigned hereby agrees to the terms outlined above.", tone: "formal" },
-  { excerpt: "Honestly, who even cares anymore?", tone: "indifferent" },
-  { excerpt: "I am absolutely thrilled to announce this incredible news!", tone: "enthusiastic" },
-];
+const TONE_EXAMPLES: { excerpt: string; tone: string }[] = unpack("W3siZXhjZXJwdCI6IkhvdyB3b25kZXJmdWwg4oCUIGFub3RoZXIgTW9uZGF5IG1vcm5pbmcgbWVldGluZy4iLCJ0b25lIjoic2FyY2FzdGljIn0seyJleGNlcnB0IjoiV2UgbXVzdCBhY3QgaW1tZWRpYXRlbHk7IGV2ZXJ5IHNlY29uZCB3ZSBkZWxheSBjb3N0cyBsaXZlcy4iLCJ0b25lIjoidXJnZW50In0seyJleGNlcnB0IjoiSSByZW1lbWJlciB0aGUgc21lbGwgb2YgR3JhbmRtYSdzIGtpdGNoZW4gZXZlcnkgYXV0dW1uLiIsInRvbmUiOiJub3N0YWxnaWMifSx7ImV4Y2VycHQiOiJUaGUgdW5kZXJzaWduZWQgaGVyZWJ5IGFncmVlcyB0byB0aGUgdGVybXMgb3V0bGluZWQgYWJvdmUuIiwidG9uZSI6ImZvcm1hbCJ9LHsiZXhjZXJwdCI6IkhvbmVzdGx5LCB3aG8gZXZlbiBjYXJlcyBhbnltb3JlPyIsInRvbmUiOiJpbmRpZmZlcmVudCJ9LHsiZXhjZXJwdCI6IkkgYW0gYWJzb2x1dGVseSB0aHJpbGxlZCB0byBhbm5vdW5jZSB0aGlzIGluY3JlZGlibGUgbmV3cyEiLCJ0b25lIjoiZW50aHVzaWFzdGljIn1d");
 
 function toneAnalysis(): Topic {
   const items = TONE_EXAMPLES.map((t) => ({ prompt: `What is the tone of: "${t.excerpt}"?`, answer: t.tone }));
@@ -696,13 +347,7 @@ function advancedEnglishExtras(grade: number): Topic[] {
 
 // ---------- Cambridge International extras (Grade 9+) ----------
 
-const REGISTER_EXAMPLES: { casual: string; formal: string }[] = [
-  { casual: "Hey, can you send me that file?", formal: "Could you please send me that file?" },
-  { casual: "Yeah, I reckon that's a good idea.", formal: "Yes, I believe that is a good idea." },
-  { casual: "Sorry, can't make it, gotta bail.", formal: "Unfortunately, I am unable to attend." },
-  { casual: "Thanks heaps for your help!", formal: "Thank you very much for your assistance." },
-  { casual: "Let's grab a coffee sometime.", formal: "Perhaps we could arrange to meet for coffee." },
-];
+const REGISTER_EXAMPLES: { casual: string; formal: string }[] = unpack("W3siY2FzdWFsIjoiSGV5LCBjYW4geW91IHNlbmQgbWUgdGhhdCBmaWxlPyIsImZvcm1hbCI6IkNvdWxkIHlvdSBwbGVhc2Ugc2VuZCBtZSB0aGF0IGZpbGU/In0seyJjYXN1YWwiOiJZZWFoLCBJIHJlY2tvbiB0aGF0J3MgYSBnb29kIGlkZWEuIiwiZm9ybWFsIjoiWWVzLCBJIGJlbGlldmUgdGhhdCBpcyBhIGdvb2QgaWRlYS4ifSx7ImNhc3VhbCI6IlNvcnJ5LCBjYW4ndCBtYWtlIGl0LCBnb3R0YSBiYWlsLiIsImZvcm1hbCI6IlVuZm9ydHVuYXRlbHksIEkgYW0gdW5hYmxlIHRvIGF0dGVuZC4ifSx7ImNhc3VhbCI6IlRoYW5rcyBoZWFwcyBmb3IgeW91ciBoZWxwISIsImZvcm1hbCI6IlRoYW5rIHlvdSB2ZXJ5IG11Y2ggZm9yIHlvdXIgYXNzaXN0YW5jZS4ifSx7ImNhc3VhbCI6IkxldCdzIGdyYWIgYSBjb2ZmZWUgc29tZXRpbWUuIiwiZm9ybWFsIjoiUGVyaGFwcyB3ZSBjb3VsZCBhcnJhbmdlIHRvIG1lZXQgZm9yIGNvZmZlZS4ifV0=");
 
 function formalInformalRegister(): Topic {
   const items = REGISTER_EXAMPLES.map((r) => ({
@@ -712,23 +357,7 @@ function formalInformalRegister(): Topic {
   return bankFill("register", "Formal and informal register", items);
 }
 
-const INFERENCE_EXAMPLES: { passage: string; inference: string; distractors: string[] }[] = [
-  {
-    passage: "Maria checked her watch for the third time and glanced at the empty doorway again.",
-    inference: "She is waiting anxiously for someone who is late",
-    distractors: ["She has nowhere to be", "She is about to leave the building", "She dislikes wearing watches"],
-  },
-  {
-    passage: "The coach benched their star player for the final quarter without any explanation.",
-    inference: "There may be a disciplinary or strategic reason not stated directly",
-    distractors: ["The player asked to sit out", "The team was losing badly", "The player was injured"],
-  },
-  {
-    passage: "Despite the rain, the stadium was completely full an hour before kickoff.",
-    inference: "The match was highly anticipated by fans",
-    distractors: ["The stadium has a small capacity", "Tickets were free that day", "The rain had just started"],
-  },
-];
+const INFERENCE_EXAMPLES: { passage: string; inference: string; distractors: string[] }[] = unpack("W3sicGFzc2FnZSI6Ik1hcmlhIGNoZWNrZWQgaGVyIHdhdGNoIGZvciB0aGUgdGhpcmQgdGltZSBhbmQgZ2xhbmNlZCBhdCB0aGUgZW1wdHkgZG9vcndheSBhZ2Fpbi4iLCJpbmZlcmVuY2UiOiJTaGUgaXMgd2FpdGluZyBhbnhpb3VzbHkgZm9yIHNvbWVvbmUgd2hvIGlzIGxhdGUiLCJkaXN0cmFjdG9ycyI6WyJTaGUgaGFzIG5vd2hlcmUgdG8gYmUiLCJTaGUgaXMgYWJvdXQgdG8gbGVhdmUgdGhlIGJ1aWxkaW5nIiwiU2hlIGRpc2xpa2VzIHdlYXJpbmcgd2F0Y2hlcyJdfSx7InBhc3NhZ2UiOiJUaGUgY29hY2ggYmVuY2hlZCB0aGVpciBzdGFyIHBsYXllciBmb3IgdGhlIGZpbmFsIHF1YXJ0ZXIgd2l0aG91dCBhbnkgZXhwbGFuYXRpb24uIiwiaW5mZXJlbmNlIjoiVGhlcmUgbWF5IGJlIGEgZGlzY2lwbGluYXJ5IG9yIHN0cmF0ZWdpYyByZWFzb24gbm90IHN0YXRlZCBkaXJlY3RseSIsImRpc3RyYWN0b3JzIjpbIlRoZSBwbGF5ZXIgYXNrZWQgdG8gc2l0IG91dCIsIlRoZSB0ZWFtIHdhcyBsb3NpbmcgYmFkbHkiLCJUaGUgcGxheWVyIHdhcyBpbmp1cmVkIl19LHsicGFzc2FnZSI6IkRlc3BpdGUgdGhlIHJhaW4sIHRoZSBzdGFkaXVtIHdhcyBjb21wbGV0ZWx5IGZ1bGwgYW4gaG91ciBiZWZvcmUga2lja29mZi4iLCJpbmZlcmVuY2UiOiJUaGUgbWF0Y2ggd2FzIGhpZ2hseSBhbnRpY2lwYXRlZCBieSBmYW5zIiwiZGlzdHJhY3RvcnMiOlsiVGhlIHN0YWRpdW0gaGFzIGEgc21hbGwgY2FwYWNpdHkiLCJUaWNrZXRzIHdlcmUgZnJlZSB0aGF0IGRheSIsIlRoZSByYWluIGhhZCBqdXN0IHN0YXJ0ZWQiXX1d");
 
 function inferenceMeaning(): Topic {
   return {
