@@ -30,6 +30,7 @@ function App() {
   const [requestedCount, setRequestedCount] = useState(0);
 
   const { label: subjectLabel, minGrade } = getSubject(subject);
+  const explanationLabel = subject === "general" ? "Did you know?" : "How to get it";
 
   const topics = useMemo(
     () => getTopics(subject, grade, syllabus, difficulty),
@@ -267,7 +268,7 @@ function App() {
                     {showAnswers && <div className="question-answer">Answer: {q.answer}</div>}
                     {showAnswers && q.explanation && (
                       <div className="question-explanation">
-                        <strong>How to get it</strong>
+                        <strong>{explanationLabel}</strong>
                         {q.explanation}
                       </div>
                     )}
@@ -371,7 +372,7 @@ function App() {
                       )}
                       {testSubmitted && !correct && q.explanation && (
                         <div className="question-explanation">
-                          <strong>How to get it</strong>
+                          <strong>{explanationLabel}</strong>
                           {q.explanation}
                         </div>
                       )}

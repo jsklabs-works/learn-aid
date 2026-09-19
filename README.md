@@ -2,7 +2,7 @@
 
 A free, browser-only worksheet and online-test generator, Grades 1–12. Built for students, parents and teachers who want quick, random practice without signing up for anything.
 
-- Pick a **syllabus** (Victorian Curriculum or Cambridge International), **subject** (Maths, English, or a Grade 9+ elective: Accounting, Business Studies, Economics, Biology, Chemistry, Physics), **grade** (1–12) and **difficulty** (Standard or Advanced)
+- Pick a **syllabus** (Victorian Curriculum or Cambridge International), **subject** (Maths, English, General knowledge, or a Grade 9+ elective: Accounting, Business Studies, Economics, Biology, Chemistry, Physics), **grade** (1–12) and **difficulty** (Standard or Advanced)
 - Choose which **topics** to include and how many **questions** you want (up to 50)
 - **Worksheet mode**: generate, preview (with diagrams for geometry questions), then **download a PDF** with a matching answer key on the last page
 - **Online test mode**: answer questions right in the browser (multiple choice or free text), submit, and get an instant score with a per-question breakdown. Wrong answers show the correct answer and a short explanation or worked steps (the same explanations appear under "Show answers" and in the PDF answer key)
@@ -34,6 +34,16 @@ Everything runs client-side — no backend, no accounts, no data collection.
 | 7–8 | Active/passive voice, clauses, persuasive techniques, vocabulary in context, commonly confused words, colons and semicolons, point of view |
 | 9–10 | Grammar editing, literary devices, word roots, run-on sentences, connotation, ethos/pathos/logos |
 | 11–12 | Advanced vocabulary, rhetorical techniques, grammar editing, text purpose, connotation, ethos/pathos/logos, parallel structure, concise writing |
+
+**General knowledge** (all grades) is a set of multiple-choice quizzes rather than curriculum drills:
+
+| Grades | Topics |
+|---|---|
+| 1–4 | Animals and nature, our world, body and health, space and weather, fun riddles and odd-one-out |
+| 5–8 | World history, Australian history, geography, science facts, inventors and discoveries, fun true-or-false |
+| 9–12 | Modern world history, government and civics, current topics, world geography, arts and books, fun brain teasers |
+
+Advanced adds the next band's topics (and, at Grade 9–12, political ideas and great scientists). The "current topics" quiz covers evergreen themes (climate, technology and AI literacy, media literacy, economics basics). It does not track the news, so it never goes out of date.
 
 Every Maths grade band and both Accounting bands include a **Word problems** topic: short real-world stories (shopping, time, ratios, savings, ladders, depreciation, cash budgets and so on) with randomised names and numbers, which you can tick on or off like any other topic.
 

@@ -5,6 +5,7 @@ import { getBusinessTopics } from "./business";
 import { getChemistryTopics } from "./chemistry";
 import { getEconomicsTopics } from "./economics";
 import { getEnglishTopics } from "./english";
+import { getGeneralTopics } from "./general";
 import { getMathsTopics } from "./maths";
 import { getPhysicsTopics } from "./physics";
 
@@ -19,6 +20,7 @@ export interface SubjectDef {
 export const SUBJECTS: SubjectDef[] = [
   { id: "maths", label: "Maths", minGrade: 1, group: "core", getTopics: getMathsTopics },
   { id: "english", label: "English", minGrade: 1, group: "core", getTopics: getEnglishTopics },
+  { id: "general", label: "General knowledge", minGrade: 1, group: "core", getTopics: getGeneralTopics },
   { id: "accounting", label: "Accounting", minGrade: 9, group: "elective", getTopics: getAccountingTopics },
   { id: "business", label: "Business Studies", minGrade: 9, group: "elective", getTopics: getBusinessTopics },
   { id: "economics", label: "Economics", minGrade: 9, group: "elective", getTopics: getEconomicsTopics },

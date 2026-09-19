@@ -31,6 +31,7 @@ export interface Topic {
 export type Subject =
   | "maths"
   | "english"
+  | "general"
   | "accounting"
   | "business"
   | "economics"
