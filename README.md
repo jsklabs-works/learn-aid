@@ -78,3 +78,7 @@ npm run build    # type-check + production build
 ## Deployment
 
 Pushing to `main` builds the app and deploys it to **GitHub Pages** automatically via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Enable Pages once in the repo settings (Settings → Pages → Source: GitHub Actions), and it publishes on every push.
+
+## Licence
+
+Copyright (c) 2026 jsklabs-works. All rights reserved. The website may be used for personal, educational and classroom purposes; copying, hosting or redistributing the source code or question content needs written permission. See [`LICENSE`](LICENSE).
