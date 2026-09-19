@@ -27,7 +27,7 @@ function App() {
   const [testAnswers, setTestAnswers] = useState<string[]>([]);
   const [testSubmitted, setTestSubmitted] = useState(false);
 
-  const subjectLabel = getSubject(subject).label;
+  const { label: subjectLabel, minGrade } = getSubject(subject);
 
   const topics = useMemo(
     () => getTopics(subject, grade, syllabus, difficulty),
@@ -36,8 +36,8 @@ function App() {
 
   function handleSubjectChange(next: Subject) {
     setSubject(next);
-    const { minGrade } = getSubject(next);
-    if (grade < minGrade) setGrade(minGrade);
+    const nextMin = getSubject(next).minGrade;
+    if (grade < nextMin) setGrade(nextMin);
   }
 
   // Whenever the subject/grade/syllabus/difficulty changes, select all of that set's topics by default.
@@ -163,7 +163,7 @@ function App() {
             <label className="field">
               <span>Grade</span>
               <select value={grade} onChange={(e) => setGrade(Number(e.target.value))}>
-                {GRADES.map((g) => (
+                {GRADES.filter((g) => g >= minGrade).map((g) => (
                   <option key={g} value={g}>
                     Grade {g}
                   </option>
