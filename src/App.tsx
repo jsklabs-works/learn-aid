@@ -5,6 +5,7 @@ import { GRADES, getTopics } from "./curriculum";
 import { isCorrectAnswer } from "./grading";
 import { generateWorksheetPdf } from "./pdf";
 import type { Difficulty, Question, Subject, Syllabus } from "./types";
+import { useTheme, type Theme } from "./useTheme";
 
 const OPTION_LETTERS = ["A", "B", "C", "D"];
 const MIN_QUESTIONS = 1;
@@ -13,6 +14,7 @@ const MAX_QUESTIONS = 50;
 type Mode = "worksheet" | "test";
 
 function App() {
+  const [theme, setTheme] = useTheme();
   const [subject, setSubject] = useState<Subject>("maths");
   const [grade, setGrade] = useState(3);
   const [syllabus, setSyllabus] = useState<Syllabus>("vic");
@@ -78,7 +80,22 @@ function App() {
   return (
     <div className="page">
       <header className="page-header">
-        <h1>Worksheet Generator</h1>
+        <div className="page-header-top">
+          <h1>Worksheet Generator</h1>
+          <div className="theme-toggle" role="radiogroup" aria-label="Theme">
+            {(["light", "system", "dark"] as Theme[]).map((t) => (
+              <button
+                key={t}
+                role="radio"
+                aria-checked={theme === t}
+                className={theme === t ? "theme-option active" : "theme-option"}
+                onClick={() => setTheme(t)}
+              >
+                {t === "light" ? "Light" : t === "dark" ? "Dark" : "Auto"}
+              </button>
+            ))}
+          </div>
+        </div>
         <p className="subtitle">
           Random practice worksheets and online tests for Grades 1–12 — for students, parents and teachers.
         </p>

@@ -10,10 +10,40 @@
   text-align: left;
 }
 
+.page-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .page-header h1 {
   margin: 0 0 8px;
   text-align: left;
   font-size: 32px;
+}
+
+.theme-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.theme-option {
+  padding: 6px 12px;
+  border: none;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.theme-option.active {
+  background: var(--accent);
+  color: white;
 }
 
 .subtitle {
