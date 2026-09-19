@@ -33,6 +33,8 @@ Everything runs client-side — no backend, no accounts, no data collection.
 | 9–10 | Grammar editing, literary devices, word roots, run-on sentences |
 | 11–12 | Advanced vocabulary, rhetorical techniques, grammar editing, text purpose |
 
+Every Maths grade band and both Accounting bands include a **Word problems** topic: short real-world stories (shopping, time, ratios, savings, ladders, depreciation, cash budgets and so on) with randomised names and numbers, which you can tick on or off like any other topic.
+
 Questions are procedurally generated (maths) or randomly sampled from curated item banks (English), so each worksheet is different. Perimeter, area, angle, and Pythagoras/trigonometry questions include a labelled diagram, both on screen and in the downloaded PDF.
 
 **Grade 9+ electives** (only offered from Grade 9; picking one from a lower grade jumps the grade up to 9):

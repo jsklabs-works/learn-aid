@@ -1,6 +1,7 @@
 import type { Difficulty, Syllabus, Topic } from "../types";
 import { unpack } from "./codec";
 import { bankMCQ, pick, randInt } from "./utils";
+import { accountingWordProblems } from "./wordProblems";
 
 const ACCOUNT_CLASSES: [string, string][] = unpack("W1siQ2FzaCBhdCBiYW5rIiwiYXNzZXQiXSxbIkFjY291bnRzIHJlY2VpdmFibGUiLCJhc3NldCJdLFsiSW52ZW50b3J5IiwiYXNzZXQiXSxbIkVxdWlwbWVudCIsImFzc2V0Il0sWyJNb3RvciB2ZWhpY2xlcyIsImFzc2V0Il0sWyJQcmVwYWlkIGluc3VyYW5jZSIsImFzc2V0Il0sWyJBY2NvdW50cyBwYXlhYmxlIiwibGlhYmlsaXR5Il0sWyJCYW5rIGxvYW4iLCJsaWFiaWxpdHkiXSxbIk1vcnRnYWdlIHBheWFibGUiLCJsaWFiaWxpdHkiXSxbIldhZ2VzIHBheWFibGUiLCJsaWFiaWxpdHkiXSxbIlVuZWFybmVkIHJldmVudWUiLCJsaWFiaWxpdHkiXSxbIk93bmVyJ3MgY2FwaXRhbCIsImVxdWl0eSJdLFsiT3duZXIncyBkcmF3aW5ncyIsImVxdWl0eSJdLFsiUmV0YWluZWQgZWFybmluZ3MiLCJlcXVpdHkiXSxbIlNhbGVzIHJldmVudWUiLCJyZXZlbnVlIl0sWyJGZWVzIGVhcm5lZCIsInJldmVudWUiXSxbIkludGVyZXN0IGluY29tZSIsInJldmVudWUiXSxbIlJlbnQgaW5jb21lIiwicmV2ZW51ZSJdLFsiV2FnZXMgZXhwZW5zZSIsImV4cGVuc2UiXSxbIlJlbnQgZXhwZW5zZSIsImV4cGVuc2UiXSxbIkluc3VyYW5jZSBleHBlbnNlIiwiZXhwZW5zZSJdLFsiRGVwcmVjaWF0aW9uIGV4cGVuc2UiLCJleHBlbnNlIl0sWyJBZHZlcnRpc2luZyBleHBlbnNlIiwiZXhwZW5zZSJdXQ==");
 const CASH_FLOW_ITEMS: [string, string][] = unpack("W1siQ2FzaCByZWNlaXZlZCBmcm9tIGN1c3RvbWVycyIsIm9wZXJhdGluZyJdLFsiUGF5bWVudHMgdG8gc3VwcGxpZXJzIiwib3BlcmF0aW5nIl0sWyJXYWdlcyBwYWlkIHRvIGVtcGxveWVlcyIsIm9wZXJhdGluZyJdLFsiUmVudCBwYWlkIiwib3BlcmF0aW5nIl0sWyJQdXJjaGFzZSBvZiBlcXVpcG1lbnQiLCJpbnZlc3RpbmciXSxbIlNhbGUgb2YgYSBtb3RvciB2ZWhpY2xlIiwiaW52ZXN0aW5nIl0sWyJQdXJjaGFzZSBvZiBzaGFyZXMgaW4gYW5vdGhlciBjb21wYW55IiwiaW52ZXN0aW5nIl0sWyJQdXJjaGFzZSBvZiBhIGJ1aWxkaW5nIiwiaW52ZXN0aW5nIl0sWyJQcm9jZWVkcyBmcm9tIGEgYmFuayBsb2FuIiwiZmluYW5jaW5nIl0sWyJSZXBheW1lbnQgb2YgYSBiYW5rIGxvYW4iLCJmaW5hbmNpbmciXSxbIk93bmVyIGludmVzdHMgYWRkaXRpb25hbCBjYXBpdGFsIiwiZmluYW5jaW5nIl0sWyJPd25lcidzIGRyYXdpbmdzIHBhaWQiLCJmaW5hbmNpbmciXV0=");
@@ -358,6 +359,10 @@ function financialStatementTerms(): Topic {
 }
 
 function baseAccountingTopics(grade: number): Topic[] {
+  return [...coreAccountingTopics(grade), accountingWordProblems(grade)];
+}
+
+function coreAccountingTopics(grade: number): Topic[] {
   if (grade <= 10) {
     return [
       accountingEquation(),
