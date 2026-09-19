@@ -1,5 +1,7 @@
 import type { Difficulty, Subject, Syllabus, Topic } from "../types";
 import { getAccountingTopics } from "./accounting";
+import { getBusinessTopics } from "./business";
+import { getEconomicsTopics } from "./economics";
 import { getEnglishTopics } from "./english";
 import { getMathsTopics } from "./maths";
 
@@ -15,6 +17,8 @@ export const SUBJECTS: SubjectDef[] = [
   { id: "maths", label: "Maths", minGrade: 1, group: "core", getTopics: getMathsTopics },
   { id: "english", label: "English", minGrade: 1, group: "core", getTopics: getEnglishTopics },
   { id: "accounting", label: "Accounting", minGrade: 9, group: "elective", getTopics: getAccountingTopics },
+  { id: "business", label: "Business Studies", minGrade: 9, group: "elective", getTopics: getBusinessTopics },
+  { id: "economics", label: "Economics", minGrade: 9, group: "elective", getTopics: getEconomicsTopics },
 ];
 
 export function getSubject(id: Subject): SubjectDef {
