@@ -1,5 +1,5 @@
 import { jsPDF } from "jspdf";
-import { drawFigure, FIGURE_HEIGHT_MM } from "./figurePdf";
+import { drawFigure, figureHeightMm } from "./figurePdf";
 import type { Question, Subject } from "./types";
 
 const PAGE_WIDTH = 210;
@@ -78,7 +78,7 @@ export function generateWorksheetPdf(info: WorksheetInfo): void {
       : null;
     const optionLines = optionsLine ? doc.splitTextToSize(optionsLine, CONTENT_WIDTH - 10) : [];
 
-    const figureHeight = q.figure ? FIGURE_HEIGHT_MM : 0;
+    const figureHeight = q.figure ? figureHeightMm(q.figure) : 0;
     const blockHeight = promptLines.length * 6 + optionLines.length * 6 + figureHeight + (q.options ? 6 : 12);
     y = ensureSpace(doc, y, blockHeight);
 
@@ -90,7 +90,7 @@ export function generateWorksheetPdf(info: WorksheetInfo): void {
 
     if (q.figure) {
       drawFigure(doc, q.figure, MARGIN + 8, y);
-      y += FIGURE_HEIGHT_MM;
+      y += figureHeight;
     }
 
     if (optionLines.length > 0) {

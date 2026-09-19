@@ -82,6 +82,8 @@ function parseMeasure(text: string): Measure | null {
 
 const closeEnough = (a: number, b: number) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
 
+const COORDINATE = /^\(?\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)?$/;
+
 const TWO_ROOTS = /^x=(-?\d+(?:\.\d+)?) or x=(-?\d+(?:\.\d+)?)$/;
 
 export function isCorrectAnswer(userAnswer: string, correctAnswer: string): boolean {
@@ -89,6 +91,10 @@ export function isCorrectAnswer(userAnswer: string, correctAnswer: string): bool
   const correct = normalizeAnswer(correctAnswer);
   if (!user) return false;
   if (user === correct) return true;
+
+  const cp = correctAnswer.replace(/−/g, "-").trim().match(COORDINATE);
+  const up = userAnswer.replace(/−/g, "-").trim().match(COORDINATE);
+  if (cp && up) return closeEnough(+cp[1], +up[1]) && closeEnough(+cp[2], +up[2]);
 
   const c = parseMeasure(correctAnswer);
   const u = parseMeasure(userAnswer);

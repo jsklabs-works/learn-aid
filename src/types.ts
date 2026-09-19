@@ -10,7 +10,8 @@ export type Figure =
       unknown: "hyp" | "legA" | "legB";
     }
   | { kind: "angleOnLine"; known: number }
-  | { kind: "triangleAngles"; a: number; b: number };
+  | { kind: "triangleAngles"; a: number; b: number }
+  | { kind: "cartesian"; extent: number; points: { label: string; x: number; y: number }[] };
 
 export interface Question {
   prompt: string;

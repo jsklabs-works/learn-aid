@@ -9,12 +9,16 @@ function fit(a: number, b: number, maxA: number, maxB: number): [number, number]
   return [a * s, b * s];
 }
 
+const CARTESIAN_SIZE = 240;
+
 export function FigureSvg({ figure }: { figure: Figure }) {
+  const width = figure.kind === "cartesian" ? CARTESIAN_SIZE : VIEW_W;
+  const height = figure.kind === "cartesian" ? CARTESIAN_SIZE : VIEW_H;
   return (
     <svg
-      viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-      width={VIEW_W}
-      height={VIEW_H}
+      viewBox={`0 0 ${width} ${height}`}
+      width={width}
+      height={height}
       className="figure-svg"
       role="img"
       aria-label="Diagram for this question"
@@ -36,6 +40,8 @@ function renderFigure(figure: Figure) {
       return <AngleOnLineFigure figure={figure} />;
     case "triangleAngles":
       return <TriangleAnglesFigure figure={figure} />;
+    case "cartesian":
+      return <CartesianFigure figure={figure} />;
   }
 }
 
@@ -164,6 +170,54 @@ function TriangleAnglesFigure({ figure }: { figure: Extract<Figure, { kind: "tri
       <text x={p3.x - 4} y={p3.y + 20} fill={STROKE} stroke="none" fontSize="11">
         ?
       </text>
+    </g>
+  );
+}
+
+function CartesianFigure({ figure }: { figure: Extract<Figure, { kind: "cartesian" }> }) {
+  const n = figure.extent;
+  const size = 200;
+  const unit = size / (2 * n);
+  const centre = CARTESIAN_SIZE / 2;
+  const px = (x: number) => centre + x * unit;
+  const py = (y: number) => centre - y * unit;
+  const ticks = Array.from({ length: 2 * n + 1 }, (_, i) => i - n);
+  return (
+    <g stroke={STROKE} fill="none">
+      {ticks.map((t) => (
+        <g key={t}>
+          <line x1={px(t)} y1={py(-n)} x2={px(t)} y2={py(n)} strokeOpacity={0.15} strokeWidth={0.6} />
+          <line x1={px(-n)} y1={py(t)} x2={px(n)} y2={py(t)} strokeOpacity={0.15} strokeWidth={0.6} />
+        </g>
+      ))}
+      <line x1={px(-n)} y1={py(0)} x2={px(n)} y2={py(0)} strokeWidth={1.4} />
+      <line x1={px(0)} y1={py(-n)} x2={px(0)} y2={py(n)} strokeWidth={1.4} />
+      {ticks
+        .filter((t) => t !== 0)
+        .map((t) => (
+          <g key={`l${t}`} fill={STROKE} stroke="none" fontSize="7.5">
+            <text x={px(t)} y={py(0) + 9} textAnchor="middle">
+              {t}
+            </text>
+            <text x={px(0) - 4} y={py(t) + 2.5} textAnchor="end">
+              {t}
+            </text>
+          </g>
+        ))}
+      <text x={px(n) + 1} y={py(0) - 4} fill={STROKE} stroke="none" fontSize="9" fontStyle="italic">
+        x
+      </text>
+      <text x={px(0) + 4} y={py(n) - 1} fill={STROKE} stroke="none" fontSize="9" fontStyle="italic">
+        y
+      </text>
+      {figure.points.map((pt) => (
+        <g key={pt.label}>
+          <circle cx={px(pt.x)} cy={py(pt.y)} r={3.4} fill={STROKE} />
+          <text x={px(pt.x) + 5} y={py(pt.y) - 5} fill={STROKE} stroke="none" fontSize="11" fontWeight="bold">
+            {pt.label}
+          </text>
+        </g>
+      ))}
     </g>
   );
 }

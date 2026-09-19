@@ -402,6 +402,119 @@ function integerOperations(maxAbs: number): Topic {
   };
 }
 
+// ---------- Cartesian plane (Grade 6) ----------
+
+const QUADRANT_TEXT =
+  "Positive x and positive y is the first quadrant (top right); negative x and positive y is the second (top left); negative x and negative y is the third (bottom left); positive x and negative y is the fourth (bottom right).";
+
+function unitsText(n: number): string {
+  return `${n} ${n === 1 ? "unit" : "units"}`;
+}
+
+function cartesianPlane(): Topic {
+  const coordinate = () => randInt(1, 6) * pick([1, -1]);
+  const moves = (x: number, y: number) =>
+    `Start at the origin (0, 0). Move ${unitsText(Math.abs(x))} ${x > 0 ? "right" : "left"}, then ${unitsText(Math.abs(y))} ${y > 0 ? "up" : "down"}.`;
+  return {
+    id: "cartesian-plane",
+    label: "The Cartesian plane",
+    generate: () => {
+      const kind = pick(["read", "quadrant", "locate", "reflect", "translate", "distance"] as const);
+
+      if (kind === "read") {
+        const x = coordinate();
+        const y = coordinate();
+        return {
+          prompt: "What are the coordinates of point A? (write them as (x, y))",
+          answer: `(${x}, ${y})`,
+          figure: { kind: "cartesian", extent: 6, points: [{ label: "A", x, y }] },
+          explanation: `Read across first, then up or down. From the origin, point A is ${unitsText(Math.abs(x))} ${x > 0 ? "right" : "left"} and ${unitsText(Math.abs(y))} ${y > 0 ? "up" : "down"}. Coordinates are written (x, y), so A is (${x}, ${y}).`,
+        };
+      }
+
+      if (kind === "quadrant") {
+        const x = coordinate();
+        const y = coordinate();
+        const answer = x > 0 && y > 0 ? "first" : x < 0 && y > 0 ? "second" : x < 0 && y < 0 ? "third" : "fourth";
+        return {
+          prompt: "In which quadrant is point P?",
+          answer,
+          options: ["first", "second", "third", "fourth"],
+          figure: { kind: "cartesian", extent: 6, points: [{ label: "P", x, y }] },
+          explanation: `P is at (${x}, ${y}): x is ${x > 0 ? "positive" : "negative"} and y is ${y > 0 ? "positive" : "negative"}. ${QUADRANT_TEXT} So P is in the ${answer} quadrant.`,
+        };
+      }
+
+      if (kind === "locate") {
+        const seen = new Set<string>();
+        const points: { label: string; x: number; y: number }[] = [];
+        for (const label of ["A", "B", "C", "D"]) {
+          let x: number, y: number;
+          do {
+            x = coordinate();
+            y = coordinate();
+          } while (seen.has(`${x},${y}`));
+          seen.add(`${x},${y}`);
+          points.push({ label, x, y });
+        }
+        const target = pick(points);
+        return {
+          prompt: `Which point is at (${target.x}, ${target.y})?`,
+          answer: target.label,
+          options: ["A", "B", "C", "D"],
+          figure: { kind: "cartesian", extent: 6, points },
+          explanation: `${moves(target.x, target.y)} That is point ${target.label}.`,
+        };
+      }
+
+      if (kind === "reflect") {
+        const x = coordinate();
+        const y = coordinate();
+        const inXAxis = Math.random() < 0.5;
+        const image = inXAxis ? `(${x}, ${-y})` : `(${-x}, ${y})`;
+        return {
+          prompt: `Point A is at (${x}, ${y}). What are the coordinates of its reflection in the ${inXAxis ? "x-axis" : "y-axis"}?`,
+          answer: image,
+          figure: { kind: "cartesian", extent: 6, points: [{ label: "A", x, y }] },
+          explanation: inXAxis
+            ? `Reflecting in the x-axis flips the point up or down: the x-coordinate stays the same and the y-coordinate changes sign. (${x}, ${y}) becomes ${image}.`
+            : `Reflecting in the y-axis flips the point left or right: the y-coordinate stays the same and the x-coordinate changes sign. (${x}, ${y}) becomes ${image}.`,
+        };
+      }
+
+      if (kind === "translate") {
+        const x = randInt(1, 5) * pick([1, -1]);
+        const y = randInt(1, 5) * pick([1, -1]);
+        const dx = randInt(1, 3) * pick([1, -1]);
+        const dy = randInt(1, 3) * pick([1, -1]);
+        return {
+          prompt: `Point A is at (${x}, ${y}). It is moved ${unitsText(Math.abs(dx))} ${dx > 0 ? "right" : "left"} and ${unitsText(Math.abs(dy))} ${dy > 0 ? "up" : "down"}. What are its new coordinates?`,
+          answer: `(${x + dx}, ${y + dy})`,
+          figure: { kind: "cartesian", extent: 8, points: [{ label: "A", x, y }] },
+          explanation: `Moving right adds to x and left subtracts; moving up adds to y and down subtracts. New x = ${x} ${dx > 0 ? "+" : "-"} ${Math.abs(dx)} = ${x + dx}. New y = ${y} ${dy > 0 ? "+" : "-"} ${Math.abs(dy)} = ${y + dy}. So A moves to (${x + dx}, ${y + dy}).`,
+        };
+      }
+
+      const horizontal = Math.random() < 0.5;
+      const fixed = coordinate();
+      const p = randInt(-6, 6);
+      let q: number;
+      do {
+        q = randInt(-6, 6);
+      } while (q === p);
+      const a = horizontal ? { label: "A", x: p, y: fixed } : { label: "A", x: fixed, y: p };
+      const b = horizontal ? { label: "B", x: q, y: fixed } : { label: "B", x: fixed, y: q };
+      const distance = Math.abs(p - q);
+      return {
+        prompt: "How many units apart are points A and B?",
+        answer: String(distance),
+        figure: { kind: "cartesian", extent: 6, points: [a, b] },
+        explanation: `Both points are on the same ${horizontal ? "horizontal" : "vertical"} line, so only the ${horizontal ? "x" : "y"}-coordinates differ. A is at ${horizontal ? "x" : "y"} = ${p} and B is at ${horizontal ? "x" : "y"} = ${q}. The distance is the difference between them: ${Math.max(p, q)} − ${Math.min(p, q) < 0 ? `(${Math.min(p, q)})` : Math.min(p, q)} = ${distance} units.`,
+      };
+    },
+  };
+}
+
 // ---------- Grades 7-8 ----------
 
 function simplifyLikeTerms(): Topic {
@@ -1059,6 +1172,7 @@ function coreMathsTopics(grade: number): Topic[] {
       areaTriangle(20),
       orderOfOperations(),
       integerOperations(20),
+      ...(grade === 6 ? [cartesianPlane()] : []),
     ];
   }
   if (grade <= 8) {

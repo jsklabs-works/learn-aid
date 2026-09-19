@@ -2,6 +2,11 @@ import type { jsPDF } from "jspdf";
 import type { Figure } from "./types";
 
 export const FIGURE_HEIGHT_MM = 34;
+const CARTESIAN_HEIGHT_MM = 54;
+
+export function figureHeightMm(figure: Figure): number {
+  return figure.kind === "cartesian" ? CARTESIAN_HEIGHT_MM : FIGURE_HEIGHT_MM;
+}
 const FIGURE_WIDTH_MM = 55;
 
 function fit(a: number, b: number, maxA: number, maxB: number): [number, number] {
@@ -76,6 +81,40 @@ export function drawFigure(doc: jsPDF, figure: Figure, x: number, y: number): vo
       doc.line(cx, cy, cx + r * Math.cos(Math.PI - rad), cy - r * Math.sin(Math.PI - rad));
       doc.text(`${figure.known}°`, cx - r / 2, cy - 3, { align: "center" });
       doc.text("?", cx + r / 2, cy - 3, { align: "center" });
+      break;
+    }
+    case "cartesian": {
+      const n = figure.extent;
+      const span = 44;
+      const unit = span / (2 * n);
+      const ox = x + 8 + span / 2;
+      const oy = y + 4 + span / 2;
+      doc.setDrawColor(215);
+      doc.setLineWidth(0.1);
+      for (let t = -n; t <= n; t++) {
+        doc.line(ox + t * unit, oy - n * unit, ox + t * unit, oy + n * unit);
+        doc.line(ox - n * unit, oy - t * unit, ox + n * unit, oy - t * unit);
+      }
+      doc.setDrawColor(60);
+      doc.setLineWidth(0.3);
+      doc.line(ox - n * unit, oy, ox + n * unit, oy);
+      doc.line(ox, oy - n * unit, ox, oy + n * unit);
+      doc.setFontSize(5.5);
+      for (let t = -n; t <= n; t++) {
+        if (t === 0) continue;
+        doc.text(String(t), ox + t * unit, oy + 2.6, { align: "center" });
+        doc.text(String(t), ox - 0.9, oy - t * unit + 0.7, { align: "right" });
+      }
+      doc.setFontSize(7);
+      doc.text("x", ox + n * unit + 1, oy - 0.8);
+      doc.text("y", ox + 0.8, oy - n * unit - 0.6);
+      doc.setFillColor(60, 60, 60);
+      for (const pt of figure.points) {
+        doc.circle(ox + pt.x * unit, oy - pt.y * unit, 0.7, "F");
+        doc.setFontSize(8);
+        doc.text(pt.label, ox + pt.x * unit + 1.2, oy - pt.y * unit - 1.2);
+      }
+      doc.setFillColor(0, 0, 0);
       break;
     }
     case "triangleAngles": {
