@@ -2,7 +2,7 @@
 
 A free, browser-only worksheet and online-test generator, Grades 1–12. Built for students, parents and teachers who want quick, random practice without signing up for anything.
 
-- Pick a **syllabus** (Victorian Curriculum or Cambridge International), **subject** (Maths, English, or or a Grade 9+ elective: Accounting, Business Studies, Economics), **grade** (1–12) and **difficulty** (Standard or Advanced)
+- Pick a **syllabus** (Victorian Curriculum or Cambridge International), **subject** (Maths, English, or a Grade 9+ elective: Accounting, Business Studies, Economics, Biology, Chemistry, Physics), **grade** (1–12) and **difficulty** (Standard or Advanced)
 - Choose which **topics** to include and how many **questions** you want (up to 50)
 - **Worksheet mode**: generate, preview (with diagrams for geometry questions), then **download a PDF** with a matching answer key on the last page
 - **Online test mode**: answer questions right in the browser (multiple choice or free text), submit, and get an instant score with a per-question breakdown
@@ -42,10 +42,13 @@ Questions are procedurally generated (maths) or randomly sampled from curated it
 | Accounting | Accounting equation, classifying accounts, debits/credits, net profit, straight-line depreciation, trial balance check | Reducing-balance depreciation, profit margins, current ratio, doubtful debts, FIFO inventory, break-even, cash flow classification |
 | Business Studies | Business ownership, marketing mix (4Ps), SWOT, objectives, markup pricing, market share | Stakeholders, business functions, leadership styles, return on investment, staff turnover, labour productivity |
 | Economics | Supply and demand, economic systems, factors of production, opportunity cost, inflation rate | Price elasticity of demand, economic growth, unemployment rate, fiscal vs monetary policy, market structures |
+| Biology | Cell structures, levels of organisation, body systems, photosynthesis/respiration, Punnett squares, energy transfer in food chains | DNA replication/transcription/translation, base pairing, dihybrid crosses, natural selection, feedback loops, enzymes, magnification, SA:V ratio |
+| Chemistry | Atomic structure, periodic table groups, balancing equations, pH, neutralisation salts, moles and mass, physical vs chemical change | Stoichiometry, concentration, Le Chatelier, oxidation numbers, organic families, alkanes, heat energy |
+| Physics | Speed, F = ma, Ohm's law, energy transformations, wave equation, density, work and power | Kinematics, momentum and impulse, kinetic/potential energy, series/parallel resistors, projectile motion, wave behaviour, half-life |
 
-Advanced adds, at Grade 11–12: Ansoff growth strategies, market segmentation and sales growth (Business Studies); the multiplier, real vs nominal GDP and comparative advantage (Economics). Cambridge adds VAT and statement terminology (Accounting); sectors of industry, fixed/variable costs and average cost (Business Studies); exchange rates, direct/indirect taxes and trade balance (Economics).
+Advanced adds, at Grade 11–12: Ansoff growth strategies, market segmentation and sales growth (Business Studies); the multiplier, real vs nominal GDP and comparative advantage (Economics); Hardy-Weinberg, cell process locations and X-linked inheritance (Biology); dilution, limiting reagents and pH of strong acids/bases (Chemistry); circular motion, electrical power and lens calculations (Physics). Cambridge adds VAT and statement terminology (Accounting); sectors of industry, fixed/variable costs and average cost (Business Studies); exchange rates, direct/indirect taxes and trade balance (Economics); characteristics of living organisms and osmosis (Biology); gas tests, separation techniques and relative formula mass (Chemistry); pressure, thermal transfer and the electromagnetic spectrum (Physics).
 
-Biology, Chemistry and Physics are planned next, using the same subject registry ([`src/curriculum/subjects.ts`](src/curriculum/subjects.ts)).
+All electives are registered in [`src/curriculum/subjects.ts`](src/curriculum/subjects.ts). The sciences are text-only for now; diagrams (circuits, cells, apparatus) are a possible future addition.
 
 ### Difficulty and syllabus
 
@@ -58,7 +61,7 @@ Free-text answers are graded with a lenient, case-insensitive string match (whit
 
 ### About the static item banks
 
-The repo is public, so the static question/answer banks (English in [`src/curriculum/english.ts`](src/curriculum/english.ts), plus the classification-style banks in [`accounting.ts`](src/curriculum/accounting.ts), [`business.ts`](src/curriculum/business.ts) and [`economics.ts`](src/curriculum/economics.ts)) are stored as base64 blobs (see [`src/curriculum/codec.ts`](src/curriculum/codec.ts)) rather than plain arrays, so an answer isn't sitting as literal, greppable text next to its question in the source or the shipped JS. This is **not real security** — anyone who reads `codec.ts` can decode it in one line, and it does nothing to stop someone inspecting a live online test's React state in dev tools. Properly hiding answers from a determined user would need a backend to check answers server-side, which this project deliberately doesn't have. Maths answers are computed live from random numbers, so there's nothing to encode there.
+The repo is public, so the static question/answer banks (English in [`src/curriculum/english.ts`](src/curriculum/english.ts), plus the classification-style banks in [`accounting.ts`](src/curriculum/accounting.ts), [`business.ts`](src/curriculum/business.ts) and [`economics.ts`](src/curriculum/economics.ts) and the three science modules) are stored as base64 blobs (see [`src/curriculum/codec.ts`](src/curriculum/codec.ts)) rather than plain arrays, so an answer isn't sitting as literal, greppable text next to its question in the source or the shipped JS. This is **not real security** — anyone who reads `codec.ts` can decode it in one line, and it does nothing to stop someone inspecting a live online test's React state in dev tools. Properly hiding answers from a determined user would need a backend to check answers server-side, which this project deliberately doesn't have. Maths answers are computed live from random numbers, so there's nothing to encode there.
 
 ## Development
 

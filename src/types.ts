@@ -25,6 +25,14 @@ export interface Topic {
   generate: () => Question;
 }
 
-export type Subject = "maths" | "english" | "accounting" | "business" | "economics";
+export type Subject =
+  | "maths"
+  | "english"
+  | "accounting"
+  | "business"
+  | "economics"
+  | "biology"
+  | "chemistry"
+  | "physics";
 export type Syllabus = "vic" | "cambridge";
 export type Difficulty = "standard" | "advanced";
