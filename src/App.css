@@ -344,3 +344,78 @@
   color: var(--text);
   font-size: 13px;
 }
+
+.layout.single {
+  grid-template-columns: 1fr;
+}
+
+.share-panel {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--accent-border);
+  border-radius: 12px;
+  background: var(--accent-bg);
+}
+
+.share-panel h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  text-align: left;
+}
+
+.share-link-row {
+  display: flex;
+  gap: 8px;
+}
+
+.share-link-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.share-link-row button {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.share-link-row button:hover {
+  background: var(--code-bg);
+}
+
+.share-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  color: var(--text-h);
+  font-size: 14px;
+}
+
+.share-note {
+  margin: 8px 0 0;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.shared-banner {
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--code-bg);
+  color: var(--text-h);
+  font-size: 14px;
+}

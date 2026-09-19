@@ -1,5 +1,5 @@
 import type { Difficulty, Syllabus, Topic } from "../types";
-import { bankFill, bankMCQ, pick } from "./utils";
+import { bankFill, bankMCQ, pick, shuffle } from "./utils";
 import { unpack } from "./codec";
 import {
   commonlyConfused,
@@ -348,7 +348,7 @@ function homophones(): Topic {
     label: "Homophones",
     generate: () => {
       const item = items[Math.floor(Math.random() * items.length)];
-      const options = [item.answer, ...item.distractors].sort(() => Math.random() - 0.5);
+      const options = shuffle([item.answer, ...item.distractors]);
       return { prompt: item.prompt, answer: item.answer, options, explanation: item.explanation };
     },
   };
@@ -413,7 +413,7 @@ function vocabularyInContext(): Topic {
     label: "Vocabulary in context",
     generate: () => {
       const item = VOCAB_CONTEXT[Math.floor(Math.random() * VOCAB_CONTEXT.length)];
-      const options = [item.meaning, ...item.distractors].sort(() => Math.random() - 0.5);
+      const options = shuffle([item.meaning, ...item.distractors]);
       return {
         prompt: `In "${item.sentence}", what does "${item.word}" mean?`,
         answer: item.meaning,
@@ -480,7 +480,7 @@ function advancedVocabulary(): Topic {
     label: "Advanced vocabulary",
     generate: () => {
       const item = ADVANCED_VOCAB[Math.floor(Math.random() * ADVANCED_VOCAB.length)];
-      const options = [item.meaning, ...item.distractors].sort(() => Math.random() - 0.5);
+      const options = shuffle([item.meaning, ...item.distractors]);
       return {
         prompt: `What does "${item.word}" mean?`,
         answer: item.meaning,
@@ -545,7 +545,7 @@ function idioms(): Topic {
     label: "Idioms and expressions",
     generate: () => {
       const item = pick(items);
-      const options = [item.answer, ...item.distractors].sort(() => Math.random() - 0.5);
+      const options = shuffle([item.answer, ...item.distractors]);
       return { prompt: item.prompt, answer: item.answer, options, explanation: item.explanation };
     },
   };
@@ -592,7 +592,7 @@ function inferenceMeaning(): Topic {
     label: "Inference and implication",
     generate: () => {
       const item = pick(INFERENCE_EXAMPLES);
-      const options = [item.inference, ...item.distractors].sort(() => Math.random() - 0.5);
+      const options = shuffle([item.inference, ...item.distractors]);
       return {
         prompt: `What can be inferred from: "${item.passage}"?`,
         answer: item.inference,

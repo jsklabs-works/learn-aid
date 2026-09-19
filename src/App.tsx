@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { FigureSvg } from "./components/FigureSvg";
+import { SharePanel } from "./components/SharePanel";
 import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
 import { generateUniqueQuestions } from "./generate";
 import { diagnoseAnswer, isCorrectAnswer } from "./grading";
 import { generateWorksheetPdf } from "./pdf";
+import { SHARE_VERSION, buildShareUrl, newSeed, parseShareHash, withSeed, type ShareSpec } from "./share";
 import type { Difficulty, Question, Subject, Syllabus } from "./types";
 import { useTheme, type Theme } from "./useTheme";
 
@@ -14,20 +16,43 @@ const MAX_QUESTIONS = 50;
 
 type Mode = "worksheet" | "test";
 
+const initialShare = parseShareHash(window.location.hash);
+
+/** Builds the questions for a spec. The same spec always gives the same questions, on any device. */
+function generateFor(spec: ShareSpec): Question[] {
+  const all = getTopics(spec.subject, spec.grade, spec.syllabus, spec.difficulty);
+  const pool = spec.topicIds ? all.filter((t) => spec.topicIds?.includes(t.id)) : all;
+  return withSeed(spec.seed, () => generateUniqueQuestions(pool, spec.count));
+}
+
 function App() {
   const [theme, setTheme] = useTheme();
-  const [subject, setSubject] = useState<Subject>("maths");
-  const [grade, setGrade] = useState(3);
-  const [syllabus, setSyllabus] = useState<Syllabus>("vic");
-  const [difficulty, setDifficulty] = useState<Difficulty>("standard");
-  const [mode, setMode] = useState<Mode>("worksheet");
-  const [count, setCount] = useState(10);
-  const [selectedTopicIds, setSelectedTopicIds] = useState<Set<string>>(new Set());
-  const [questions, setQuestions] = useState<Question[] | null>(null);
+  const [subject, setSubject] = useState<Subject>(initialShare?.subject ?? "maths");
+  const [grade, setGrade] = useState(initialShare?.grade ?? 3);
+  const [syllabus, setSyllabus] = useState<Syllabus>(initialShare?.syllabus ?? "vic");
+  const [difficulty, setDifficulty] = useState<Difficulty>(initialShare?.difficulty ?? "standard");
+  const [mode, setMode] = useState<Mode>(initialShare ? "test" : "worksheet");
+  const [count, setCount] = useState(initialShare?.count ?? 10);
+  const [selectedTopicIds, setSelectedTopicIds] = useState<Set<string>>(() =>
+    initialShare
+      ? new Set(
+          initialShare.topicIds ??
+            getTopics(initialShare.subject, initialShare.grade, initialShare.syllabus, initialShare.difficulty).map((t) => t.id),
+        )
+      : new Set(),
+  );
+  const [questions, setQuestions] = useState<Question[] | null>(() => (initialShare ? generateFor(initialShare) : null));
   const [showAnswers, setShowAnswers] = useState(false);
-  const [testAnswers, setTestAnswers] = useState<string[]>([]);
+  const [testAnswers, setTestAnswers] = useState<string[]>(() =>
+    initialShare ? new Array(initialShare.count).fill("") : [],
+  );
   const [testSubmitted, setTestSubmitted] = useState(false);
-  const [requestedCount, setRequestedCount] = useState(0);
+  const [requestedCount, setRequestedCount] = useState(initialShare?.count ?? 0);
+  const [shared, setShared] = useState<ShareSpec | null>(initialShare);
+  const sharedRef = useRef<ShareSpec | null>(initialShare);
+  const [lastSpec, setLastSpec] = useState<ShareSpec | null>(null);
+  const [sharePanelOpen, setSharePanelOpen] = useState(false);
+  const [revealOnShare, setRevealOnShare] = useState(true);
 
   const { label: subjectLabel, minGrade } = getSubject(subject);
   const explanationLabel = subject === "general" ? "Did you know?" : "How to get it";
@@ -45,9 +70,58 @@ function App() {
 
   // Whenever the subject/grade/syllabus/difficulty changes, select all of that set's topics by default.
   useEffect(() => {
+    if (sharedRef.current) return;
     setSelectedTopicIds(new Set(topics.map((t) => t.id)));
     setQuestions(null);
+    setLastSpec(null);
   }, [topics]);
+
+  const loadShared = useCallback((spec: ShareSpec) => {
+    const generated = generateFor(spec);
+    sharedRef.current = spec;
+    setShared(spec);
+    setSubject(spec.subject);
+    setGrade(spec.grade);
+    setSyllabus(spec.syllabus);
+    setDifficulty(spec.difficulty);
+    setCount(spec.count);
+    setMode("test");
+    setSelectedTopicIds(
+      new Set(spec.topicIds ?? getTopics(spec.subject, spec.grade, spec.syllabus, spec.difficulty).map((t) => t.id)),
+    );
+    setQuestions(generated);
+    setRequestedCount(spec.count);
+    setShowAnswers(false);
+    setTestAnswers(new Array(generated.length).fill(""));
+    setTestSubmitted(false);
+    setSharePanelOpen(false);
+  }, []);
+
+  // A share link pasted into an already-open tab only changes the hash.
+  useEffect(() => {
+    function onHashChange() {
+      const spec = parseShareHash(window.location.hash);
+      if (spec) loadShared(spec);
+    }
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, [loadShared]);
+
+  function exitShared() {
+    sharedRef.current = null;
+    setShared(null);
+    window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    setSelectedTopicIds(new Set(topics.map((t) => t.id)));
+    setQuestions(null);
+    setTestAnswers([]);
+    setTestSubmitted(false);
+  }
+
+  function retakeShared() {
+    setTestAnswers(new Array(questions?.length ?? 0).fill(""));
+    setTestSubmitted(false);
+    window.scrollTo({ top: 0 });
+  }
 
   const activeTopics = topics.filter((t) => selectedTopicIds.has(t.id));
 
@@ -61,8 +135,20 @@ function App() {
   }
 
   function handleGenerate() {
-    const pool = activeTopics.length > 0 ? activeTopics : topics;
-    const generated = generateUniqueQuestions(pool, count);
+    const chosen = activeTopics.length > 0 ? activeTopics : topics;
+    const spec: ShareSpec = {
+      subject,
+      grade,
+      syllabus,
+      difficulty,
+      count,
+      topicIds: chosen.length < topics.length ? chosen.map((t) => t.id) : null,
+      seed: newSeed(),
+      reveal: true,
+      version: SHARE_VERSION,
+    };
+    const generated = generateFor(spec);
+    setLastSpec(spec);
     setQuestions(generated);
     setRequestedCount(count);
     setShowAnswers(false);
@@ -80,6 +166,8 @@ function App() {
       questions,
     });
   }
+
+  const showFeedback = !shared || shared.reveal;
 
   const score = useMemo(() => {
     if (!questions || !testSubmitted) return null;
@@ -111,7 +199,8 @@ function App() {
         </p>
       </header>
 
-      <main className="layout">
+      <main className={shared ? "layout single" : "layout"}>
+        {!shared && (
         <section className="panel" aria-label="Settings">
           <div className="mode-toggle" role="tablist" aria-label="Mode">
             <button
@@ -215,6 +304,7 @@ function App() {
             {mode === "worksheet" ? "Generate worksheet" : "Start test"}
           </button>
         </section>
+        )}
 
         <section className="preview" aria-label="Preview">
           {!questions && (
@@ -234,11 +324,20 @@ function App() {
                     {showAnswers ? "Hide answers" : "Show answers"}
                   </button>
                   <button onClick={handleGenerate}>Regenerate</button>
+                  <button onClick={() => setSharePanelOpen((o) => !o)}>Share as online test</button>
                   <button className="primary-button" onClick={handleDownload}>
                     Download PDF (with answer key)
                   </button>
                 </div>
               </div>
+
+              {sharePanelOpen && lastSpec && (
+                <SharePanel
+                  link={buildShareUrl({ ...lastSpec, reveal: revealOnShare })}
+                  reveal={revealOnShare}
+                  onRevealChange={setRevealOnShare}
+                />
+              )}
 
               {questions.length < requestedCount && (
                 <div className="notice" role="status">
@@ -285,10 +384,20 @@ function App() {
                   Grade {grade} {subjectLabel} Test
                 </h2>
                 <div className="preview-actions">
+                  {!shared && !testSubmitted && (
+                    <button onClick={() => setSharePanelOpen((o) => !o)}>Share this test</button>
+                  )}
                   {!testSubmitted ? (
                     <button className="primary-button" onClick={() => setTestSubmitted(true)}>
                       Submit test
                     </button>
+                  ) : shared ? (
+                    <>
+                      {shared.reveal && <button onClick={retakeShared}>Retake this test</button>}
+                      <button className="primary-button" onClick={exitShared}>
+                        Take your own practice test
+                      </button>
+                    </>
                   ) : (
                     <button className="primary-button" onClick={handleGenerate}>
                       Try a new test
@@ -296,6 +405,22 @@ function App() {
                   )}
                 </div>
               </div>
+
+              {shared && (
+                <div className="shared-banner" role="status">
+                  Shared test · {questions.length} question{questions.length === 1 ? "" : "s"}
+                  {shared.version !== SHARE_VERSION &&
+                    ". This link was made with a different version of Learn Aid, so the questions may not match the original."}
+                </div>
+              )}
+
+              {!shared && !testSubmitted && sharePanelOpen && lastSpec && (
+                <SharePanel
+                  link={buildShareUrl({ ...lastSpec, reveal: revealOnShare })}
+                  reveal={revealOnShare}
+                  onRevealChange={setRevealOnShare}
+                />
+              )}
 
               {questions.length < requestedCount && (
                 <div className="notice" role="status">
@@ -363,14 +488,17 @@ function App() {
                           }
                         />
                       )}
-                      {testSubmitted && (
+                      {testSubmitted && !showFeedback && (
+                        <div className="question-answer">{correct ? "Correct" : "Incorrect"}</div>
+                      )}
+                      {testSubmitted && showFeedback && (
                         <div className="question-answer">
                           {correct ? "Correct" : `Correct answer: ${q.answer}`}
                           {!correct && userAnswer && <> — you answered: {userAnswer}</>}
                           {!correct && diagnoseAnswer(userAnswer, q.answer) && <> {diagnoseAnswer(userAnswer, q.answer)}</>}
                         </div>
                       )}
-                      {testSubmitted && !correct && q.explanation && (
+                      {testSubmitted && showFeedback && !correct && q.explanation && (
                         <div className="question-explanation">
                           <strong>{explanationLabel}</strong>
                           {q.explanation}

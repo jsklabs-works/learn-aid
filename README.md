@@ -6,6 +6,7 @@ A free, browser-only worksheet and online-test generator, Grades 1–12. Built f
 - Choose which **topics** to include and how many **questions** you want (up to 50)
 - **Worksheet mode**: generate, preview (with diagrams for geometry questions), then **download a PDF** with a matching answer key on the last page
 - **Online test mode**: answer questions right in the browser (multiple choice or free text), submit, and get an instant score with a per-question breakdown. Wrong answers show the correct answer and a short explanation or worked steps (the same explanations appear under "Show answers" and in the PDF answer key)
+- **Share a test**: after generating a worksheet or test, click *Share as online test* (or *Share this test*) to get a link. Everyone who opens it gets the same questions in the same order as an online test, and you can choose whether they see the correct answers afterwards or just their score. The link only holds the settings and a random seed (the questions are rebuilt from it in the browser), so nothing is stored on a server. Links are tied to the app version: when question content changes, bump `SHARE_VERSION` in [`src/share.ts`](src/share.ts) so older links show a warning.
 - Answers are checked leniently: units are optional (`45`, `45°` and `45 degrees` all count), unit spellings are flexible (`m²`, `sq m`, `square metres`) and coordinates like `(3,4)` and `(3, 4)` match
 - No question is ever repeated within one worksheet or test
 
