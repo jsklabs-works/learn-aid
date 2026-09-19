@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import { FigureSvg } from "./components/FigureSvg";
 import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
+import { generateUniqueQuestions } from "./generate";
 import { diagnoseAnswer, isCorrectAnswer } from "./grading";
 import { generateWorksheetPdf } from "./pdf";
 import type { Difficulty, Question, Subject, Syllabus } from "./types";
@@ -26,6 +27,7 @@ function App() {
   const [showAnswers, setShowAnswers] = useState(false);
   const [testAnswers, setTestAnswers] = useState<string[]>([]);
   const [testSubmitted, setTestSubmitted] = useState(false);
+  const [requestedCount, setRequestedCount] = useState(0);
 
   const { label: subjectLabel, minGrade } = getSubject(subject);
 
@@ -59,11 +61,9 @@ function App() {
 
   function handleGenerate() {
     const pool = activeTopics.length > 0 ? activeTopics : topics;
-    const generated: Question[] = Array.from({ length: count }, () => {
-      const topic = pool[Math.floor(Math.random() * pool.length)];
-      return topic.generate();
-    });
+    const generated = generateUniqueQuestions(pool, count);
     setQuestions(generated);
+    setRequestedCount(count);
     setShowAnswers(false);
     setTestAnswers(new Array(generated.length).fill(""));
     setTestSubmitted(false);
@@ -239,6 +239,13 @@ function App() {
                 </div>
               </div>
 
+              {questions.length < requestedCount && (
+                <div className="notice" role="status">
+                  Only {questions.length} different questions are available for these settings, so that is all you
+                  are getting (nothing is repeated). Tick more topics or pick another grade to get {requestedCount}.
+                </div>
+              )}
+
               <ol className="question-list">
                 {questions.map((q, i) => (
                   <li key={i} className="question">
@@ -288,6 +295,13 @@ function App() {
                   )}
                 </div>
               </div>
+
+              {questions.length < requestedCount && (
+                <div className="notice" role="status">
+                  Only {questions.length} different questions are available for these settings, so that is all you
+                  are getting (nothing is repeated). Tick more topics or pick another grade to get {requestedCount}.
+                </div>
+              )}
 
               {score && (
                 <div className="score-banner">

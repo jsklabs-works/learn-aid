@@ -282,6 +282,16 @@
   display: block;
 }
 
+.notice {
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-size: 14px;
+}
+
 .score-banner {
   margin-bottom: 16px;
   padding: 12px 16px;
