@@ -14,6 +14,71 @@ const SEGMENTATION: [string, string][] = unpack("W1siRGl2aWRpbmcgY3VzdG9tZXJzIGJ
 const SECTORS: [string, string][] = unpack("W1siRmFybWluZywgZmlzaGluZyBhbmQgbWluaW5nIiwicHJpbWFyeSJdLFsiTWFudWZhY3R1cmluZyBnb29kcyBmcm9tIHJhdyBtYXRlcmlhbHMiLCJzZWNvbmRhcnkiXSxbIkJhbmtpbmcsIHJldGFpbCBhbmQgdHJhbnNwb3J0IiwidGVydGlhcnkiXSxbIkV4dHJhY3Rpbmcgb2lsIGZyb20gdGhlIGdyb3VuZCIsInByaW1hcnkiXSxbIkJ1aWxkaW5nIGNhcnMgaW4gYSBmYWN0b3J5Iiwic2Vjb25kYXJ5Il0sWyJQcm92aWRpbmcgZWR1Y2F0aW9uIGFuZCBoZWFsdGhjYXJlIiwidGVydGlhcnkiXSxbIk1ha2luZyBicmVhZCBmcm9tIGZsb3VyIiwic2Vjb25kYXJ5Il0sWyJHcm93aW5nIHdoZWF0IG9uIGEgZmFybSIsInByaW1hcnkiXV0=");
 const COST_CLASS: [string, string][] = unpack("W1siUmVudCBvZiBhIGZhY3RvcnkiLCJmaXhlZCJdLFsiUmF3IG1hdGVyaWFscyIsInZhcmlhYmxlIl0sWyJBIHNhbGFyaWVkIG1hbmFnZXIncyB3YWdlcyIsImZpeGVkIl0sWyJQaWVjZS1yYXRlIHdhZ2VzIiwidmFyaWFibGUiXSxbIkluc3VyYW5jZSBwcmVtaXVtcyIsImZpeGVkIl0sWyJQYWNrYWdpbmciLCJ2YXJpYWJsZSJdLFsiTG9hbiBpbnRlcmVzdCIsImZpeGVkIl0sWyJTYWxlcyBjb21taXNzaW9uIiwidmFyaWFibGUiXSxbIkVsZWN0cmljaXR5IHVzZWQgYnkgbWFjaGluZXMiLCJ2YXJpYWJsZSJdXQ==");
 
+const MIX_MEANING: Record<string, string> = {
+  product: "what is being sold (its design, features and quality)",
+  price: "how much customers pay, including discounts and payment terms",
+  place: "where and how customers can buy it",
+  promotion: "how the business tells customers about it",
+};
+const SWOT_MEANING: Record<string, string> = {
+  strength: "an internal advantage the business has",
+  weakness: "an internal problem the business has",
+  opportunity: "an external chance the business could take advantage of",
+  threat: "an external risk the business must deal with",
+};
+const OBJECTIVE_MEANING: Record<string, string> = {
+  profit: "aims to earn more than it spends",
+  growth: "aims to get bigger, with more sales, branches or customers",
+  survival: "aims to keep trading and cover its costs",
+  "social responsibility": "aims to benefit the community or the environment",
+};
+const FUNCTION_MEANING: Record<string, string> = {
+  operations: "makes the product or delivers the service",
+  marketing: "researches customers, sets prices and promotes the product",
+  finance: "manages money, budgets and funding",
+  "human resources": "recruits, trains and looks after staff",
+};
+const LEADERSHIP_MEANING: Record<string, string> = {
+  autocratic: "makes decisions alone",
+  democratic: "involves the team in decisions",
+  "laissez-faire": "leaves the team to decide for themselves",
+};
+const GROWTH_MEANING: Record<string, string> = {
+  "market penetration": "sells more of an existing product in an existing market",
+  "product development": "creates new products for existing customers",
+  "market development": "sells existing products in new markets",
+  diversification: "launches new products in new markets, which is the riskiest option",
+};
+const SEGMENT_MEANING: Record<string, string> = {
+  demographic: "groups customers by age, income, gender or occupation",
+  psychographic: "groups customers by lifestyle, values and interests",
+  geographic: "groups customers by location or climate",
+  behavioural: "groups customers by buying habits and loyalty",
+};
+const SECTOR_MEANING: Record<string, string> = {
+  primary: "extracts or grows raw materials, such as farming, mining and fishing",
+  secondary: "turns raw materials into goods, such as manufacturing and construction",
+  tertiary: "provides services, such as retail, banking and education",
+};
+const COST_MEANING: Record<string, string> = {
+  fixed: "stays the same however much is produced",
+  variable: "changes as the amount produced changes",
+};
+
+const EXPLAIN: Record<string, (item: string, answer: string) => string> = {
+  "business-ownership": (d, a) => `A ${a} ${d}.`,
+  "marketing-mix": (s, a) => `"${s}" is about ${a}, which covers ${MIX_MEANING[a]}.`,
+  swot: (f, a) => `"${f}" is a ${a}: ${SWOT_MEANING[a]}.`,
+  "business-objectives": (s, a) => `The action "${s}" shows the objective of ${a}. A business with this objective ${OBJECTIVE_MEANING[a]}.`,
+  stakeholders: (d, a) => `The stakeholder group that ${d} is ${a === "community" ? "the community" : a}.`,
+  "business-functions": (t, a) => `"${t}" is the job of ${a}. This function ${FUNCTION_MEANING[a]}.`,
+  "leadership-styles": (_d, a) => `This is ${a} leadership: an ${a} leader ${LEADERSHIP_MEANING[a]}.`.replace("an laissez-faire", "a laissez-faire").replace("an democratic", "a democratic"),
+  "growth-strategies": (_d, a) => `This is ${a}: it ${GROWTH_MEANING[a]}.`,
+  "market-segmentation": (_d, a) => `This is ${a} segmentation: it ${SEGMENT_MEANING[a]}.`,
+  "industry-sectors": (s, a) => `"${s}" belongs to the ${a} sector, which ${SECTOR_MEANING[a]}.`,
+  "cost-classification": (c, a) => `"${c}" is a ${a} cost. A ${a} cost ${COST_MEANING[a]}.`,
+};
+
 function bankTopic(
   id: string,
   label: string,
@@ -24,7 +89,7 @@ function bankTopic(
   return bankMCQ(
     id,
     label,
-    bank.map(([item, answer]) => ({ prompt: prompt(item), answer })),
+    bank.map(([item, answer]) => ({ prompt: prompt(item), answer, explanation: EXPLAIN[id]?.(item, answer) })),
     pool,
   );
 }
@@ -79,6 +144,7 @@ function markupPricing(): Topic {
       return {
         prompt: `A retailer buys an item for $${cost} and adds a ${pct}% markup. What is the selling price?`,
         answer: `$${cost + (cost * pct) / 100}`,
+        explanation: `Markup = ${pct}% of $${cost} = $${(cost * pct) / 100}. Selling price = cost + markup = $${cost} + $${(cost * pct) / 100} = $${cost + (cost * pct) / 100}.`,
       };
     },
   };
@@ -94,6 +160,7 @@ function marketShare(): Topic {
       return {
         prompt: `A business has sales of $${(total * pct) / 100} in a market with total sales of $${total}. What is its market share?`,
         answer: `${pct}%`,
+        explanation: `Market share = business sales ÷ total market sales × 100 = $${(total * pct) / 100} ÷ $${total} × 100 = ${pct}%.`,
       };
     },
   };
@@ -142,6 +209,7 @@ function returnOnInvestment(): Topic {
       return {
         prompt: `A business invests $${investment} and earns a profit of $${(investment * pct) / 100} from the investment. Calculate the return on investment (as a percentage).`,
         answer: `${pct}%`,
+        explanation: `ROI = profit ÷ investment × 100 = $${(investment * pct) / 100} ÷ $${investment} × 100 = ${pct}%.`,
       };
     },
   };
@@ -157,6 +225,7 @@ function staffTurnover(): Topic {
       return {
         prompt: `A business had an average of ${employees} employees and ${(employees * pct) / 100} of them left during the year. Calculate the staff turnover rate.`,
         answer: `${pct}%`,
+        explanation: `Staff turnover rate = employees who left ÷ average employees × 100 = ${(employees * pct) / 100} ÷ ${employees} × 100 = ${pct}%.`,
       };
     },
   };
@@ -172,6 +241,7 @@ function labourProductivity(): Topic {
       return {
         prompt: `A factory produces ${rate * hours} units using ${hours} labour hours. What is its labour productivity (units per labour hour)?`,
         answer: String(rate),
+        explanation: `Labour productivity = output ÷ labour hours = ${rate * hours} ÷ ${hours} = ${rate} units per labour hour.`,
       };
     },
   };
@@ -209,6 +279,7 @@ function salesGrowth(): Topic {
       return {
         prompt: `A business's sales rose from $${before} to $${(before * (100 + pct)) / 100}. Calculate the percentage growth in sales.`,
         answer: `${pct}%`,
+        explanation: `Sales growth = (new sales - old sales) ÷ old sales × 100 = ($${(before * (100 + pct)) / 100} - $${before}) ÷ $${before} × 100 = ${pct}%.`,
       };
     },
   };
@@ -247,6 +318,7 @@ function averageCost(): Topic {
       return {
         prompt: `Fixed costs are $${output * fixedPerUnit}, variable costs are $${variable} per unit and output is ${output} units. What is the average cost per unit?`,
         answer: `$${fixedPerUnit + variable}`,
+        explanation: `Total cost = fixed costs + variable costs = $${output * fixedPerUnit} + ($${variable} × ${output}) = $${output * fixedPerUnit + variable * output}. Average cost = total cost ÷ output = $${output * fixedPerUnit + variable * output} ÷ ${output} = $${fixedPerUnit + variable}.`,
       };
     },
   };

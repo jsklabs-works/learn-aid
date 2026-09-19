@@ -9,6 +9,37 @@ const POLICY: [string, string][] = unpack("W1siVGhlIGNlbnRyYWwgYmFuayByYWlzZXMga
 const STRUCTURES: [string, string][] = unpack("W1siaGFzIG1hbnkgc21hbGwgc2VsbGVycywgaWRlbnRpY2FsIHByb2R1Y3RzIGFuZCBmcmVlIGVudHJ5IGFuZCBleGl0IiwicGVyZmVjdCBjb21wZXRpdGlvbiJdLFsiaGFzIGEgc2luZ2xlIHNlbGxlciBhbmQgaGlnaCBiYXJyaWVycyB0byBlbnRyeSIsIm1vbm9wb2x5Il0sWyJpcyBkb21pbmF0ZWQgYnkgYSBmZXcgbGFyZ2UgZmlybXMgdGhhdCByZWFjdCB0byBlYWNoIG90aGVyJ3MgcHJpY2VzIiwib2xpZ29wb2x5Il0sWyJoYXMgbWFueSBzZWxsZXJzIG9mZmVyaW5nIGRpZmZlcmVudGlhdGVkIHByb2R1Y3RzIiwibW9ub3BvbGlzdGljIGNvbXBldGl0aW9uIl0sWyJpcyBiZXN0IGlsbHVzdHJhdGVkIGJ5IGEgbG9jYWwgd2F0ZXIgdXRpbGl0eSB3aXRoIG5vIGNvbXBldGl0b3JzIiwibW9ub3BvbHkiXSxbImlzIGJlc3QgaWxsdXN0cmF0ZWQgYnkgYSBzbWFsbCB3aGVhdCBtYXJrZXQgd2hlcmUgZmFybWVycyBhcmUgcHJpY2UgdGFrZXJzIiwicGVyZmVjdCBjb21wZXRpdGlvbiJdXQ==");
 const TAXES: [string, string][] = unpack("W1siVGF4IG9uIHdhZ2VzIGFuZCBzYWxhcmllcyIsImRpcmVjdCB0YXgiXSxbIlRheCBvbiBjb21wYW55IHByb2ZpdHMiLCJkaXJlY3QgdGF4Il0sWyJUYXggYWRkZWQgdG8gdGhlIHByaWNlIG9mIGdvb2RzIGFuZCBzZXJ2aWNlcyIsImluZGlyZWN0IHRheCJdLFsiVGF4IG9uIGltcG9ydGVkIGdvb2RzIiwiaW5kaXJlY3QgdGF4Il0sWyJFeGNpc2UgZHV0eSBvbiBmdWVsIiwiaW5kaXJlY3QgdGF4Il0sWyJUYXggb24gcGVyc29uYWwgaW52ZXN0bWVudCBpbmNvbWUiLCJkaXJlY3QgdGF4Il1d");
 
+const SYSTEM_MEANING: Record<string, string> = {
+  "market economy": "lets prices and competition in private markets decide what is produced",
+  "command economy": "has the government plan what is produced",
+  "mixed economy": "combines private markets with government involvement",
+  "traditional economy": "relies on custom and tradition to decide what is produced",
+};
+const FACTOR_MEANING: Record<string, string> = {
+  land: "natural resources such as farmland, minerals and water",
+  labour: "the work people do",
+  capital: "man-made tools, machines and buildings used to produce goods",
+  enterprise: "the risk-taking and organising that starts and runs a business",
+};
+const POLICY_MEANING: Record<string, string> = {
+  "fiscal policy": "uses government spending and taxes",
+  "monetary policy": "uses interest rates and the money supply, and is run by the central bank",
+};
+const TAX_MEANING: Record<string, string> = {
+  "direct tax": "is paid straight to the government by the person or company earning the income",
+  "indirect tax": "is added to the price of goods and services, so it is paid by whoever buys them",
+};
+
+const EXPLAIN: Record<string, (item: string, answer: string) => string> = {
+  "supply-demand": (_s, a) =>
+    `Price rises when demand goes up or supply goes down, and falls when demand goes down or supply goes up. Here the result is that ${a}.`,
+  "economic-systems": (_d, a) => `A ${a} ${SYSTEM_MEANING[a]}.`,
+  "factors-of-production": (i, a) => `"${i}" is ${a}. ${a[0].toUpperCase()}${a.slice(1)} means ${FACTOR_MEANING[a]}.`,
+  "policy-tools": (i, a) => `"${i}" is ${a}, which ${POLICY_MEANING[a]}.`,
+  "market-structures": (d, a) => `The description "${d}" points to ${a === "monopoly" ? "a monopoly" : a === "oligopoly" ? "an oligopoly" : a}.`,
+  "tax-types": (t, a) => `"${t}" is a ${a}. A ${a} ${TAX_MEANING[a]}.`,
+};
+
 function bankTopic(
   id: string,
   label: string,
@@ -19,7 +50,7 @@ function bankTopic(
   return bankMCQ(
     id,
     label,
-    bank.map(([item, answer]) => ({ prompt: prompt(item), answer })),
+    bank.map(([item, answer]) => ({ prompt: prompt(item), answer, explanation: EXPLAIN[id]?.(item, answer) })),
     pool,
   );
 }
@@ -65,6 +96,7 @@ function opportunityCost(): Topic {
       return {
         prompt: `Sam can work ${hours} hours at $${wage} per hour, or go to a free concert instead. What is the opportunity cost of going to the concert?`,
         answer: `$${wage * hours}`,
+        explanation: `Opportunity cost is the value of the best alternative given up. Working ${hours} hours at $${wage} an hour earns ${hours} × $${wage} = $${wage * hours}.`,
       };
     },
   };
@@ -80,6 +112,7 @@ function inflationRate(): Topic {
       return {
         prompt: `A basket of goods cost $${before} last year and $${(before * (100 + pct)) / 100} this year. Calculate the inflation rate.`,
         answer: `${pct}%`,
+        explanation: `Inflation rate = (new price - old price) ÷ old price × 100 = ($${(before * (100 + pct)) / 100} - $${before}) ÷ $${before} × 100 = ${pct}%.`,
       };
     },
   };
@@ -97,6 +130,7 @@ function priceElasticity(): Topic {
       return {
         prompt: `The price of a good rises by ${pricePct}% and the quantity demanded falls by ${pricePct * ped}%. Calculate the price elasticity of demand (ignore the sign, to 1 decimal place).`,
         answer: ped.toFixed(1),
+        explanation: `PED = % change in quantity demanded ÷ % change in price = ${pricePct * ped} ÷ ${pricePct} = ${ped.toFixed(1)}.`,
       };
     },
   };
@@ -112,6 +146,7 @@ function elasticityInterpretation(): Topic {
       return {
         prompt: `A good has a price elasticity of demand of ${ped.toFixed(1)}. Is demand elastic, inelastic or unit elastic?`,
         answer,
+        explanation: `${ped < 1 ? "A PED below 1 means demand is inelastic: quantity changes by less than the price does" : ped === 1 ? "A PED of exactly 1 means demand is unit elastic: quantity changes by the same percentage as price" : "A PED above 1 means demand is elastic: quantity changes by more than the price does"}. Here PED = ${ped.toFixed(1)}, so demand is ${answer}.`,
         options: ["elastic", "inelastic", "unit elastic"],
       };
     },
@@ -128,6 +163,7 @@ function economicGrowth(): Topic {
       return {
         prompt: `Real GDP grew from $${before} billion to $${(before * (100 + pct)) / 100} billion. Calculate the percentage growth rate.`,
         answer: `${pct}%`,
+        explanation: `Growth rate = (new GDP - old GDP) ÷ old GDP × 100 = ($${(before * (100 + pct)) / 100} - $${before}) ÷ $${before} × 100 = ${pct}%.`,
       };
     },
   };
@@ -144,6 +180,7 @@ function unemploymentRate(): Topic {
       return {
         prompt: `An economy has ${labourForce - unemployed} people employed and ${unemployed} people unemployed. What is the unemployment rate?`,
         answer: `${pct}%`,
+        explanation: `Labour force = employed + unemployed = ${labourForce - unemployed} + ${unemployed} = ${labourForce}. Unemployment rate = unemployed ÷ labour force × 100 = ${unemployed} ÷ ${labourForce} × 100 = ${pct}%.`,
       };
     },
   };
@@ -187,6 +224,7 @@ function multiplierEffect(): Topic {
       return {
         prompt: `The marginal propensity to consume is ${mpc}. Government spending rises by $${injection} million. What is the total change in national income?`,
         answer: `$${injection * multiplier} million`,
+        explanation: `Multiplier = 1 ÷ (1 - MPC) = 1 ÷ (1 - ${mpc}) = ${multiplier}. Change in national income = $${injection} million × ${multiplier} = $${injection * multiplier} million.`,
       };
     },
   };
@@ -202,6 +240,7 @@ function realGdp(): Topic {
       return {
         prompt: `Nominal GDP is $${(real * deflator) / 100} billion and the GDP deflator is ${deflator}. What is real GDP?`,
         answer: `$${real} billion`,
+        explanation: `Real GDP = nominal GDP ÷ deflator × 100 = $${(real * deflator) / 100} ÷ ${deflator} × 100 = $${real} billion.`,
       };
     },
   };
@@ -224,6 +263,7 @@ function comparativeAdvantage(): Topic {
       return {
         prompt: `In a day, Country A can produce ${a1} units of X or ${a2} units of Y. Country B can produce ${b1} units of X or ${b2} units of Y. Which country has the comparative advantage in producing X?`,
         answer,
+        explanation: `The opportunity cost of one unit of X is the Y given up. Country A gives up ${a2}/${a1} = ${+(a2 / a1).toFixed(2)} units of Y; Country B gives up ${b2}/${b1} = ${+(b2 / b1).toFixed(2)}. The country with the lower opportunity cost has the comparative advantage: ${answer}.`,
         options: ["Country A", "Country B"],
       };
     },
@@ -242,6 +282,7 @@ function exchangeRates(): Topic {
       return {
         prompt: `The exchange rate is 1 US dollar = ${rate} units of foreign currency. How many units of foreign currency will you receive for $${dollars}?`,
         answer: (dollars * rate).toFixed(2),
+        explanation: `Foreign currency = dollars × exchange rate = ${dollars} × ${rate} = ${(dollars * rate).toFixed(2)}.`,
       };
     },
   };
@@ -264,6 +305,7 @@ function tradeBalance(): Topic {
       return {
         prompt: `A country exports $${exports} billion and imports $${imports} billion of goods. Is there a trade surplus or a trade deficit?`,
         answer: exports > imports ? "surplus" : "deficit",
+        explanation: `Trade balance = exports - imports = $${exports} - $${imports} = ${exports - imports < 0 ? "-" : ""}$${Math.abs(exports - imports)} billion. A positive balance is a surplus and a negative balance is a deficit, so this is a ${exports > imports ? "surplus" : "deficit"}.`,
         options: ["surplus", "deficit"],
       };
     },

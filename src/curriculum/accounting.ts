@@ -3,6 +3,20 @@ import { unpack } from "./codec";
 import { bankMCQ, pick, randInt } from "./utils";
 import { accountingWordProblems } from "./wordProblems";
 
+const ACCOUNT_TYPE_MEANING: Record<string, string> = {
+  asset: "something the business owns that has value",
+  liability: "something the business owes to others",
+  equity: "the owner's claim on the business",
+  revenue: "income earned from the business's activities",
+  expense: "a cost of running the business",
+};
+
+const CASH_FLOW_MEANING: Record<string, string> = {
+  operating: "the day-to-day running of the business",
+  investing: "buying or selling long-term assets and investments",
+  financing: "raising or repaying money from owners and lenders",
+};
+
 const ACCOUNT_CLASSES: [string, string][] = unpack("W1siQ2FzaCBhdCBiYW5rIiwiYXNzZXQiXSxbIkFjY291bnRzIHJlY2VpdmFibGUiLCJhc3NldCJdLFsiSW52ZW50b3J5IiwiYXNzZXQiXSxbIkVxdWlwbWVudCIsImFzc2V0Il0sWyJNb3RvciB2ZWhpY2xlcyIsImFzc2V0Il0sWyJQcmVwYWlkIGluc3VyYW5jZSIsImFzc2V0Il0sWyJBY2NvdW50cyBwYXlhYmxlIiwibGlhYmlsaXR5Il0sWyJCYW5rIGxvYW4iLCJsaWFiaWxpdHkiXSxbIk1vcnRnYWdlIHBheWFibGUiLCJsaWFiaWxpdHkiXSxbIldhZ2VzIHBheWFibGUiLCJsaWFiaWxpdHkiXSxbIlVuZWFybmVkIHJldmVudWUiLCJsaWFiaWxpdHkiXSxbIk93bmVyJ3MgY2FwaXRhbCIsImVxdWl0eSJdLFsiT3duZXIncyBkcmF3aW5ncyIsImVxdWl0eSJdLFsiUmV0YWluZWQgZWFybmluZ3MiLCJlcXVpdHkiXSxbIlNhbGVzIHJldmVudWUiLCJyZXZlbnVlIl0sWyJGZWVzIGVhcm5lZCIsInJldmVudWUiXSxbIkludGVyZXN0IGluY29tZSIsInJldmVudWUiXSxbIlJlbnQgaW5jb21lIiwicmV2ZW51ZSJdLFsiV2FnZXMgZXhwZW5zZSIsImV4cGVuc2UiXSxbIlJlbnQgZXhwZW5zZSIsImV4cGVuc2UiXSxbIkluc3VyYW5jZSBleHBlbnNlIiwiZXhwZW5zZSJdLFsiRGVwcmVjaWF0aW9uIGV4cGVuc2UiLCJleHBlbnNlIl0sWyJBZHZlcnRpc2luZyBleHBlbnNlIiwiZXhwZW5zZSJdXQ==");
 const CASH_FLOW_ITEMS: [string, string][] = unpack("W1siQ2FzaCByZWNlaXZlZCBmcm9tIGN1c3RvbWVycyIsIm9wZXJhdGluZyJdLFsiUGF5bWVudHMgdG8gc3VwcGxpZXJzIiwib3BlcmF0aW5nIl0sWyJXYWdlcyBwYWlkIHRvIGVtcGxveWVlcyIsIm9wZXJhdGluZyJdLFsiUmVudCBwYWlkIiwib3BlcmF0aW5nIl0sWyJQdXJjaGFzZSBvZiBlcXVpcG1lbnQiLCJpbnZlc3RpbmciXSxbIlNhbGUgb2YgYSBtb3RvciB2ZWhpY2xlIiwiaW52ZXN0aW5nIl0sWyJQdXJjaGFzZSBvZiBzaGFyZXMgaW4gYW5vdGhlciBjb21wYW55IiwiaW52ZXN0aW5nIl0sWyJQdXJjaGFzZSBvZiBhIGJ1aWxkaW5nIiwiaW52ZXN0aW5nIl0sWyJQcm9jZWVkcyBmcm9tIGEgYmFuayBsb2FuIiwiZmluYW5jaW5nIl0sWyJSZXBheW1lbnQgb2YgYSBiYW5rIGxvYW4iLCJmaW5hbmNpbmciXSxbIk93bmVyIGludmVzdHMgYWRkaXRpb25hbCBjYXBpdGFsIiwiZmluYW5jaW5nIl0sWyJPd25lcidzIGRyYXdpbmdzIHBhaWQiLCJmaW5hbmNpbmciXV0=");
 const STATEMENT_TERMS: [string, string][] = unpack("W1sic2hvd3MgYSBidXNpbmVzcydzIGFzc2V0cywgbGlhYmlsaXRpZXMgYW5kIGVxdWl0eSBhdCBhIHBvaW50IGluIHRpbWUiLCJTdGF0ZW1lbnQgb2YgZmluYW5jaWFsIHBvc2l0aW9uIl0sWyJzaG93cyByZXZlbnVlLCBleHBlbnNlcyBhbmQgcHJvZml0IGZvciBhIHBlcmlvZCIsIkluY29tZSBzdGF0ZW1lbnQiXSxbInNob3dzIGNhc2ggaW5mbG93cyBhbmQgb3V0Zmxvd3MgZm9yIGEgcGVyaW9kIiwiU3RhdGVtZW50IG9mIGNhc2ggZmxvd3MiXSxbImxpc3RzIGFsbCBsZWRnZXIgYmFsYW5jZXMgdG8gY2hlY2sgdGhhdCBkZWJpdHMgZXF1YWwgY3JlZGl0cyIsIlRyaWFsIGJhbGFuY2UiXSxbImlzIHRoZSBDYW1icmlkZ2UgbmFtZSBmb3IgdGhlIEJhbGFuY2UgU2hlZXQiLCJTdGF0ZW1lbnQgb2YgZmluYW5jaWFsIHBvc2l0aW9uIl0sWyJpcyB0aGUgQ2FtYnJpZGdlIG5hbWUgZm9yIHRoZSBQcm9maXQgYW5kIExvc3MgU3RhdGVtZW50IiwiSW5jb21lIHN0YXRlbWVudCJdXQ==");
@@ -22,17 +36,20 @@ function accountingEquation(): Topic {
         return {
           prompt: `A business has liabilities of $${liabilities} and owner's equity of $${equity}. What are its total assets?`,
           answer: `$${assets}`,
+          explanation: `The accounting equation is Assets = Liabilities + Owner's equity. Assets = $${liabilities} + $${equity} = $${assets}.`,
         };
       }
       if (unknown === "liabilities") {
         return {
           prompt: `A business has assets of $${assets} and owner's equity of $${equity}. What are its total liabilities?`,
           answer: `$${liabilities}`,
+          explanation: `The accounting equation is Assets = Liabilities + Owner's equity, so Liabilities = Assets - Owner's equity = $${assets} - $${equity} = $${liabilities}.`,
         };
       }
       return {
         prompt: `A business has assets of $${assets} and liabilities of $${liabilities}. What is the owner's equity?`,
         answer: `$${equity}`,
+        explanation: `The accounting equation is Assets = Liabilities + Owner's equity, so Owner's equity = Assets - Liabilities = $${assets} - $${liabilities} = $${equity}.`,
       };
     },
   };
@@ -42,6 +59,7 @@ function accountClassification(): Topic {
   const items = ACCOUNT_CLASSES.map(([account, kind]) => ({
     prompt: `Classify this account: "${account}"`,
     answer: kind,
+    explanation: `"${account}" is classified as ${/^[aeiou]/.test(kind) ? "an" : "a"} ${kind}: ${kind[0].toUpperCase()}${kind.slice(1)} means ${ACCOUNT_TYPE_MEANING[kind]}.`,
   }));
   return bankMCQ("account-classification", "Classifying accounts", items, [
     "asset",
@@ -81,6 +99,7 @@ function debitCreditRules(): Topic {
       return {
         prompt: `Which side is used to record ${increase ? "an increase" : "a decrease"} in ${ACCOUNT_PHRASE[type]}?`,
         answer: side,
+        explanation: `Debits increase assets and expenses; credits increase liabilities, owner's equity and revenue. ${type[0].toUpperCase()}${type.slice(1)} accounts normally have a ${normal} balance, so ${increase ? "an increase" : "a decrease"} is recorded on the ${side} side.`,
         options: ["debit", "credit"],
       };
     },
@@ -97,6 +116,7 @@ function profitCalculation(): Topic {
       return {
         prompt: `A business earned revenue of $${revenue} and had total expenses of $${expenses}. What was its net profit?`,
         answer: `$${revenue - expenses}`,
+        explanation: `Net profit = revenue - expenses = $${revenue} - $${expenses} = $${revenue - expenses}.`,
       };
     },
   };
@@ -114,6 +134,7 @@ function straightLineDepreciation(): Topic {
       return {
         prompt: `An asset costs $${cost}, has a residual value of $${residual} and a useful life of ${years} years. Using the straight-line method, what is the annual depreciation expense?`,
         answer: `$${annual}`,
+        explanation: `Annual depreciation = (cost - residual value) ÷ useful life = ($${cost} - $${residual}) ÷ ${years} = $${annual}.`,
       };
     },
   };
@@ -130,6 +151,7 @@ function trialBalanceCheck(): Topic {
       return {
         prompt: `A trial balance shows total debits of $${debits} and total credits of $${credits}. Do the totals balance?`,
         answer: balanced ? "Yes" : "No",
+        explanation: `${balanced ? "Yes" : "No"}: in a trial balance, total debits must equal total credits. Debits are $${debits} and credits are $${credits}${balanced ? ", so they balance" : `, so they do not balance (the difference is $${Math.abs(debits - credits)})`}.`,
         options: ["Yes", "No"],
       };
     },
@@ -150,6 +172,7 @@ function reducingBalanceDepreciation(): Topic {
       return {
         prompt: `An asset costing $${cost} is depreciated at ${rate}% p.a. using the reducing balance method. What is its carrying amount at the end of year ${years}? (to the nearest cent)`,
         answer: `$${carrying.toFixed(2)}`,
+        explanation: `Carrying amount = cost × (1 - rate)^years = $${cost} × ${(1 - rate / 100).toFixed(2)}^${years} = $${carrying.toFixed(2)}.`,
       };
     },
   };
@@ -167,6 +190,7 @@ function profitRatios(): Topic {
       return {
         prompt: `A business had revenue of $${revenue} and ${kind} profit of $${profit}. Calculate the ${kind} profit margin (as a percentage).`,
         answer: `${pct}%`,
+        explanation: `${kind[0].toUpperCase()}${kind.slice(1)} profit margin = ${kind} profit ÷ revenue × 100 = $${profit} ÷ $${revenue} × 100 = ${pct}%.`,
       };
     },
   };
@@ -183,6 +207,7 @@ function liquidityRatio(): Topic {
       return {
         prompt: `A business has current assets of $${assets} and current liabilities of $${liabilities}. Calculate the current ratio (as x:1, to 1 decimal place).`,
         answer: `${ratio.toFixed(1)}:1`,
+        explanation: `Current ratio = current assets ÷ current liabilities = $${assets} ÷ $${liabilities} = ${ratio.toFixed(1)}:1.`,
       };
     },
   };
@@ -198,6 +223,7 @@ function badDebts(): Topic {
       return {
         prompt: `A business has accounts receivable of $${receivable} and estimates ${pct}% will not be collected. What amount should be recorded as the allowance for doubtful debts?`,
         answer: `$${(receivable * pct) / 100}`,
+        explanation: `Allowance for doubtful debts = accounts receivable × estimated % = $${receivable} × ${pct}% = $${(receivable * pct) / 100}.`,
       };
     },
   };
@@ -217,6 +243,7 @@ function inventoryFifo(): Topic {
       return {
         prompt: `A business buys ${q1} units at $${p1} each, then ${q2} more units at $${p2} each. It sells ${sold} units. Using FIFO, what is the cost of goods sold?`,
         answer: `$${cogs}`,
+        explanation: `FIFO means the oldest stock is sold first. The first ${q1} units cost $${p1} each = $${q1 * p1}. The other ${sold - q1} units come from the second batch at $${p2} each = $${(sold - q1) * p2}. Cost of goods sold = $${q1 * p1} + $${(sold - q1) * p2} = $${cogs}.`,
       };
     },
   };
@@ -235,6 +262,7 @@ function breakEven(): Topic {
       return {
         prompt: `A product sells for $${price} and has variable costs of $${variable} per unit. Fixed costs are $${fixed}. How many units must be sold to break even?`,
         answer: `${units} units`,
+        explanation: `Break-even units = fixed costs ÷ contribution per unit. Contribution = $${price} - $${variable} = $${contribution}. So $${fixed} ÷ $${contribution} = ${units} units.`,
       };
     },
   };
@@ -244,6 +272,7 @@ function cashFlowClassification(): Topic {
   const items = CASH_FLOW_ITEMS.map(([activity, category]) => ({
     prompt: `In a cash flow statement, how is this classified: "${activity}"?`,
     answer: category,
+    explanation: `"${activity}" is a ${category} activity. ${category[0].toUpperCase()}${category.slice(1)} activities involve ${CASH_FLOW_MEANING[category]}.`,
   }));
   return bankMCQ("cash-flow-classification", "Cash flow classification", items, [
     "operating",
@@ -269,12 +298,14 @@ function budgetVariance(): Topic {
         return {
           prompt: `Budgeted ${label} was $${budget} and actual ${label} was $${actual}. What is the amount of the variance?`,
           answer: `$${diff}`,
+          explanation: `Variance = actual - budget. Actual was $${actual} and the budget was $${budget}, so the difference is $${diff}.`,
         };
       }
       const favourable = kind === "revenue" ? over : !over;
       return {
         prompt: `Budgeted ${label} was $${budget} and actual ${label} was $${actual}. Is the variance favourable or unfavourable?`,
         answer: favourable ? "favourable" : "unfavourable",
+        explanation: `Actual ${label} was $${actual} against a budget of $${budget}. Higher revenue helps profit and higher expenses reduce it, so this variance is ${favourable ? "favourable" : "unfavourable"}.`,
         options: ["favourable", "unfavourable"],
       };
     },
@@ -292,12 +323,14 @@ function accrualAdjustments(): Topic {
         return {
           prompt: `A business paid $${12 * monthly} for 12 months' insurance starting ${elapsed} months before its financial year end. How much is a prepaid expense at year end?`,
           answer: `$${monthly * (12 - elapsed)}`,
+          explanation: `The insurance covers 12 months at $${monthly} a month. ${elapsed} months have passed, so ${12 - elapsed} months are still unused. Prepaid expense = ${12 - elapsed} × $${monthly} = $${monthly * (12 - elapsed)}.`,
         };
       }
       const unpaid = randInt(1, 4);
       return {
         prompt: `Monthly rent is $${monthly}. The rent for the last ${unpaid} ${unpaid === 1 ? "month" : "months"} of the financial year has not yet been paid. What is the accrued rent expense at year end?`,
         answer: `$${monthly * unpaid}`,
+        explanation: `An accrued expense is one that has been used but not yet paid. Accrued rent = ${unpaid} ${unpaid === 1 ? "month" : "months"} × $${monthly} = $${monthly * unpaid}.`,
       };
     },
   };
@@ -316,6 +349,7 @@ function partnershipProfitShare(): Topic {
       return {
         prompt: `Partners A and B share profits in the ratio ${a}:${b}. The partnership profit is $${profit}. What is Partner ${partner}'s share?`,
         answer: `$${(partner === "A" ? a : b) * unit}`,
+        explanation: `Total parts = ${a} + ${b} = ${a + b}. One part = $${profit} ÷ ${a + b} = $${unit}. Partner ${partner} has ${partner === "A" ? a : b} ${(partner === "A" ? a : b) === 1 ? "part" : "parts"}: ${partner === "A" ? a : b} × $${unit} = $${(partner === "A" ? a : b) * unit}.`,
       };
     },
   };
@@ -335,11 +369,13 @@ function vatCalculation(): Topic {
         return {
           prompt: `An item costs $${excl} excluding VAT. VAT is charged at ${rate}%. What is the price including VAT?`,
           answer: `$${excl + vat}`,
+          explanation: `VAT = ${rate}% of $${excl} = $${vat}. Price including VAT = $${excl} + $${vat} = $${excl + vat}.`,
         };
       }
       return {
         prompt: `An item's price including ${rate}% VAT is $${excl + vat}. How much of this is VAT?`,
         answer: `$${vat}`,
+        explanation: `The price including VAT is ${100 + rate}% of the original price. Original price = $${excl + vat} × 100 ÷ ${100 + rate} = $${excl}. VAT = $${excl + vat} - $${excl} = $${vat}.`,
       };
     },
   };
@@ -349,6 +385,7 @@ function financialStatementTerms(): Topic {
   const items = STATEMENT_TERMS.map(([description, statement]) => ({
     prompt: `Which document ${description}?`,
     answer: statement,
+    explanation: `The ${statement.toLowerCase()} ${description}.`,
   }));
   return bankMCQ("statement-terms", "Financial statement terminology", items, [
     "Statement of financial position",
