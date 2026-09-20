@@ -13,8 +13,7 @@ import type { Difficulty, Question, Subject, Syllabus } from "./types";
 import { useTheme, type Theme } from "./useTheme";
 
 const OPTION_LETTERS = ["A", "B", "C", "D"];
-const MIN_QUESTIONS = 1;
-const MAX_QUESTIONS = 50;
+const QUESTION_COUNTS = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 const CALCULATOR_MIN_GRADE = 10;
 
 type Mode = "worksheet" | "test";
@@ -306,16 +305,16 @@ function App() {
 
             <label className="field">
               <span>Number of questions</span>
-              <input
-                type="number"
-                min={MIN_QUESTIONS}
-                max={MAX_QUESTIONS}
-                value={count}
-                onChange={(e) => {
-                  const v = Number(e.target.value);
-                  setCount(Number.isNaN(v) ? MIN_QUESTIONS : Math.min(MAX_QUESTIONS, Math.max(MIN_QUESTIONS, v)));
-                }}
-              />
+              <select value={count} onChange={(e) => setCount(Number(e.target.value))}>
+                {(QUESTION_COUNTS.includes(count)
+                  ? QUESTION_COUNTS
+                  : [...QUESTION_COUNTS, count].sort((a, b) => a - b)
+                ).map((n) => (
+                  <option key={n} value={n}>
+                    {n} questions
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
 
