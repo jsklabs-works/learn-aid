@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
+import { Calculator } from "./components/Calculator";
 import { FigureSvg } from "./components/FigureSvg";
 import { SharePanel } from "./components/SharePanel";
 import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
@@ -13,6 +14,7 @@ import { useTheme, type Theme } from "./useTheme";
 const OPTION_LETTERS = ["A", "B", "C", "D"];
 const MIN_QUESTIONS = 1;
 const MAX_QUESTIONS = 50;
+const CALCULATOR_MIN_GRADE = 10;
 
 type Mode = "worksheet" | "test";
 
@@ -53,6 +55,7 @@ function App() {
   const [lastSpec, setLastSpec] = useState<ShareSpec | null>(null);
   const [sharePanelOpen, setSharePanelOpen] = useState(false);
   const [revealOnShare, setRevealOnShare] = useState(true);
+  const [calculatorOpen, setCalculatorOpen] = useState(false);
 
   const { label: subjectLabel, minGrade } = getSubject(subject);
   const explanationLabel = subject === "general" ? "Did you know?" : "How to get it";
@@ -512,6 +515,15 @@ function App() {
           )}
         </section>
       </main>
+
+      {questions && grade >= CALCULATOR_MIN_GRADE &&
+        (calculatorOpen ? (
+          <Calculator onClose={() => setCalculatorOpen(false)} />
+        ) : (
+          <button className="calc-launcher" onClick={() => setCalculatorOpen(true)}>
+            Calculator
+          </button>
+        ))}
 
       <footer className="page-footer">
         <p>Runs entirely in your browser — no data leaves your device, and no account is needed.</p>

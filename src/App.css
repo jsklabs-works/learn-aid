@@ -419,3 +419,136 @@
   color: var(--text-h);
   font-size: 14px;
 }
+
+.calc-launcher {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 20;
+  padding: 10px 16px;
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.calc {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 20;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text-h);
+  box-shadow: var(--shadow);
+}
+
+.calc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.calc-header-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.calc-mode,
+.calc-close {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.calc-display {
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--code-bg);
+}
+
+.calc-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-h);
+  font-family: var(--mono);
+  font-size: 16px;
+}
+
+.calc-result {
+  margin-top: 4px;
+  min-height: 22px;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.calc-error {
+  color: #e74c3c;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.calc-keys {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.calc-key {
+  padding: 9px 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.calc-key:hover {
+  background: var(--code-bg);
+}
+
+.calc-key.fn {
+  background: var(--code-bg);
+  font-size: 13px;
+}
+
+.calc-key.op {
+  background: var(--accent-bg);
+}
+
+.calc-key.eq {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+
+@media print {
+  .calc,
+  .calc-launcher {
+    display: none;
+  }
+}
