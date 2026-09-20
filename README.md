@@ -3,7 +3,7 @@
 A free, browser-only worksheet and online-test generator, Grades 1–12. Built for students, parents and teachers who want quick, random practice without signing up for anything.
 
 - Pick a **syllabus** (Victorian Curriculum or Cambridge International), **subject** (Maths, English, General knowledge, or a Grade 9+ elective: Accounting, Business Studies, Economics, Biology, Chemistry, Physics), **grade** (1–12) and **difficulty** (Standard or Advanced)
-- Choose which **topics** to include and how many **questions** you want (up to 50)
+- Choose which **topics** to include (with *Select all*, *Deselect all* and a filter box for long lists) and how many **questions** you want (up to 50)
 - **Worksheet mode**: generate, preview (with diagrams for geometry questions), then **download a PDF** with a matching answer key on the last page
 - **Online test mode**: answer questions right in the browser (multiple choice or free text), submit, and get an instant score with a per-question breakdown. Wrong answers show the correct answer and a short explanation or worked steps (the same explanations appear under "Show answers" and in the PDF answer key)
 - **Formula sheet**: the *Formulas* button in the header opens a revision reference for Maths, Physics, Chemistry, Biology, Accounting, Business Studies, Economics and English (rules and quick guides). Pick a subject and grade to see everything up to that grade, each with a note and a worked example, search it, or download it as a PDF. It is locked while an online test is in progress and unlocks when the test is submitted. The content lives in [`src/formulas.ts`](src/formulas.ts).

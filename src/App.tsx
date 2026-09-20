@@ -57,6 +57,7 @@ function App() {
   const [sharePanelOpen, setSharePanelOpen] = useState(false);
   const [revealOnShare, setRevealOnShare] = useState(true);
   const [calculatorOpen, setCalculatorOpen] = useState(false);
+  const [topicFilter, setTopicFilter] = useState("");
   const [view, setView] = useState<"practice" | "formulas">("practice");
 
   const { label: subjectLabel, minGrade } = getSubject(subject);
@@ -76,6 +77,7 @@ function App() {
   // Whenever the subject/grade/syllabus/difficulty changes, select all of that set's topics by default.
   useEffect(() => {
     if (sharedRef.current) return;
+    setTopicFilter("");
     setSelectedTopicIds(new Set(topics.map((t) => t.id)));
     setQuestions(null);
     setLastSpec(null);
@@ -129,6 +131,19 @@ function App() {
   }
 
   const activeTopics = topics.filter((t) => selectedTopicIds.has(t.id));
+  const filterText = topicFilter.trim().toLowerCase();
+  const visibleTopics = filterText ? topics.filter((t) => t.label.toLowerCase().includes(filterText)) : topics;
+
+  function setVisibleSelected(selected: boolean) {
+    setSelectedTopicIds((prev) => {
+      const next = new Set(prev);
+      for (const t of visibleTopics) {
+        if (selected) next.add(t.id);
+        else next.delete(t.id);
+      }
+      return next;
+    });
+  }
 
   function toggleTopic(id: string) {
     setSelectedTopicIds((prev) => {
@@ -306,8 +321,28 @@ function App() {
 
           <fieldset className="topics">
             <legend>Topics</legend>
+            <input
+              type="search"
+              className="topic-filter"
+              value={topicFilter}
+              placeholder="Filter topics"
+              aria-label="Filter topics"
+              onChange={(e) => setTopicFilter(e.target.value)}
+            />
+            <div className="topic-actions">
+              <button type="button" onClick={() => setVisibleSelected(true)}>
+                Select all{filterText ? " shown" : ""}
+              </button>
+              <button type="button" onClick={() => setVisibleSelected(false)}>
+                Deselect all{filterText ? " shown" : ""}
+              </button>
+              <span className="topic-count">
+                {activeTopics.length} of {topics.length} selected
+              </span>
+            </div>
             <div className="topic-grid">
-              {topics.map((topic) => (
+              {visibleTopics.length === 0 && <p className="share-note">No topics match "{topicFilter}".</p>}
+              {visibleTopics.map((topic) => (
                 <label key={topic.id} className="topic-checkbox">
                   <input
                     type="checkbox"
@@ -320,7 +355,8 @@ function App() {
             </div>
           </fieldset>
 
-          <button className="primary-button" onClick={handleGenerate}>
+          {activeTopics.length === 0 && <p className="share-note">Tick at least one topic to continue.</p>}
+          <button className="primary-button" onClick={handleGenerate} disabled={activeTopics.length === 0}>
             {mode === "worksheet" ? "Generate worksheet" : "Start test"}
           </button>
         </section>
