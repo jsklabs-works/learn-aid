@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { Calculator } from "./components/Calculator";
+import { FeedbackDialog } from "./components/FeedbackDialog";
 import { FigureSvg } from "./components/FigureSvg";
 import { FormulaSheet } from "./components/FormulaSheet";
 import { SharePanel } from "./components/SharePanel";
@@ -8,6 +9,7 @@ import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
 import { generateUniqueQuestions } from "./generate";
 import { diagnoseAnswer, isCorrectAnswer } from "./grading";
 import { generateWorksheetPdf } from "./pdf";
+import type { FeedbackContext } from "./feedback";
 import { SHARE_VERSION, buildShareUrl, newSeed, parseShareHash, withSeed, type ShareSpec } from "./share";
 import type { Difficulty, Question, Subject, Syllabus } from "./types";
 import { useTheme, type Theme } from "./useTheme";
@@ -58,6 +60,7 @@ function App() {
   const [revealOnShare, setRevealOnShare] = useState(true);
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [view, setView] = useState<"practice" | "formulas">("practice");
+  const [feedback, setFeedback] = useState<{ questionIndex?: number } | null>(null);
 
   const { label: subjectLabel, minGrade } = getSubject(subject);
   const explanationLabel = subject === "general" ? "Did you know?" : "How to get it";
@@ -175,6 +178,23 @@ function App() {
   const showFeedback = !shared || shared.reveal;
   const testInProgress = mode === "test" && questions !== null && !testSubmitted;
 
+  function buildFeedbackContext(questionIndex?: number): FeedbackContext {
+    const q = questionIndex !== undefined ? questions?.[questionIndex] : undefined;
+    const spec = shared ?? lastSpec;
+    return {
+      subjectLabel,
+      grade,
+      syllabus: syllabus === "vic" ? "Victorian Curriculum" : "Cambridge International",
+      difficulty: difficulty === "standard" ? "Standard" : "Advanced",
+      mode: shared ? "Shared online test" : mode === "test" ? "Online test" : "Worksheet",
+      question:
+        q && questionIndex !== undefined && questions
+          ? { number: questionIndex + 1, total: questions.length, prompt: q.prompt, answer: q.answer, options: q.options }
+          : undefined,
+      reproLink: spec ? buildShareUrl(spec) : undefined,
+    };
+  }
+
   const score = useMemo(() => {
     if (!questions || !testSubmitted) return null;
     const correct = questions.filter((q, i) => isCorrectAnswer(testAnswers[i] ?? "", q.answer)).length;
@@ -187,6 +207,9 @@ function App() {
         <div className="page-header-top">
           <h1>Learn Aid</h1>
           <div className="header-actions">
+          <button className="header-button" onClick={() => setFeedback({})}>
+            Feedback
+          </button>
           <button
             className="header-button"
             disabled={testInProgress}
@@ -391,6 +414,9 @@ function App() {
                         {q.explanation}
                       </div>
                     )}
+                    <button className="report-link" onClick={() => setFeedback({ questionIndex: i })}>
+                      Report a problem
+                    </button>
                   </li>
                 ))}
               </ol>
@@ -524,6 +550,11 @@ function App() {
                           {q.explanation}
                         </div>
                       )}
+                      {testSubmitted && (
+                        <button className="report-link" onClick={() => setFeedback({ questionIndex: i })}>
+                          Report a problem
+                        </button>
+                      )}
                     </li>
                   );
                 })}
@@ -541,6 +572,14 @@ function App() {
             Calculator
           </button>
         ))}
+
+      {feedback && (
+        <FeedbackDialog
+          context={buildFeedbackContext(feedback.questionIndex)}
+          initialType={feedback.questionIndex !== undefined ? "question" : "idea"}
+          onClose={() => setFeedback(null)}
+        />
+      )}
 
       <footer className="page-footer">
         <p>Runs entirely in your browser — no data leaves your device, and no account is needed.</p>
