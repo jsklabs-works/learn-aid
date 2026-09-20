@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 import { drawFigure, figureHeightMm } from "./figurePdf";
+import type { FormulaEntry } from "./formulas";
 import type { Question, Subject } from "./types";
 
 const PAGE_WIDTH = 210;
@@ -31,6 +32,12 @@ function sanitizeForPdf(text: string): string {
     .replace(/−/g, "-")
     .replace(/π/g, "pi")
     .replace(/′/g, "'")
+    .replace(/θ/g, "theta")
+    .replace(/λ/g, "lambda")
+    .replace(/ρ/g, "rho")
+    .replace(/→/g, "->")
+    .replace(/≤/g, "<=")
+    .replace(/≥/g, ">=")
     .replace(/∫ ?/g, "integral of ");
 }
 
@@ -59,6 +66,17 @@ function addHeader(doc: jsPDF, title: string, topicLabels: string[]): number {
   doc.line(MARGIN, y, PAGE_WIDTH - MARGIN, y);
   y += 10;
   return y;
+}
+
+function addFooters(doc: jsPDF): void {
+  const pages = doc.getNumberOfPages();
+  for (let page = 1; page <= pages; page++) {
+    doc.setPage(page);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(140);
+    doc.text(FOOTER_TEXT, PAGE_WIDTH / 2, PAGE_HEIGHT - 10, { align: "center" });
+  }
 }
 
 function ensureSpace(doc: jsPDF, y: number, needed: number): number {
@@ -141,15 +159,74 @@ export function generateWorksheetPdf(info: WorksheetInfo): void {
     ay += 2;
   });
 
-  const pages = doc.getNumberOfPages();
-  for (let page = 1; page <= pages; page++) {
-    doc.setPage(page);
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(140);
-    doc.text(FOOTER_TEXT, PAGE_WIDTH / 2, PAGE_HEIGHT - 10, { align: "center" });
-  }
+  addFooters(doc);
 
   const fileName = `grade-${info.grade}-${info.subject}-worksheet.pdf`;
   doc.save(fileName);
+}
+
+interface FormulaSheetInfo {
+  subject: Subject;
+  subjectLabel: string;
+  grade: number;
+  groups: { topic: string; entries: FormulaEntry[] }[];
+}
+
+export function generateFormulaPdf(info: FormulaSheetInfo): void {
+  const doc = newDoc();
+  let y = MARGIN;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text(sanitizeForPdf(`Grade ${info.grade} ${info.subjectLabel} formula sheet`), MARGIN, y);
+  y += 6;
+  doc.setDrawColor(200);
+  doc.line(MARGIN, y, PAGE_WIDTH - MARGIN, y);
+  y += 9;
+
+  for (const group of info.groups) {
+    y = ensureSpace(doc, y, 30);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.setTextColor(0);
+    doc.text(sanitizeForPdf(group.topic), MARGIN, y);
+    y += 7;
+
+    for (const entry of group.entries) {
+      const formulaLines = doc.setFont("courier", "normal").setFontSize(10).splitTextToSize(sanitizeForPdf(entry.formula), CONTENT_WIDTH - 6);
+      doc.setFont("helvetica", "normal").setFontSize(9);
+      const noteLines = entry.note ? doc.splitTextToSize(sanitizeForPdf(entry.note), CONTENT_WIDTH - 6) : [];
+      const exampleLines = entry.example ? doc.splitTextToSize(sanitizeForPdf(`Example: ${entry.example}`), CONTENT_WIDTH - 6) : [];
+      const height = 5.5 + formulaLines.length * 4.6 + noteLines.length * 4 + exampleLines.length * 4 + 3;
+      y = ensureSpace(doc, y, height);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(0);
+      doc.text(sanitizeForPdf(entry.name), MARGIN, y);
+      y += 5.5;
+
+      doc.setFont("courier", "normal");
+      doc.setFontSize(10);
+      doc.text(formulaLines, MARGIN + 3, y);
+      y += formulaLines.length * 4.6;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(90);
+      if (noteLines.length > 0) {
+        doc.text(noteLines, MARGIN + 3, y);
+        y += noteLines.length * 4;
+      }
+      if (exampleLines.length > 0) {
+        doc.text(exampleLines, MARGIN + 3, y);
+        y += exampleLines.length * 4;
+      }
+      y += 3;
+    }
+    y += 3;
+  }
+
+  doc.setTextColor(0);
+  addFooters(doc);
+  doc.save(`grade-${info.grade}-${info.subject}-formula-sheet.pdf`);
 }

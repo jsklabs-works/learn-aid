@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { Calculator } from "./components/Calculator";
 import { FigureSvg } from "./components/FigureSvg";
+import { FormulaSheet } from "./components/FormulaSheet";
 import { SharePanel } from "./components/SharePanel";
 import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
 import { generateUniqueQuestions } from "./generate";
@@ -56,6 +57,7 @@ function App() {
   const [sharePanelOpen, setSharePanelOpen] = useState(false);
   const [revealOnShare, setRevealOnShare] = useState(true);
   const [calculatorOpen, setCalculatorOpen] = useState(false);
+  const [view, setView] = useState<"practice" | "formulas">("practice");
 
   const { label: subjectLabel, minGrade } = getSubject(subject);
   const explanationLabel = subject === "general" ? "Did you know?" : "How to get it";
@@ -171,6 +173,7 @@ function App() {
   }
 
   const showFeedback = !shared || shared.reveal;
+  const testInProgress = mode === "test" && questions !== null && !testSubmitted;
 
   const score = useMemo(() => {
     if (!questions || !testSubmitted) return null;
@@ -183,6 +186,15 @@ function App() {
       <header className="page-header">
         <div className="page-header-top">
           <h1>Learn Aid</h1>
+          <div className="header-actions">
+          <button
+            className="header-button"
+            disabled={testInProgress}
+            onClick={() => setView((v) => (v === "formulas" ? "practice" : "formulas"))}
+            title={testInProgress ? "Formulas are locked while a test is in progress. They unlock when you submit." : undefined}
+          >
+            {testInProgress ? "Formulas (locked)" : view === "formulas" ? "Practice" : "Formulas"}
+          </button>
           <div className="theme-toggle" role="radiogroup" aria-label="Theme">
             {(["light", "system", "dark"] as Theme[]).map((t) => (
               <button
@@ -196,13 +208,18 @@ function App() {
               </button>
             ))}
           </div>
+          </div>
         </div>
         <p className="subtitle">
           Fresh practice worksheets and self-marking online tests for Grades 1–12, made for students, parents and teachers.
         </p>
       </header>
 
-      <main className={shared ? "layout single" : "layout"}>
+      {view === "formulas" && !testInProgress && (
+        <FormulaSheet initialSubject={subject} initialGrade={grade} onBack={() => setView("practice")} />
+      )}
+
+      <main className={shared ? "layout single" : "layout"} hidden={view === "formulas"}>
         {!shared && (
         <section className="panel" aria-label="Settings">
           <div className="mode-toggle" role="tablist" aria-label="Mode">
