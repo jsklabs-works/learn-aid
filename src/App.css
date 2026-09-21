@@ -705,3 +705,157 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+
+.test-report {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.test-report h3 {
+  margin: 0;
+  text-align: left;
+  font-size: 16px;
+}
+
+.test-report .report-heading {
+  margin-top: 8px;
+}
+
+.topic-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.topic-bar-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 2fr) 3fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.topic-bar-label {
+  color: var(--text-h);
+  text-align: left;
+}
+
+.topic-bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--code-bg);
+}
+
+.topic-bar i {
+  display: block;
+  height: 100%;
+}
+
+.topic-bar i.weak {
+  background: #e74c3c;
+}
+
+.topic-bar i.strong {
+  background: #2ecc71;
+}
+
+.topic-bar-score {
+  min-width: 52px;
+  color: var(--text);
+  text-align: right;
+}
+
+.test-report .primary-button {
+  align-self: flex-start;
+}
+
+.history-card {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.history-card h3 {
+  margin: 0 0 10px;
+  text-align: left;
+  font-size: 16px;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.history-meta,
+.history-weak {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.history-row button {
+  padding: 6px 12px;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.results-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.results-group h3 {
+  margin: 20px 0 4px;
+  text-align: left;
+  font-size: 16px;
+}
+
+.results-table {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.results-table th,
+.results-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.results-table th {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+}

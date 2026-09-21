@@ -3,10 +3,15 @@ import "./App.css";
 import { Calculator } from "./components/Calculator";
 import { FigureSvg } from "./components/FigureSvg";
 import { FormulaSheet } from "./components/FormulaSheet";
+import { HistoryCard } from "./components/HistoryCard";
+import { ResultsPage } from "./components/ResultsPage";
 import { SharePanel } from "./components/SharePanel";
+import { TestReport, type TopicResult } from "./components/TestReport";
 import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
 import { generateUniqueQuestions } from "./generate";
 import { diagnoseAnswer, isCorrectAnswer } from "./grading";
+import { clearHistory, listHistory, recordResult, type HistorySet } from "./history";
+import { encodeResult } from "./resultCode";
 import { generateWorksheetPdf } from "./pdf";
 import { SHARE_VERSION, buildShareUrl, newSeed, parseShareHash, withSeed, type ShareSpec } from "./share";
 import type { Difficulty, Question, Subject, Syllabus } from "./types";
@@ -57,7 +62,16 @@ function App() {
   const [revealOnShare, setRevealOnShare] = useState(true);
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [topicFilter, setTopicFilter] = useState("");
-  const [view, setView] = useState<"practice" | "formulas">("practice");
+  const [view, setView] = useState<"practice" | "formulas" | "results">("practice");
+  const [studentName, setStudentName] = useState(() => {
+    try {
+      return window.localStorage.getItem("learnaid.name") ?? "";
+    } catch {
+      return "";
+    }
+  });
+  const [historyVersion, setHistoryVersion] = useState(0);
+  const appliedKeyRef = useRef<string | null>(null);
 
   const { label: subjectLabel, minGrade } = getSubject(subject);
   const explanationLabel = subject === "general" ? "Did you know?" : "How to get it";
@@ -73,14 +87,21 @@ function App() {
     if (grade < nextMin) setGrade(nextMin);
   }
 
+  const settingsKey = `${subject}|${grade}|${syllabus}|${difficulty}`;
+
   // Whenever the subject/grade/syllabus/difficulty changes, select all of that set's topics by default.
   useEffect(() => {
     if (sharedRef.current) return;
+    if (appliedKeyRef.current === settingsKey) {
+      appliedKeyRef.current = null;
+      return;
+    }
+    appliedKeyRef.current = null;
     setTopicFilter("");
     setSelectedTopicIds(new Set(topics.map((t) => t.id)));
     setQuestions(null);
     setLastSpec(null);
-  }, [topics]);
+  }, [topics, settingsKey]);
 
   const loadShared = useCallback((spec: ShareSpec) => {
     const generated = generateFor(spec);
@@ -127,6 +148,67 @@ function App() {
     setTestAnswers(new Array(questions?.length ?? 0).fill(""));
     setTestSubmitted(false);
     window.scrollTo({ top: 0 });
+  }
+
+  /** Starts a fresh online test from a spec, whether it came from a report, the history card or a share link. */
+  function startFromSpec(spec: ShareSpec) {
+    appliedKeyRef.current = `${spec.subject}|${spec.grade}|${spec.syllabus}|${spec.difficulty}`;
+    sharedRef.current = null;
+    setShared(null);
+    if (window.location.hash) window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    const generated = generateFor(spec);
+    const all = getTopics(spec.subject, spec.grade, spec.syllabus, spec.difficulty);
+    setSubject(spec.subject);
+    setGrade(spec.grade);
+    setSyllabus(spec.syllabus);
+    setDifficulty(spec.difficulty);
+    setCount(spec.count);
+    setMode("test");
+    setSelectedTopicIds(new Set(spec.topicIds ?? all.map((t) => t.id)));
+    setLastSpec(spec);
+    setQuestions(generated);
+    setRequestedCount(spec.count);
+    setShowAnswers(false);
+    setTestAnswers(new Array(generated.length).fill(""));
+    setTestSubmitted(false);
+    setSharePanelOpen(false);
+    setView("practice");
+    window.scrollTo({ top: 0 });
+  }
+
+  function practiceTopics(spec: Omit<ShareSpec, "topicIds" | "seed" | "reveal" | "version" | "count">, ids: string[]) {
+    const all = getTopics(spec.subject, spec.grade, spec.syllabus, spec.difficulty);
+    const valid = ids.filter((id) => all.some((t) => t.id === id));
+    if (valid.length === 0) return;
+    startFromSpec({
+      ...spec,
+      count: 10,
+      topicIds: valid.length < all.length ? valid : null,
+      seed: newSeed(),
+      reveal: true,
+      version: SHARE_VERSION,
+    });
+  }
+
+  function submitTest() {
+    if (!questions) return;
+    recordResult(
+      { subject, grade, syllabus, difficulty },
+      questions.flatMap((q, i) =>
+        q.topicId ? [{ topicId: q.topicId, correct: isCorrectAnswer(testAnswers[i] ?? "", q.answer) }] : [],
+      ),
+    );
+    setHistoryVersion((v) => v + 1);
+    setTestSubmitted(true);
+  }
+
+  function changeStudentName(name: string) {
+    setStudentName(name);
+    try {
+      window.localStorage.setItem("learnaid.name", name);
+    } catch {
+      // Storage can be blocked; the name just isn't remembered.
+    }
   }
 
   const activeTopics = topics.filter((t) => selectedTopicIds.has(t.id));
@@ -209,12 +291,50 @@ function App() {
     return { correct, total: questions.length };
   }, [questions, testAnswers, testSubmitted]);
 
+  const topicResults = useMemo<TopicResult[]>(() => {
+    if (!questions || !testSubmitted) return [];
+    const labels = new Map(topics.map((t) => [t.id, t.label]));
+    const byTopic = new Map<string, TopicResult>();
+    questions.forEach((q, i) => {
+      if (!q.topicId) return;
+      const entry = byTopic.get(q.topicId) ?? { id: q.topicId, label: labels.get(q.topicId) ?? q.topicId, correct: 0, total: 0 };
+      entry.total += 1;
+      if (isCorrectAnswer(testAnswers[i] ?? "", q.answer)) entry.correct += 1;
+      byTopic.set(q.topicId, entry);
+    });
+    return Array.from(byTopic.values());
+  }, [questions, testAnswers, testSubmitted, topics]);
+
+  const resultCode = useMemo(() => {
+    if (!score) return "";
+    return encodeResult({
+      name: studentName,
+      subject,
+      grade,
+      syllabus,
+      difficulty,
+      correct: score.correct,
+      total: score.total,
+      seed: (shared ?? lastSpec)?.seed ?? "",
+      topics: topicResults.map((t) => [t.id, t.correct, t.total]),
+    });
+  }, [score, studentName, subject, grade, syllabus, difficulty, shared, lastSpec, topicResults]);
+
+  const historySets = useMemo<HistorySet[]>(
+    () => listHistory(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-read after each submit or clear
+    [historyVersion, questions === null],
+  );
+
   return (
     <div className="page">
       <header className="page-header">
         <div className="page-header-top">
           <h1>Learn Aid</h1>
           <div className="header-actions">
+          <button className="header-button" onClick={() => setView((v) => (v === "results" ? "practice" : "results"))}>
+            {view === "results" ? "Practice" : "Results"}
+          </button>
           <button
             className="header-button"
             disabled={testInProgress}
@@ -247,7 +367,9 @@ function App() {
         <FormulaSheet initialSubject={subject} initialGrade={grade} onBack={() => setView("practice")} />
       )}
 
-      <main className={shared ? "layout single" : "layout"} hidden={view === "formulas"}>
+      {view === "results" && <ResultsPage onBack={() => setView("practice")} />}
+
+      <main className={shared ? "layout single" : "layout"} hidden={view !== "practice"}>
         {!shared && (
         <section className="panel" aria-label="Settings">
           <div className="mode-toggle" role="tablist" aria-label="Mode">
@@ -396,6 +518,18 @@ function App() {
               <p>Choose your settings, then generate to see a preview here.</p>
             </div>
           )}
+          {!questions && !shared && (
+            <HistoryCard
+              sets={historySets}
+              onPractice={(set, ids) =>
+                practiceTopics({ subject: set.subject, grade: set.grade, syllabus: set.syllabus, difficulty: set.difficulty }, ids)
+              }
+              onClear={() => {
+                clearHistory();
+                setHistoryVersion((v) => v + 1);
+              }}
+            />
+          )}
 
           {questions && mode === "worksheet" && (
             <>
@@ -473,7 +607,7 @@ function App() {
                     <button onClick={() => setSharePanelOpen((o) => !o)}>Share this test</button>
                   )}
                   {!testSubmitted ? (
-                    <button className="primary-button" onClick={() => setTestSubmitted(true)}>
+                    <button className="primary-button" onClick={submitTest}>
                       Submit test
                     </button>
                   ) : shared ? (
@@ -519,6 +653,18 @@ function App() {
                   You scored <strong>{score.correct}</strong> / {score.total} (
                   {Math.round((score.correct / score.total) * 100)}%)
                 </div>
+              )}
+
+              {score && (
+                <TestReport
+                  name={studentName}
+                  onNameChange={changeStudentName}
+                  code={resultCode}
+                  topics={topicResults}
+                  onPractice={(ids) =>
+                    practiceTopics({ subject, grade, syllabus, difficulty }, ids)
+                  }
+                />
               )}
 
               <ol className="question-list">

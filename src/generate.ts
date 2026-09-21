@@ -25,7 +25,7 @@ export function generateUniqueQuestions(topics: Topic[], count: number): Questio
     }
     seen.add(question.prompt);
     misses.set(topic.id, 0);
-    questions.push(question);
+    questions.push({ ...question, topicId: topic.id });
   }
 
   return questions;

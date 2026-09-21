@@ -20,6 +20,8 @@ export interface Question {
   figure?: Figure;
   /** Worked steps or a short reason, shown for wrong answers and in answer keys. Lines are separated by \n. */
   explanation?: string;
+  /** Which topic produced this question, so results can be broken down by topic. */
+  topicId?: string;
 }
 
 export interface Topic {
