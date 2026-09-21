@@ -25,6 +25,8 @@ export interface Question {
 export interface Topic {
   id: string;
   label: string;
+  /** Lets the topic list group topics; anything without one is a plain skills topic. */
+  category?: "word-problems";
   generate: () => Question;
 }
 

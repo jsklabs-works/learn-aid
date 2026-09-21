@@ -47,7 +47,7 @@ Everything runs client-side — no backend, no accounts, no data collection.
 
 Advanced adds the next band's topics (and, at Grade 9–12, political ideas and great scientists). The "current topics" quiz covers evergreen themes (climate, technology and AI literacy, media literacy, economics basics). It does not track the news, so it never goes out of date.
 
-Every Maths grade band and both Accounting bands include a **Word problems** topic: short real-world stories (shopping, time, ratios, savings, ladders, depreciation, cash budgets and so on) with randomised names and numbers, which you can tick on or off like any other topic.
+Every Maths grade band and every elective (Accounting, Business Studies, Economics, Biology, Chemistry and Physics, in both grade bands) includes a **Word problems** topic: short real-world stories (shopping, time, ratios, savings, echoes, titrations, mark-recapture surveys, break-even and so on) with randomised names and numbers, each with a worked explanation. In the topic list they sit under their own *Word problems* heading, and *Only word problems* and *No word problems* buttons let you pick just them or leave them out.
 
 Questions are procedurally generated (maths) or randomly sampled from curated item banks (English), so each worksheet is different. Perimeter, area, angle, and Pythagoras/trigonometry questions include a labelled diagram, both on screen and in the downloaded PDF.
 

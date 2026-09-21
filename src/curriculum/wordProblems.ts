@@ -1,12 +1,12 @@
 import type { Question, Topic } from "../types";
 import { pick, randInt, simplifyFraction } from "./utils";
 
-type Kind = () => Question;
+export type Kind = () => Question;
 
-const NAMES = ["Ava", "Liam", "Mia", "Noah", "Zoe", "Ethan", "Ruby", "Jack", "Chloe", "Oliver", "Sophie", "Lucas"];
+export const NAMES = ["Ava", "Liam", "Mia", "Noah", "Zoe", "Ethan", "Ruby", "Jack", "Chloe", "Oliver", "Sophie", "Lucas"];
 const ITEMS = ["stickers", "marbles", "pencils", "cards", "stamps", "coins", "shells", "buttons"];
 const THINGS = ["notebooks", "toy cars", "erasers", "drinks", "muffins"];
-const BUSINESSES = [
+export const BUSINESSES = [
   "Ava's Bakery",
   "Noah's Garage",
   "Zoe's Florist",
@@ -27,8 +27,8 @@ function twoNames(): [string, string] {
 const mm = (n: number) => String(n).padStart(2, "0");
 const plural = (n: number, one: string, many: string) => (n === 1 ? one : many);
 
-function topicFrom(kinds: Kind[]): Topic {
-  return { id: "word-problems", label: "Word problems", generate: () => pick(kinds)() };
+export function topicFrom(kinds: Kind[]): Topic {
+  return { id: "word-problems", label: "Word problems", category: "word-problems", generate: () => pick(kinds)() };
 }
 
 // ---------- Maths ----------

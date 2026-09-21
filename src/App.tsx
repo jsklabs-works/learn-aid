@@ -133,6 +133,17 @@ function App() {
   const filterText = topicFilter.trim().toLowerCase();
   const visibleTopics = filterText ? topics.filter((t) => t.label.toLowerCase().includes(filterText)) : topics;
 
+  function selectOnly(keep: (t: (typeof topics)[number]) => boolean) {
+    setSelectedTopicIds(new Set(topics.filter(keep).map((t) => t.id)));
+  }
+
+  const hasWordProblems = topics.some((t) => t.category === "word-problems");
+  const hasSkills = topics.some((t) => t.category !== "word-problems");
+  const topicGroups = [
+    { title: "Skills", items: visibleTopics.filter((t) => t.category !== "word-problems") },
+    { title: "Word problems", items: visibleTopics.filter((t) => t.category === "word-problems") },
+  ].filter((g) => g.items.length > 0);
+
   function setVisibleSelected(selected: boolean) {
     setSelectedTopicIds((prev) => {
       const next = new Set(prev);
@@ -339,17 +350,32 @@ function App() {
                 {activeTopics.length} of {topics.length} selected
               </span>
             </div>
+            {hasWordProblems && hasSkills && (
+              <div className="topic-actions">
+                <button type="button" onClick={() => selectOnly((t) => t.category === "word-problems")}>
+                  Only word problems
+                </button>
+                <button type="button" onClick={() => selectOnly((t) => t.category !== "word-problems")}>
+                  No word problems
+                </button>
+              </div>
+            )}
             <div className="topic-grid">
               {visibleTopics.length === 0 && <p className="share-note">No topics match "{topicFilter}".</p>}
-              {visibleTopics.map((topic) => (
-                <label key={topic.id} className="topic-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={selectedTopicIds.has(topic.id)}
-                    onChange={() => toggleTopic(topic.id)}
-                  />
-                  <span>{topic.label}</span>
-                </label>
+              {topicGroups.map((group) => (
+                <div key={group.title} className="topic-group">
+                  {topicGroups.length > 1 && <div className="topic-group-title">{group.title}</div>}
+                  {group.items.map((topic) => (
+                    <label key={topic.id} className="topic-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedTopicIds.has(topic.id)}
+                        onChange={() => toggleTopic(topic.id)}
+                      />
+                      <span>{topic.label}</span>
+                    </label>
+                  ))}
+                </div>
               ))}
             </div>
           </fieldset>

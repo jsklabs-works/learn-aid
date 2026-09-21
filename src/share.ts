@@ -2,7 +2,7 @@ import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
 import type { Difficulty, Subject, Syllabus } from "./types";
 
 /** Bump when a content change would make an old link produce different questions. */
-export const SHARE_VERSION = 1;
+export const SHARE_VERSION = 2;
 const MAX_QUESTIONS = 50;
 const SEED_PATTERN = /^[a-z0-9]{4,16}$/;
 
