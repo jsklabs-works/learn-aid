@@ -87,7 +87,7 @@ function ensureSpace(doc: jsPDF, y: number, needed: number): number {
   return y;
 }
 
-export function generateWorksheetPdf(info: WorksheetInfo): void {
+export function generateWorksheetPdf(info: WorksheetInfo, includeAnswerKey = true): void {
   const doc = newDoc();
   const title = `Grade ${info.grade} ${info.subjectLabel} Worksheet`;
 
@@ -125,43 +125,45 @@ export function generateWorksheetPdf(info: WorksheetInfo): void {
     }
   });
 
-  doc.addPage();
-  let ay = MARGIN;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text("Answer Key", MARGIN, ay);
-  ay += 10;
-  doc.setDrawColor(200);
-  doc.line(MARGIN, ay, PAGE_WIDTH - MARGIN, ay);
-  ay += 8;
+  if (includeAnswerKey) {
+    doc.addPage();
+    let ay = MARGIN;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("Answer Key", MARGIN, ay);
+    ay += 10;
+    doc.setDrawColor(200);
+    doc.line(MARGIN, ay, PAGE_WIDTH - MARGIN, ay);
+    ay += 8;
 
-  doc.setFontSize(12);
-  info.questions.forEach((q, index) => {
-    const text = sanitizeForPdf(`${index + 1}. ${q.answer}`);
-    const lines = doc.splitTextToSize(text, CONTENT_WIDTH);
-    const steps = q.explanation
-      ? doc.splitTextToSize(sanitizeForPdf(q.explanation), CONTENT_WIDTH - 8)
-      : [];
-    ay = ensureSpace(doc, ay, lines.length * 6 + steps.length * 4.5 + 2);
-    doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
-    doc.setTextColor(0);
-    doc.text(lines, MARGIN, ay);
-    ay += lines.length * 6;
-    if (steps.length > 0) {
-      doc.setFontSize(9);
-      doc.setTextColor(90);
-      doc.text(steps, MARGIN + 8, ay - 1);
-      ay += steps.length * 4.5;
-      doc.setTextColor(0);
+    info.questions.forEach((q, index) => {
+      const text = sanitizeForPdf(`${index + 1}. ${q.answer}`);
+      const lines = doc.splitTextToSize(text, CONTENT_WIDTH);
+      const steps = q.explanation
+        ? doc.splitTextToSize(sanitizeForPdf(q.explanation), CONTENT_WIDTH - 8)
+        : [];
+      ay = ensureSpace(doc, ay, lines.length * 6 + steps.length * 4.5 + 2);
+      doc.setFont("helvetica", "normal");
       doc.setFontSize(12);
-    }
-    ay += 2;
-  });
+      doc.setTextColor(0);
+      doc.text(lines, MARGIN, ay);
+      ay += lines.length * 6;
+      if (steps.length > 0) {
+        doc.setFontSize(9);
+        doc.setTextColor(90);
+        doc.text(steps, MARGIN + 8, ay - 1);
+        ay += steps.length * 4.5;
+        doc.setTextColor(0);
+        doc.setFontSize(12);
+      }
+      ay += 2;
+    });
+  }
 
   addFooters(doc);
 
-  const fileName = `grade-${info.grade}-${info.subject}-worksheet.pdf`;
+  const fileName = `grade-${info.grade}-${info.subject}-worksheet${includeAnswerKey ? "-with-answers" : ""}.pdf`;
   doc.save(fileName);
 }
 

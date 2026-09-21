@@ -186,15 +186,18 @@ function App() {
     setTestSubmitted(false);
   }
 
-  function handleDownload() {
+  function handleDownload(includeAnswerKey: boolean) {
     if (!questions) return;
-    generateWorksheetPdf({
-      subject,
-      subjectLabel,
-      grade,
-      topicLabels: (activeTopics.length > 0 ? activeTopics : topics).map((t) => t.label),
-      questions,
-    });
+    generateWorksheetPdf(
+      {
+        subject,
+        subjectLabel,
+        grade,
+        topicLabels: (activeTopics.length > 0 ? activeTopics : topics).map((t) => t.label),
+        questions,
+      },
+      includeAnswerKey,
+    );
   }
 
   const showFeedback = !shared || shared.reveal;
@@ -406,8 +409,9 @@ function App() {
                   </button>
                   <button onClick={handleGenerate}>Regenerate</button>
                   <button onClick={() => setSharePanelOpen((o) => !o)}>Share as online test</button>
-                  <button className="primary-button" onClick={handleDownload}>
-                    Download PDF (with answer key)
+                  <button onClick={() => handleDownload(false)}>Download PDF</button>
+                  <button className="primary-button" onClick={() => handleDownload(true)}>
+                    Download PDF with answer key
                   </button>
                 </div>
               </div>
