@@ -16,6 +16,9 @@ interface WorksheetInfo {
   grade: number;
   topicLabels: string[];
   questions: Question[];
+  /** When set, printed on every page so the worksheet can be checked online later. */
+  worksheetKey?: string;
+  siteUrl?: string;
 }
 
 function newDoc(): jsPDF {
@@ -68,14 +71,25 @@ function addHeader(doc: jsPDF, title: string, topicLabels: string[]): number {
   return y;
 }
 
-function addFooters(doc: jsPDF): void {
+function addFooters(doc: jsPDF, key?: { worksheetKey: string; siteUrl?: string }): void {
   const pages = doc.getNumberOfPages();
   for (let page = 1; page <= pages; page++) {
     doc.setPage(page);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(140);
-    doc.text(FOOTER_TEXT, PAGE_WIDTH / 2, PAGE_HEIGHT - 10, { align: "center" });
+    if (key) {
+      const where = key.siteUrl ? `${key.siteUrl} (Check worksheet)` : "Learn Aid (Check worksheet)";
+      doc.text(`Check your answers online: ${where}`, PAGE_WIDTH / 2, PAGE_HEIGHT - 16, { align: "center" });
+      doc.setFont("courier", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(90);
+      doc.text(`Worksheet key: ${key.worksheetKey}`, PAGE_WIDTH / 2, PAGE_HEIGHT - 12, { align: "center" });
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(140);
+    }
+    doc.text(FOOTER_TEXT, PAGE_WIDTH / 2, PAGE_HEIGHT - 7, { align: "center" });
   }
 }
 
@@ -161,7 +175,7 @@ export function generateWorksheetPdf(info: WorksheetInfo, includeAnswerKey = tru
     });
   }
 
-  addFooters(doc);
+  addFooters(doc, includeAnswerKey || !info.worksheetKey ? undefined : { worksheetKey: info.worksheetKey, siteUrl: info.siteUrl });
 
   const fileName = `grade-${info.grade}-${info.subject}-worksheet${includeAnswerKey ? "-with-answers" : ""}.pdf`;
   doc.save(fileName);

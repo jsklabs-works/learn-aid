@@ -1,5 +1,6 @@
 import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
-import type { Difficulty, Subject, Syllabus } from "./types";
+import { generateUniqueQuestions } from "./generate";
+import type { Difficulty, Question, Subject, Syllabus } from "./types";
 
 /** Bump when a content change would make an old link produce different questions. */
 export const SHARE_VERSION = 2;
@@ -104,5 +105,83 @@ export function parseShareHash(hash: string): ShareSpec | null {
     seed,
     reveal: params.get("a") !== "0",
     version: Number(params.get("v")) || 0,
+  };
+}
+
+/** Builds the questions for a spec. The same spec always gives the same questions, on any device. */
+export function generateFor(spec: ShareSpec): Question[] {
+  const all = getTopics(spec.subject, spec.grade, spec.syllabus, spec.difficulty);
+  const pool = spec.topicIds ? all.filter((t) => spec.topicIds?.includes(t.id)) : all;
+  return withSeed(spec.seed, () => generateUniqueQuestions(pool, spec.count));
+}
+
+function keyChecksum(text: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(16).padStart(8, "0").slice(0, 4);
+}
+
+/**
+ * A short, typeable key printed on the questions-only PDF. It holds the same information as a share link
+ * (settings, topics and seed), so entering it later rebuilds the identical questions with their answers.
+ * Topics are stored as a bit mask over the subject's topic list, or "all".
+ */
+export function encodeWorksheetKey(spec: ShareSpec): string {
+  const all = getTopics(spec.subject, spec.grade, spec.syllabus, spec.difficulty);
+  let mask = "all";
+  if (spec.topicIds) {
+    const bits = all.map((t) => (spec.topicIds?.includes(t.id) ? "1" : "0")).join("");
+    mask = BigInt(`0b${bits}`).toString(16);
+  }
+  const body = [
+    `lw${spec.version}`,
+    spec.subject,
+    spec.grade,
+    spec.syllabus === "vic" ? "v" : "c",
+    spec.difficulty === "standard" ? "s" : "a",
+    spec.count,
+    spec.seed,
+    mask,
+  ].join(".");
+  return `${body}.${keyChecksum(body)}`;
+}
+
+export type KeyResult = { ok: true; spec: ShareSpec } | { ok: false; error: string };
+
+export function decodeWorksheetKey(input: string): KeyResult {
+  const key = input.trim().replace(/\s+/g, "").toLowerCase();
+  const parts = key.split(".");
+  if (parts.length !== 9 || !/^lw\d+$/.test(parts[0])) return { ok: false, error: "That does not look like a worksheet key." };
+  const body = parts.slice(0, 8).join(".");
+  if (keyChecksum(body) !== parts[8]) return { ok: false, error: "The key looks wrong. Check it against the printed worksheet." };
+
+  const [, subjectId, gradeText, y, d, countText, seed, mask] = parts;
+  const subject = SUBJECTS.find((s) => s.id === subjectId)?.id;
+  const grade = Number(gradeText);
+  const count = Number(countText);
+  if (!subject || !GRADES.includes(grade) || grade < getSubject(subject).minGrade) return { ok: false, error: "The key is not valid." };
+  if ((y !== "v" && y !== "c") || (d !== "s" && d !== "a")) return { ok: false, error: "The key is not valid." };
+  if (!Number.isInteger(count) || count < 1 || count > MAX_QUESTIONS || !SEED_PATTERN.test(seed)) {
+    return { ok: false, error: "The key is not valid." };
+  }
+  const syllabus: Syllabus = y === "v" ? "vic" : "cambridge";
+  const difficulty: Difficulty = d === "s" ? "standard" : "advanced";
+
+  let topicIds: string[] | null = null;
+  if (mask !== "all") {
+    if (!/^[0-9a-f]+$/.test(mask)) return { ok: false, error: "The key is not valid." };
+    const all = getTopics(subject, grade, syllabus, difficulty);
+    const bits = BigInt(`0x${mask}`).toString(2).padStart(all.length, "0");
+    const chosen = all.filter((_, i) => bits[bits.length - all.length + i] === "1").map((t) => t.id);
+    if (chosen.length === 0) return { ok: false, error: "The key is not valid." };
+    topicIds = chosen.length < all.length ? chosen : null;
+  }
+
+  return {
+    ok: true,
+    spec: { subject, grade, syllabus, difficulty, count, topicIds, seed, reveal: true, version: Number(parts[0].slice(2)) },
   };
 }

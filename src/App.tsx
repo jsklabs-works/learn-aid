@@ -3,17 +3,17 @@ import "./App.css";
 import { Calculator } from "./components/Calculator";
 import { FigureSvg } from "./components/FigureSvg";
 import { FormulaSheet } from "./components/FormulaSheet";
+import { CheckWorksheet } from "./components/CheckWorksheet";
 import { HistoryCard } from "./components/HistoryCard";
 import { ResultsPage } from "./components/ResultsPage";
 import { SharePanel } from "./components/SharePanel";
 import { TestReport, type TopicResult } from "./components/TestReport";
 import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
-import { generateUniqueQuestions } from "./generate";
 import { diagnoseAnswer, isCorrectAnswer } from "./grading";
 import { clearHistory, listHistory, recordResult, type HistorySet } from "./history";
 import { encodeResult } from "./resultCode";
 import { generateWorksheetPdf } from "./pdf";
-import { SHARE_VERSION, buildShareUrl, newSeed, parseShareHash, withSeed, type ShareSpec } from "./share";
+import { SHARE_VERSION, buildShareUrl, encodeWorksheetKey, generateFor, newSeed, parseShareHash, type ShareSpec } from "./share";
 import type { Difficulty, Question, Subject, Syllabus } from "./types";
 import { useTheme, type Theme } from "./useTheme";
 
@@ -24,13 +24,6 @@ const CALCULATOR_MIN_GRADE = 10;
 type Mode = "worksheet" | "test";
 
 const initialShare = parseShareHash(window.location.hash);
-
-/** Builds the questions for a spec. The same spec always gives the same questions, on any device. */
-function generateFor(spec: ShareSpec): Question[] {
-  const all = getTopics(spec.subject, spec.grade, spec.syllabus, spec.difficulty);
-  const pool = spec.topicIds ? all.filter((t) => spec.topicIds?.includes(t.id)) : all;
-  return withSeed(spec.seed, () => generateUniqueQuestions(pool, spec.count));
-}
 
 function App() {
   const [theme, setTheme] = useTheme();
@@ -62,7 +55,7 @@ function App() {
   const [revealOnShare, setRevealOnShare] = useState(true);
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [topicFilter, setTopicFilter] = useState("");
-  const [view, setView] = useState<"practice" | "formulas" | "results">("practice");
+  const [view, setView] = useState<"practice" | "formulas" | "results" | "check">("practice");
   const [studentName, setStudentName] = useState(() => {
     try {
       return window.localStorage.getItem("learnaid.name") ?? "";
@@ -277,6 +270,8 @@ function App() {
         grade,
         topicLabels: (activeTopics.length > 0 ? activeTopics : topics).map((t) => t.label),
         questions,
+      worksheetKey: !includeAnswerKey && lastSpec && !shared ? encodeWorksheetKey(lastSpec) : undefined,
+      siteUrl: `${window.location.origin}${window.location.pathname}`,
       },
       includeAnswerKey,
     );
@@ -332,6 +327,9 @@ function App() {
         <div className="page-header-top">
           <h1>Learn Aid</h1>
           <div className="header-actions">
+          <button className="header-button" onClick={() => setView((v) => (v === "check" ? "practice" : "check"))}>
+            {view === "check" ? "Practice" : "Check worksheet"}
+          </button>
           <button className="header-button" onClick={() => setView((v) => (v === "results" ? "practice" : "results"))}>
             {view === "results" ? "Practice" : "Results"}
           </button>
@@ -368,6 +366,16 @@ function App() {
       )}
 
       {view === "results" && <ResultsPage onBack={() => setView("practice")} />}
+      {view === "check" && (
+        <CheckWorksheet
+          onBack={() => setView("practice")}
+          onMark={(spec) => {
+            loadShared(spec);
+            setView("practice");
+            window.scrollTo({ top: 0 });
+          }}
+        />
+      )}
 
       <main className={shared ? "layout single" : "layout"} hidden={view !== "practice"}>
         {!shared && (
@@ -543,7 +551,12 @@ function App() {
                   </button>
                   <button onClick={handleGenerate}>Regenerate</button>
                   <button onClick={() => setSharePanelOpen((o) => !o)}>Share as online test</button>
-                  <button onClick={() => handleDownload(false)}>Download PDF</button>
+                  <button
+                    onClick={() => handleDownload(false)}
+                    title="Includes a worksheet key on every page, so the answers can be checked online later"
+                  >
+                    Download PDF
+                  </button>
                   <button className="primary-button" onClick={() => handleDownload(true)}>
                     Download PDF with answer key
                   </button>
