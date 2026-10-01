@@ -1,5 +1,5 @@
 import type { Difficulty, Question, Syllabus, Topic } from "../types";
-import { gcd, ordinal, pick, randInt, simplifyFraction } from "./utils";
+import { gcd, ordinal, pick, randInt, shuffle, simplifyFraction } from "./utils";
 import { moreMathsTopics } from "./mathsMore";
 import { mathsWordProblems } from "./wordProblems";
 
@@ -77,25 +77,45 @@ function shapeSides(): Topic {
     ["rectangle", 4],
     ["pentagon", 5],
     ["hexagon", 6],
+    ["heptagon", 7],
     ["octagon", 8],
+    ["nonagon", 9],
+    ["decagon", 10],
   ];
+  const note: Record<string, string> = {
+    triangle: "tri- means three",
+    square: "4 equal sides",
+    rectangle: "2 long sides and 2 short sides",
+    pentagon: "penta- means five",
+    hexagon: "hexa- means six",
+    heptagon: "hepta- means seven",
+    octagon: "octa- means eight",
+    nonagon: "nona- means nine",
+    decagon: "deca- means ten",
+  };
+  const article = (name: string) => (/^[aeiou]/.test(name) ? "An" : "A");
+  // Square and rectangle share a side count, so only shapes with a unique count are fair for "which shape has N sides?".
+  const uniquelyIdentifiable = shapes.filter(([, sides]) => shapes.filter(([, s]) => s === sides).length === 1);
   return {
     id: "shape-sides",
     label: "Shape recognition",
     generate: () => {
-      const [name, sides] = pick(shapes);
-      const note: Record<string, string> = {
-        triangle: "tri- means three",
-        square: "4 equal sides",
-        rectangle: "2 long sides and 2 short sides",
-        pentagon: "penta- means five",
-        hexagon: "hexa- means six",
-        octagon: "octa- means eight",
-      };
+      if (Math.random() < 0.5) {
+        const [name, sides] = pick(shapes);
+        return {
+          prompt: `How many sides does a ${name} have?`,
+          answer: String(sides),
+          explanation: `${article(name)} ${name} has ${sides} sides (${note[name]}).`,
+        };
+      }
+      const [name, sides] = pick(uniquelyIdentifiable);
+      const wrongShapes = shapes.filter(([, s]) => s !== sides);
+      const options = shuffle([name, ...shuffle(wrongShapes).slice(0, 3).map(([n]) => n)]);
       return {
-        prompt: `How many sides does a ${name} have?`,
-        answer: String(sides),
-        explanation: `${/^[aeiou]/.test(name) ? "An" : "A"} ${name} has ${sides} sides (${note[name]}).`,
+        prompt: `Which shape has ${sides} sides?`,
+        answer: name,
+        options,
+        explanation: `${article(name)} ${name} has ${sides} sides (${note[name]}).`,
       };
     },
   };
