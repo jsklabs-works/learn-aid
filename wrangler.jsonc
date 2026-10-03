@@ -1,0 +1,9 @@
+// Cloudflare settings: Cloudflare runs "npm run build", then publishes the dist/ folder.
+{
+  "name": "learn-aid",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
