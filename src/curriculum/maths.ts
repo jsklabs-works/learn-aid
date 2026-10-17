@@ -81,6 +81,8 @@ function shapeSides(): Topic {
     ["octagon", 8],
     ["nonagon", 9],
     ["decagon", 10],
+    ["hendecagon", 11],
+    ["dodecagon", 12],
   ];
   const note: Record<string, string> = {
     triangle: "tri- means three",
@@ -92,6 +94,8 @@ function shapeSides(): Topic {
     octagon: "octa- means eight",
     nonagon: "nona- means nine",
     decagon: "deca- means ten",
+    hendecagon: "hendeca- means eleven",
+    dodecagon: "dodeca- means twelve",
   };
   const article = (name: string) => (/^[aeiou]/.test(name) ? "An" : "A");
   // Square and rectangle share a side count, so only shapes with a unique count are fair for "which shape has N sides?".
@@ -972,6 +976,18 @@ const UNIT_CIRCLE: { angle: string; sin: string; cos: string; tan: string }[] = 
   { angle: "45°", sin: "√2/2", cos: "√2/2", tan: "1" },
   { angle: "60°", sin: "√3/2", cos: "1/2", tan: "√3" },
   { angle: "90°", sin: "1", cos: "0", tan: "undefined" },
+  { angle: "120°", sin: "√3/2", cos: "-1/2", tan: "-√3" },
+  { angle: "135°", sin: "√2/2", cos: "-√2/2", tan: "-1" },
+  { angle: "150°", sin: "1/2", cos: "-√3/2", tan: "-1/√3" },
+  { angle: "180°", sin: "0", cos: "-1", tan: "0" },
+  { angle: "210°", sin: "-1/2", cos: "-√3/2", tan: "1/√3" },
+  { angle: "225°", sin: "-√2/2", cos: "-√2/2", tan: "1" },
+  { angle: "240°", sin: "-√3/2", cos: "-1/2", tan: "√3" },
+  { angle: "270°", sin: "-1", cos: "0", tan: "undefined" },
+  { angle: "300°", sin: "-√3/2", cos: "1/2", tan: "-√3" },
+  { angle: "315°", sin: "-√2/2", cos: "√2/2", tan: "-1" },
+  { angle: "330°", sin: "-1/2", cos: "√3/2", tan: "-1/√3" },
+  { angle: "360°", sin: "0", cos: "1", tan: "0" },
 ];
 
 function unitCircleValues(): Topic {

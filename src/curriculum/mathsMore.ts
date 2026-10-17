@@ -470,8 +470,11 @@ function simpleInterest(): Topic {
 
 function polygonAngles(): Topic {
   const polygons: [string, number][] = [
+    ["triangle", 3],
+    ["quadrilateral", 4],
     ["pentagon", 5],
     ["hexagon", 6],
+    ["heptagon", 7],
     ["octagon", 8],
     ["nonagon", 9],
     ["decagon", 10],
@@ -681,7 +684,13 @@ function vectorMagnitude(): Topic {
 export function moreMathsTopics(grade: number): Topic[] {
   if (grade <= 2) {
     const max = grade === 1 ? 20 : 99;
-    return [compareNumbers(max), placeValueSmall(max), doubleAndHalf(grade === 1 ? 10 : 25), missingNumber(grade === 1 ? 20 : 50), oddOrEven(max)];
+    return [
+      compareNumbers(max),
+      placeValueSmall(grade === 1 ? 30 : max),
+      doubleAndHalf(grade === 1 ? 10 : 25),
+      missingNumber(grade === 1 ? 20 : 50),
+      oddOrEven(max),
+    ];
   }
   if (grade <= 4) return [placeValueLarge(), rounding(), equivalentFractions(), unitConversion(), elapsedTime()];
   if (grade <= 6) return [hcfAndLcm(), primeNumbers(), meanMedianMode(20), fractionOfAmount(), volumeCuboid()];
