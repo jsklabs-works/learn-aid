@@ -101,7 +101,9 @@ function ensureSpace(doc: jsPDF, y: number, needed: number): number {
   return y;
 }
 
-export function generateWorksheetPdf(info: WorksheetInfo, includeAnswerKey = true): void {
+export type PdfOutput = "download" | "print";
+
+function buildWorksheetDoc(info: WorksheetInfo, includeAnswerKey: boolean): jsPDF {
   const doc = newDoc();
   const title = `Grade ${info.grade} ${info.subjectLabel} Worksheet`;
 
@@ -177,7 +179,22 @@ export function generateWorksheetPdf(info: WorksheetInfo, includeAnswerKey = tru
 
   addFooters(doc, includeAnswerKey || !info.worksheetKey ? undefined : { worksheetKey: info.worksheetKey, siteUrl: info.siteUrl });
 
+  return doc;
+}
+
+export function generateWorksheetPdf(info: WorksheetInfo, includeAnswerKey = true, output: PdfOutput = "download"): void {
+  const doc = buildWorksheetDoc(info, includeAnswerKey);
   const fileName = `grade-${info.grade}-${info.subject}-worksheet${includeAnswerKey ? "-with-answers" : ""}.pdf`;
+  if (output === "print") {
+    doc.autoPrint({ variant: "javascript" });
+    const url = URL.createObjectURL(doc.output("blob"));
+    const win = window.open(url, "_blank");
+    if (win) {
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      return;
+    }
+    URL.revokeObjectURL(url);
+  }
   doc.save(fileName);
 }
 

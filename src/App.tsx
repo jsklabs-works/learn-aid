@@ -12,7 +12,7 @@ import { GRADES, SUBJECTS, getSubject, getTopics } from "./curriculum";
 import { diagnoseAnswer, isCorrectAnswer } from "./grading";
 import { clearHistory, listHistory, recordResult, type HistorySet } from "./history";
 import { encodeResult } from "./resultCode";
-import { generateWorksheetPdf } from "./pdf";
+import { generateWorksheetPdf, type PdfOutput } from "./pdf";
 import { SHARE_VERSION, buildShareUrl, encodeWorksheetKey, generateFor, newSeed, parseShareHash, type ShareSpec } from "./share";
 import type { Difficulty, Question, Subject, Syllabus } from "./types";
 import { useTheme, type Theme } from "./useTheme";
@@ -261,7 +261,7 @@ function App() {
     setTestSubmitted(false);
   }
 
-  function handleDownload(includeAnswerKey: boolean) {
+  function handleDownload(includeAnswerKey: boolean, output: PdfOutput = "download") {
     if (!questions) return;
     generateWorksheetPdf(
       {
@@ -270,10 +270,11 @@ function App() {
         grade,
         topicLabels: (activeTopics.length > 0 ? activeTopics : topics).map((t) => t.label),
         questions,
-      worksheetKey: !includeAnswerKey && lastSpec && !shared ? encodeWorksheetKey(lastSpec) : undefined,
-      siteUrl: `${window.location.origin}${window.location.pathname}`,
+        worksheetKey: !includeAnswerKey && lastSpec && !shared ? encodeWorksheetKey(lastSpec) : undefined,
+        siteUrl: `${window.location.origin}${window.location.pathname}`,
       },
       includeAnswerKey,
+      output,
     );
   }
 
@@ -559,6 +560,18 @@ function App() {
                   </button>
                   <button className="primary-button" onClick={() => handleDownload(true)}>
                     Download PDF with answer key
+                  </button>
+                  <button
+                    onClick={() => handleDownload(false, "print")}
+                    title="Opens the worksheet (questions only) in a new tab and starts printing"
+                  >
+                    Print
+                  </button>
+                  <button
+                    onClick={() => handleDownload(true, "print")}
+                    title="Opens the worksheet with the answer key in a new tab and starts printing"
+                  >
+                    Print with answer key
                   </button>
                 </div>
               </div>
